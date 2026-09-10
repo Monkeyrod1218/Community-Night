@@ -341,6 +341,7 @@
   const statsEl=document.getElementById('otStats');
   const totalEl=document.getElementById('otTotal');
   const DPR=Math.min(window.devicePixelRatio||1,2);
+  const earthImg=new Image(); earthImg.src='images/earth.png';
   const ALTMAX=20200;
   function opd(alt){const r=6371+alt;return 86400/(2*Math.PI*Math.sqrt(r*r*r/398600));}
   function mk(n,alt){const a=[];for(let i=0;i<n;i++)a.push({th:Math.random()*6.2832,alt:alt,o:opd(alt)});return a;}
@@ -372,19 +373,12 @@
     ctx.setTransform(DPR,0,0,DPR,0,0);
     ctx.clearRect(0,0,L,L);
     const c=L/2, rE=L*0.115, maxR=L*0.46, t=ts/1000;
-    // Earth
+    // Earth (image, slowly rotating)
     const eAng=dragRot+t*1*SCALE;
-    const g=ctx.createRadialGradient(c-rE*0.35,c-rE*0.4,rE*0.2,c,c,rE);
-    g.addColorStop(0,'#7fc0ff');g.addColorStop(.6,'#2f6fc4');g.addColorStop(1,'#173a72');
-    ctx.beginPath();ctx.arc(c,c,rE,0,6.2832);ctx.fillStyle=g;ctx.fill();
-    ctx.save();ctx.beginPath();ctx.arc(c,c,rE,0,6.2832);ctx.clip();
-    ctx.fillStyle='rgba(110,200,140,.75)';
-    [[0.0,0.45,0.5],[2.1,0.55,0.42],[4.0,0.5,0.6],[5.3,0.3,0.35]].forEach(k=>{
-      const a=k[0]+eAng, x=c+Math.cos(a)*rE*k[1], y=c+Math.sin(a)*rE*k[1]*0.6;
-      ctx.beginPath();ctx.ellipse(x,y,rE*k[2]*0.5,rE*k[2]*0.36,a,0,6.2832);ctx.fill();
-    });
+    ctx.save();ctx.translate(c,c);ctx.rotate(eAng);
+    if(earthImg.complete&&earthImg.naturalWidth){ctx.drawImage(earthImg,-rE,-rE,2*rE,2*rE);}
+    else{ctx.beginPath();ctx.arc(0,0,rE,0,6.2832);ctx.fillStyle='#2f6fc4';ctx.fill();}
     ctx.restore();
-    ctx.beginPath();ctx.arc(c,c,rE,0,6.2832);ctx.strokeStyle='rgba(180,210,255,.35)';ctx.lineWidth=1;ctx.stroke();
     // rings (for single-altitude layers)
     LAYERS.forEach(Lr=>{ if(!Lr.on||Lr.key==='deb') return;
       const rr=ringR(Lr.sats[0].alt,rE,maxR);

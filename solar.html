@@ -372,6 +372,7 @@
     const px=cx+Math.cos(a)*radii[i], py=cy+Math.sin(a)*radii[i];
     const pr=i<4?2.6:(i<6?4.2:3.4);
     html+=`<circle class="planet-dot" data-i="${i}" cx="${px}" cy="${py}" r="${pr}" fill="${p.col}" style="color:${p.col}"/>`;
+    if(i===2) html+=`<image href="images/earth.png" x="${(px-6).toFixed(2)}" y="${(py-6).toFixed(2)}" width="12" height="12" style="pointer-events:none"/>`;
   });
   svg.innerHTML=html;
 
