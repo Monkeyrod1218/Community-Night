@@ -40,10 +40,10 @@
   .dome-shine{position:absolute;inset:0;pointer-events:none;
     -webkit-mask:url(images/under-the-dome.png) center/contain no-repeat;
             mask:url(images/under-the-dome.png) center/contain no-repeat;
-    background-image:linear-gradient(115deg,rgba(255,255,255,0) 43%,rgba(255,255,255,.92) 50%,rgba(255,255,255,0) 57%);
+    background-image:linear-gradient(115deg,rgba(255,236,120,0) 43%,rgba(255,236,120,.95) 50%,rgba(255,236,120,0) 57%);
     background-size:220% 100%;background-repeat:no-repeat;
-    mix-blend-mode:screen;animation:domeSweep 4.5s ease-in-out infinite}
-  @keyframes domeSweep{0%{background-position:-40% 0}32%{background-position:150% 0}100%{background-position:150% 0}}
+    mix-blend-mode:screen;animation:domeSweep 7s ease-in-out infinite}
+  @keyframes domeSweep{0%{background-position:-40% 0}50%{background-position:150% 0}100%{background-position:150% 0}}
   @media(prefers-reduced-motion:reduce){.dome-shine{animation:none;opacity:0}}
   .subtitle{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(1.1rem,3vw,1.7rem);
     color:var(--star);margin-top:18px;max-width:24ch}
