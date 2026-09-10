@@ -276,6 +276,8 @@
         .jp-jump:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(244,193,91,.45)}
         .jp-result{font-family:'Fraunces',serif;font-size:clamp(1.15rem,3vw,1.55rem);color:var(--gold-soft);margin-top:22px;min-height:2.4em;line-height:1.3}
         .jp-result strong{color:var(--star)}
+        .jp-grav{font-family:'JetBrains Mono',monospace;font-size:.92rem;color:var(--cyan);margin-top:12px;line-height:1.4}
+        .jp-grav strong{color:var(--gold-soft)}
       </style>
       <div class="jp-box reveal" style="text-align:center">
         <div class="jp-lab">Choose a world</div>
@@ -390,7 +392,8 @@
     else if(ft<0.5) msg=(function(){var L=art(b[0])+b[0];return L.charAt(0).toUpperCase()+L.slice(1);})()+'’s gravity is so strong you\'d barely leave the ground — only <strong>'+fmt(ft)+'</strong>!';
     else { const m = mult>=2?Math.round(mult)+'×':mult.toFixed(1)+'×';
       msg='On '+art(b[0])+b[0]+' you\'d jump <strong>'+fmt(ft)+'</strong> — about <strong>'+m+'</strong> your Earth jump!'; }
-    result.innerHTML=msg;
+    const gr=b[2]/G_EARTH; const grStr=gr.toFixed(gr<10?2:1)+'\u00d7';
+    result.innerHTML=msg+'<div class="jp-grav">Surface gravity: <strong>'+grStr+'</strong> of Earth\u2019s.</div>';
   }
   function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
   btn.addEventListener('click',jump);
