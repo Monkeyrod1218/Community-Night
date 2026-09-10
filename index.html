@@ -34,8 +34,17 @@
   .eyebrow{font-family:'JetBrains Mono',monospace;font-size:clamp(1.09rem,2.56vw,1.31rem);
     letter-spacing:.32em;text-transform:uppercase;color:var(--cyan);margin-bottom:26px}
   .hero h1{margin:0;line-height:0}
-  .hero .dome-word{width:min(92vw,880px);height:auto;display:block;
+  .dome-word-wrap{position:relative;display:inline-block;width:min(92vw,880px);line-height:0}
+  .hero .dome-word{width:100%;height:auto;display:block;
     filter:drop-shadow(0 8px 26px rgba(0,0,0,.55))}
+  .dome-shine{position:absolute;inset:0;pointer-events:none;
+    -webkit-mask:url(images/under-the-dome.png) center/contain no-repeat;
+            mask:url(images/under-the-dome.png) center/contain no-repeat;
+    background-image:linear-gradient(115deg,rgba(255,255,255,0) 43%,rgba(255,255,255,.92) 50%,rgba(255,255,255,0) 57%);
+    background-size:220% 100%;background-repeat:no-repeat;
+    mix-blend-mode:screen;animation:domeSweep 4.5s ease-in-out infinite}
+  @keyframes domeSweep{0%{background-position:-40% 0}32%{background-position:150% 0}100%{background-position:150% 0}}
+  @media(prefers-reduced-motion:reduce){.dome-shine{animation:none;opacity:0}}
   .subtitle{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(1.1rem,3vw,1.7rem);
     color:var(--star);margin-top:18px;max-width:24ch}
   .tagline{color:var(--mist);font-family:'Dancing Script','Segoe Script',cursive;font-weight:600;
@@ -60,7 +69,7 @@
     <img class="site-logo" src="images/gpisd-logo.png" alt="Grand Prairie ISD">
     <section class="hero">
       <div class="eyebrow">GPISD &middot; John Carl Pogue Planetarium &middot; Community Night</div>
-      <h1><img class="dome-word" src="images/under-the-dome.png" alt="Under the Dome"></h1>
+      <h1><span class="dome-word-wrap"><img class="dome-word" src="images/under-the-dome.png" alt="Under the Dome"><span class="dome-shine" aria-hidden="true"></span></span></h1>
       <p class="tagline">Discover the universe right here in Grand Prairie.</p>
 
       <div class="lang">
