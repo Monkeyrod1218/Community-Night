@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Solar System · Community Night</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<style>
+  :root{
+    --void:#05070f;
+    --night:#0a0f22;
+    --deep:#111935;
+    --panel:#141d3d;
+    --line:#27325c;
+    --star:#eef2ff;
+    --mist:#9aa5cf;
+    --dim:#5d6794;
+    --gold:#f4c15b;
+    --gold-soft:#ffd98a;
+    --cyan:#74dbe8;
+    --rose:#f08fb0;
+    --ember:#ff8a5c;
+    --r:18px;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--void);
+    color:var(--star);
+    font-family:'Spline Sans',sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold);color:var(--void)}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;line-height:1.05;letter-spacing:-.01em}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* ---------- starfield ---------- */
+  #sky{position:fixed;inset:0;z-index:0;display:block}
+  .scrim{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 80% at 70% -10%, rgba(116,219,232,.08), transparent 55%),
+               radial-gradient(90% 60% at 10% 110%, rgba(244,193,91,.06), transparent 60%)}
+  main,header,footer{position:relative;z-index:2}
+
+  /* ---------- nav ---------- */
+  header{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:linear-gradient(to bottom, rgba(5,7,15,.85), rgba(5,7,15,.4));
+    border-bottom:1px solid rgba(39,50,92,.6)}
+  nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{display:flex;align-items:center;gap:12px;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem}
+  .brand-logo{height:38px;width:auto;display:block}
+  .badge{width:34px;height:34px;border-radius:50%;flex:0 0 auto;display:block;
+    filter:drop-shadow(0 0 8px rgba(244,193,91,.45))}
+  .navlinks{display:flex;gap:28px;font-size:.92rem;color:var(--mist)}
+  .navlinks a{position:relative;transition:color .2s}
+  .navlinks a:hover{color:var(--star)}
+  .navlinks a::after{content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;background:var(--gold);transition:width .25s}
+  .navlinks a:hover::after{width:100%}
+  .navitem{position:relative;display:inline-flex;align-items:center}
+  .navcaret{font-size:.7em;opacity:.8;margin-left:3px}
+  .dropmenu{position:absolute;top:100%;left:0;min-width:196px;display:flex;flex-direction:column;padding:8px;background:rgba(9,13,30,.98);border:1px solid var(--line);border-radius:12px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s,transform .18s,visibility .18s;box-shadow:0 16px 40px rgba(0,0,0,.55);z-index:60}
+  .navitem:hover .dropmenu,.navitem:focus-within .dropmenu{opacity:1;visibility:visible;transform:translateY(0)}
+  .dropmenu a{white-space:nowrap;padding:9px 12px;border-radius:8px;font-size:.9rem;color:var(--mist)}
+  .dropmenu a::after{display:none!important}
+  .dropmenu a:hover{background:rgba(244,193,91,.14);color:var(--star)}
+  .navcta{padding:9px 18px;border:1px solid var(--gold);border-radius:100px;color:var(--gold);font-size:.85rem;font-weight:500;transition:.25s}
+  .navcta:hover{background:var(--gold);color:var(--void)}
+  @media(max-width:760px){.navlinks{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{padding:clamp(80px,14vh,160px) 0 90px;text-align:center}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:var(--cyan);margin-bottom:22px}
+  .hero h1{font-size:clamp(2.8rem,9vw,6.2rem);font-weight:600}
+  .hero h1 em{font-style:italic;color:var(--gold-soft)}
+  .hero p{max-width:600px;margin:26px auto 0;color:var(--mist);font-size:clamp(1rem,2.4vw,1.2rem)}
+  .hero-cta{display:flex;gap:14px;justify-content:center;margin-top:38px;flex-wrap:wrap}
+  .btn{padding:14px 28px;border-radius:100px;font-weight:500;font-size:.95rem;transition:.25s;cursor:pointer;border:1px solid transparent}
+  .btn-gold{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#241704;box-shadow:0 10px 30px rgba(244,193,91,.3)}
+  .btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(244,193,91,.45)}
+  .btn-ghost{border-color:var(--line);color:var(--star)}
+  .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- section frame ---------- */
+  section{padding:clamp(100px,16vh,170px) 0}
+  main section.wrap:not(.hero){padding-top:clamp(55px,8.5vh,95px);padding-bottom:clamp(55px,8.5vh,95px)}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--gold);opacity:.6}
+  .sec-title{font-size:clamp(2rem,5vw,3.2rem);margin-bottom:14px}
+  .sec-intro{max-width:620px;color:var(--mist);margin-bottom:46px}
+
+  /* ---------- tonight panel ---------- */
+  .tonight{display:grid;grid-template-columns:300px 1fr;gap:36px;align-items:center;
+    background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);
+    border-radius:26px;padding:40px;overflow:hidden;position:relative}
+  .tonight::before{content:"";position:absolute;right:-120px;top:-120px;width:300px;height:300px;border-radius:50%;
+    background:radial-gradient(circle,rgba(116,219,232,.12),transparent 70%)}
+  .moonwrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+  #moonsvg{filter:drop-shadow(0 0 40px rgba(238,242,255,.18))}
+  .moon-name{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold-soft)}
+  .moon-illum{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--mist)}
+  .tonight h3{font-size:1.7rem;margin-bottom:8px}
+  .sky-now{color:var(--mist);margin-bottom:22px}
+  .factgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .fact{background:rgba(10,15,34,.6);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .fact .k{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  .fact .v{font-family:'Fraunces',serif;font-size:1.35rem;color:var(--star);margin-top:4px}
+  @media(max-width:720px){.tonight{grid-template-columns:1fr;text-align:center}.moonwrap{margin:0 auto}.factgrid{grid-template-columns:1fr}}
+
+  /* ---------- solar system ---------- */
+  .solar-stage{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+  .orrery{position:relative;aspect-ratio:1;width:100%;max-width:560px;margin:0 auto}
+  .orrery svg{width:100%;height:100%;overflow:visible}
+  .orbit{fill:none;stroke:rgba(154,165,207,.18);stroke-width:.4}
+  .planet-dot{cursor:pointer;transition:r .2s, filter .2s}
+  .planet-dot:hover{filter:brightness(1.4) drop-shadow(0 0 8px currentColor)}
+  .planet-dot.active{filter:brightness(1.5) drop-shadow(0 0 14px currentColor)}
+  .sun-core{filter:drop-shadow(0 0 28px rgba(244,193,91,.8))}
+  .planet-label{font-family:'JetBrains Mono',monospace;font-size:3px;fill:var(--mist);pointer-events:none}
+  .info-card{background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:22px;padding:34px;min-height:340px}
+  .info-card .ptag{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
+  .info-card h3{font-size:2.4rem;margin:6px 0 4px}
+  .info-card .pdesc{color:var(--mist);margin:14px 0 24px}
+  .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .stat{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:rgba(5,7,15,.4)}
+  .stat .sk{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .stat .sv{font-family:'Fraunces',serif;font-size:1.15rem;margin-top:2px}
+  .wow{margin-top:20px;padding:14px 16px;border-left:2px solid var(--gold);background:rgba(244,193,91,.06);border-radius:0 10px 10px 0;font-size:.92rem;color:var(--gold-soft)}
+  .picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .picker button{font-family:'JetBrains Mono',monospace;font-size:.74rem;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--mist);cursor:pointer;transition:.2s}
+  .picker button:hover{border-color:var(--cyan);color:var(--cyan)}
+  .picker button.on{background:var(--gold);border-color:var(--gold);color:var(--void)}
+  @media(max-width:860px){.solar-stage{grid-template-columns:1fr}}
+
+  /* ---------- constellations ---------- */
+  .const-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .const-card{background:linear-gradient(165deg,var(--night),var(--void));border:1px solid var(--line);border-radius:20px;padding:24px;cursor:pointer;transition:.3s;position:relative;overflow:hidden}
+  .const-card:hover{border-color:var(--gold);transform:translateY(-4px)}
+  .const-card svg{width:100%;height:150px;display:block;margin-bottom:16px}
+  .cline{stroke:rgba(116,219,232,.4);stroke-width:.5}
+  .cstar{fill:var(--star)}
+  .const-card:hover .cstar{fill:var(--gold-soft)}
+  .const-card:hover .cline{stroke:rgba(244,193,91,.6)}
+  .const-card h3{font-size:1.4rem}
+  .const-card .latin{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--cyan);letter-spacing:.15em;text-transform:uppercase}
+  .const-card p{color:var(--mist);font-size:.9rem;margin-top:10px}
+  @media(max-width:820px){.const-grid{grid-template-columns:1fr}}
+
+  /* ---------- scale slider ---------- */
+  .scale-box{background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:24px;padding:40px}
+  .scale-readout{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  #scaleObj{font-family:'Fraunces',serif;font-size:clamp(2rem,6vw,3.6rem);color:var(--gold-soft)}
+  #scaleSize{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:1rem}
+  #scaleDesc{color:var(--mist);min-height:48px;margin:10px 0 26px}
+  input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--gold));outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--star);cursor:pointer;box-shadow:0 0 18px rgba(238,242,255,.6);border:3px solid var(--gold)}
+  input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--star);cursor:pointer;border:3px solid var(--gold)}
+  .scale-ticks{position:relative;height:1.1rem;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--dim)}
+  .scale-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+
+  /* ---------- visit / schedule ---------- */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .card{background:linear-gradient(165deg,var(--night),var(--void));border:1px solid var(--line);border-radius:20px;padding:30px}
+  .card h3{font-size:1.5rem;margin-bottom:8px}
+  .ph{color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(244,193,91,.07);border:1px dashed var(--line);border-radius:6px;padding:2px 8px;display:inline-block}
+  .sched-row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(39,50,92,.5);gap:16px}
+  .sched-row:last-child{border:none}
+  .sched-row .when{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--cyan);white-space:nowrap}
+  .sched-row .what b{display:block;font-family:'Fraunces',serif;font-size:1.05rem}
+  .sched-row .what span{color:var(--mist);font-size:.85rem}
+  .pill{font-size:.66rem;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:100px;border:1px solid var(--line);color:var(--mist);align-self:center;white-space:nowrap}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+
+  footer{border-top:1px solid var(--line);padding:60px 0 40px;margin-top:40px}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;margin-bottom:40px}
+  footer h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  footer a,footer p{color:var(--mist);font-size:.9rem;display:block;margin-bottom:8px;transition:color .2s}
+  footer a:hover{color:var(--star)}
+  .foot-bottom{border-top:1px solid var(--line);padding-top:24px;color:var(--dim);font-size:.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  @media(max-width:760px){.foot-grid{grid-template-columns:1fr}}
+  .note{font-size:.74rem;color:var(--dim);font-style:italic;margin-top:6px}
+
+  /* day & night map */
+  .daynight-wrap{max-width:980px;margin:0 auto;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#0a0f22;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .daynight-wrap canvas{display:block;width:100%;height:auto}
+  .dn-caption{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--mist);padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .dn-caption b{color:var(--gold)}
+
+  .daynight-wrap{position:relative}
+  .daynight-wrap canvas{cursor:crosshair}
+  .dn-pop{position:absolute;z-index:6;width:214px;background:#f6f3ea;color:#1a2036;border:2px solid var(--gold);border-radius:12px;padding:12px 30px 12px 14px;box-shadow:0 14px 38px rgba(0,0,0,.6);transform:translate(-50%,-100%) translateY(-14px)}
+  .dn-pop.below{transform:translate(-50%,0) translateY(0)}
+  .dn-pop .dn-pop-city{font-family:'Fraunces',serif;font-weight:600;font-size:1.12rem;line-height:1.12;color:#141a2e}
+  .dn-pop .dn-pop-region{font-size:.82rem;color:#6a5c2f;margin-top:2px}
+  .dn-pop .dn-pop-time{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#141a2e;margin-top:9px;border-top:1px solid rgba(0,0,0,.14);padding-top:8px;line-height:1.35}
+  .dn-pop-x{position:absolute;top:5px;right:8px;background:none;border:none;font-size:1.15rem;line-height:1;color:#6a5c2f;cursor:pointer;padding:0}
+  .dn-pop::after{content:"";position:absolute;left:50%;transform:translateX(-50%);border:9px solid transparent}
+  .dn-pop:not(.below)::after{bottom:-9px;border-top-color:var(--gold);border-bottom:0}
+  .dn-pop.below::after{top:-9px;border-bottom-color:var(--gold);border-top:0}
+
+  /* weight across the solar system */
+  .weight-box{max-width:900px;margin:0 auto;background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:24px;padding:clamp(22px,4vw,40px)}
+  .weight-input{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+  .weight-input label{font-size:1rem;color:var(--star)}
+  #wIn{width:130px;font-family:'JetBrains Mono',monospace;font-size:1.1rem;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(5,7,15,.5);color:var(--star)}
+  #wIn:focus{outline:none;border-color:var(--gold)}
+  .unit-toggle{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .ubtn{padding:9px 16px;background:transparent;color:var(--mist);border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:.85rem}
+  .ubtn.on{background:var(--gold);color:var(--void)}
+  .weight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+  .wcard{background:rgba(5,7,15,.42);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .wcard.hot{border-color:var(--gold);box-shadow:inset 0 0 0 1px rgba(244,193,91,.25)}
+  .wcard.earth{border-color:var(--cyan)}
+  .wname{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mist)}
+  .wval{font-family:'Fraunces',serif;font-size:1.9rem;color:var(--gold-soft);margin:2px 0 8px;line-height:1}
+  .wval .wu{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--mist);margin-left:4px}
+  .wbar{height:6px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}
+  .wbar span{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--gold))}
+  .wg{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--dim);margin-top:8px}
+
+  /* light travel time */
+  .lt-box{max-width:900px;margin:0 auto}
+  .lt-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+  .lt-chip{padding:10px 16px;border-radius:100px;border:1px solid var(--line);background:rgba(5,7,15,.4);color:var(--mist);cursor:pointer;font-size:.92rem;transition:.2s;font-family:inherit}
+  .lt-chip:hover{border-color:var(--cyan);color:var(--star)}
+  .lt-chip.on{background:var(--gold);border-color:var(--gold);color:var(--void)}
+  .lt-panel{background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:20px;padding:clamp(24px,4vw,40px)}
+  .lt-obj{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+  .lt-time{font-family:'Fraunces',serif;font-size:clamp(2rem,5.5vw,3.4rem);color:var(--gold-soft);line-height:1.05;margin:6px 0 4px}
+  .lt-dist{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--mist);margin-bottom:16px}
+  .lt-see{color:var(--star);font-size:1.05rem;line-height:1.72;max-width:640px}
+</style>
+
+<style>
+  .back-btn{position:fixed;top:20px;left:20px;z-index:100;display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--star);background:rgba(9,13,30,.72);backdrop-filter:blur(6px);
+    border:1px solid var(--line);border-radius:100px;padding:11px 20px;transition:.25s;text-decoration:none}
+  .back-btn:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-1px)}
+  main{padding-top:92px}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="scrim"></div>
+<a class="back-btn" href="english.html">&larr; Back</a>
+<main id="top">
+<section id="solar" class="wrap">
+    <h2 class="sec-title reveal" style="transition-delay: 60ms;">The Solar System, up close</h2>
+    <p class="sec-intro reveal" style="transition-delay: 120ms;">Eight planets orbit our star. Tap any glowing world below to pull its real numbers, and a fact that tends to make a planetarium audience gasp.</p>
+    <div class="solar-stage reveal" style="transition-delay: 180ms;">
+      <div class="orrery">
+        <svg id="orrerySvg" viewBox="0 0 200 200" aria-label="Interactive solar system"><defs><radialgradient id="sun" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff7e0"></stop><stop offset="40%" stop-color="#f4c15b"></stop><stop offset="100%" stop-color="#e07a2a"></stop></radialgradient></defs><circle class="orbit" cx="100" cy="100" r="26"></circle><circle class="orbit" cx="100" cy="100" r="36"></circle><circle class="orbit" cx="100" cy="100" r="47"></circle><circle class="orbit" cx="100" cy="100" r="58"></circle><circle class="orbit" cx="100" cy="100" r="74"></circle><circle class="orbit" cx="100" cy="100" r="90"></circle><circle class="orbit" cx="100" cy="100" r="106"></circle><circle class="orbit" cx="100" cy="100" r="120"></circle><circle class="sun-core" cx="100" cy="100" r="13" fill="url(#sun)"></circle><circle class="planet-dot" data-i="0" cx="124.43200814043362" cy="108.89252372646739" r="2.6" fill="#b8a88f" style="color:#b8a88f"></circle><circle class="planet-dot" data-i="1" cx="106.2513343960095" cy="135.45307910843948" r="2.6" fill="#e7c97a" style="color:#e7c97a"></circle><circle class="planet-dot active" data-i="2" cx="59.29680602213138" cy="123.5" r="2.6" fill="#5aa9e6" style="color:#5aa9e6"></circle><circle class="planet-dot" data-i="3" cx="49.77052658050256" cy="71" r="2.6" fill="#d2603f" style="color:#d2603f"></circle><circle class="planet-dot" data-i="4" cx="137" cy="35.91412011995155" r="4.2" fill="#d9a679" style="color:#d9a679"></circle><circle class="planet-dot" data-i="5" cx="168.94399988070802" cy="157.85088487178854" r="4.2" fill="#e3d2a0" style="color:#e3d2a0"></circle><circle class="planet-dot" data-i="6" cx="47.00000000000002" cy="191.7986928011505" r="3.4" fill="#9fe0e6" style="color:#9fe0e6"></circle><circle class="planet-dot" data-i="7" cx="58.957582800919674" cy="-12.76311449430898" r="3.4" fill="#4f6dd6" style="color:#4f6dd6"></circle></svg>
+      </div>
+      <div class="info-card">
+        <div class="ptag" id="pTag">PLANET 03 · ROCKY</div>
+        <h3 id="pName">Earth</h3>
+        <div class="pdesc" id="pDesc">Our home: the only world we know of with liquid water oceans and life.</div>
+        <div class="stat-row">
+          <div class="stat"><div class="sk">Distance from Sun</div><div class="sv" id="pDist">150 million km</div></div>
+          <div class="stat"><div class="sk">A year lasts</div><div class="sv" id="pYear">365.25 days</div></div>
+          <div class="stat"><div class="sk">A day lasts</div><div class="sv" id="pDay">24 hours</div></div>
+          <div class="stat"><div class="sk">Moons</div><div class="sv" id="pMoons">1</div></div>
+        </div>
+        <div class="wow" id="pWow">✦ That 150-million-km distance has a name: one Astronomical Unit (AU), the ruler astronomers use to measure the whole solar system.</div>
+        <div class="picker" id="picker"><button data-i="0">Mercury</button><button data-i="1">Venus</button><button data-i="2" class="on">Earth</button><button data-i="3">Mars</button><button data-i="4">Jupiter</button><button data-i="5">Saturn</button><button data-i="6">Uranus</button><button data-i="7">Neptune</button></div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+/* ============ STARFIELD ============ */
+(function(){
+  const c=document.getElementById('sky'),x=c.getContext('2d');
+  let w,h,stars=[],shoot=null,t=0;
+  function size(){w=c.width=innerWidth;h=c.height=innerHeight;build();}
+  function build(){
+    stars=[];const n=Math.min(260,Math.floor(w*h/8000));
+    for(let i=0;i<n;i++)stars.push({
+      x:Math.random()*w,y:Math.random()*h,
+      r:Math.random()*1.3+.2,
+      tw:Math.random()*Math.PI*2,sp:Math.random()*.03+.005,
+      hue:Math.random()<.15?'200,225,255':(Math.random()<.3?'255,225,180':'238,242,255')
+    });
+  }
+  function maybeShoot(){
+    if(shoot||Math.random()>.004)return;
+    shoot={x:Math.random()*w*.6,y:Math.random()*h*.3,len:0,a:Math.random()*.5+.2,life:0};
+  }
+  function draw(){
+    t++;x.clearRect(0,0,w,h);
+    for(const s of stars){
+      const a=.4+Math.sin(s.tw+t*s.sp)*.4;
+      x.beginPath();x.arc(s.x,s.y,s.r,0,7);
+      x.fillStyle='rgba('+s.hue+','+a.toFixed(2)+')';x.fill();
+    }
+    maybeShoot();
+    if(shoot){
+      shoot.life++;shoot.len=Math.min(shoot.len+9,140);
+      const ex=shoot.x+Math.cos(shoot.a)*shoot.len, ey=shoot.y+Math.sin(shoot.a)*shoot.len;
+      const g=x.createLinearGradient(shoot.x,shoot.y,ex,ey);
+      g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(255,235,200,.9)');
+      x.strokeStyle=g;x.lineWidth=1.6;x.beginPath();x.moveTo(shoot.x,shoot.y);x.lineTo(ex,ey);x.stroke();
+      shoot.x+=Math.cos(shoot.a)*7;shoot.y+=Math.sin(shoot.a)*7;
+      if(shoot.life>40||ex>w||ey>h)shoot=null;
+    }
+    requestAnimationFrame(draw);
+  }
+  addEventListener('resize',size);size();draw();
+})();
+
+
+/* ============ SOLAR SYSTEM ============ */
+(function(){
+  const planets=[{
+    n:'Mercury',type:'ROCKY',col:'#b8a88f',dist:'58 million km',year:'88 days',day:'59 days',moons:'0',
+    d:'The smallest planet and the fastest: it whips around the Sun in just three Earth months.',
+    wow:'A day on Mercury is longer than its year. It spins so slowly that the Sun-to-Sun day lasts about 176 Earth days.'
+  },{
+    n:'Venus',type:'ROCKY',col:'#e7c97a',dist:'108 million km',year:'225 days',day:'243 days',moons:'0',
+    d:'Earth\u2019s twin in size, but wrapped in thick, toxic clouds that trap heat.',
+    wow:'Venus is the hottest planet at about 465\u00B0C \u2014 hot enough to melt lead \u2014 even though Mercury is closer to the Sun.'
+  },{
+    n:'Earth',type:'ROCKY',col:'#5aa9e6',dist:'150 million km',year:'365.25 days',day:'24 hours',moons:'1',
+    d:'Our home: the only world we know of with liquid water oceans and life.',
+    wow:'That 150-million-km distance has a name \u2014 one Astronomical Unit (AU) \u2014 the ruler astronomers use to measure the whole solar system.'
+  },{
+    n:'Mars',type:'ROCKY',col:'#d2603f',dist:'228 million km',year:'687 days',day:'24.6 hours',moons:'2',
+    d:'The rusty Red Planet, home to the tallest volcano and the deepest canyon in the solar system.',
+    wow:'Olympus Mons on Mars is about three times the height of Mount Everest \u2014 a volcano nearly as wide as Texas.'
+  },{
+    n:'Jupiter',type:'GAS GIANT',col:'#d9a679',dist:'778 million km',year:'12 years',day:'10 hours',moons:'95+',
+    d:'The king of planets \u2014 so massive that all the other planets could fit inside it.',
+    wow:'Its Great Red Spot is a storm wider than Earth that has been raging for at least 350 years.'
+  },{
+    n:'Saturn',type:'GAS GIANT',col:'#e3d2a0',dist:'1.4 billion km',year:'29 years',day:'10.7 hours',moons:'140+',
+    d:'Famous for its dazzling rings made of countless chunks of ice and rock.',
+    wow:'Saturn is so light for its size that, if you had a bathtub big enough, it would float in water.'
+  },{
+    n:'Uranus',type:'ICE GIANT',col:'#9fe0e6',dist:'2.9 billion km',year:'84 years',day:'17 hours',moons:'28',
+    d:'A pale blue-green ice giant that spins on its side, like a rolling ball.',
+    wow:'Uranus is tipped over 98\u00B0 \u2014 each pole gets about 42 years of sunlight followed by 42 years of darkness.'
+  },{
+    n:'Neptune',type:'ICE GIANT',col:'#4f6dd6',dist:'4.5 billion km',year:'165 years',day:'16 hours',moons:'16',
+    d:'The most distant planet \u2014 a deep blue world with the fiercest winds in the solar system.',
+    wow:'Winds on Neptune scream at over 2,000 km/h \u2014 faster than the speed of sound on Earth.'
+  }];
+
+  const svg=document.getElementById('orrerySvg');
+  const cx=100,cy=100;
+  const radii=[26,36,47,58,74,90,106,120];
+  let ns='http://www.w3.org/2000/svg';
+  let html='<defs><radialGradient id="sun" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff7e0"/><stop offset="40%" stop-color="#f4c15b"/><stop offset="100%" stop-color="#e07a2a"/></radialGradient></defs>';
+  // orbits
+  radii.forEach(r=>html+=`<circle class="orbit" cx="${cx}" cy="${cy}" r="${r}"/>`);
+  // sun
+  html+=`<circle class="sun-core" cx="${cx}" cy="${cy}" r="13" fill="url(#sun)"/>`;
+  // planets placed at varied angles
+  const angs=[20,80,150,210,300,40,120,250];
+  planets.forEach((p,i)=>{
+    const a=angs[i]*Math.PI/180;
+    const px=cx+Math.cos(a)*radii[i], py=cy+Math.sin(a)*radii[i];
+    const pr=i<4?2.6:(i<6?4.2:3.4);
+    html+=`<circle class="planet-dot" data-i="${i}" cx="${px}" cy="${py}" r="${pr}" fill="${p.col}" style="color:${p.col}"/>`;
+  });
+  svg.innerHTML=html;
+
+  const picker=document.getElementById('picker');
+  picker.innerHTML='';
+  planets.forEach((p,i)=>{
+    const b=document.createElement('button');b.textContent=p.n;b.dataset.i=i;picker.appendChild(b);
+  });
+
+  function show(i){
+    const p=planets[i];
+    document.getElementById('pTag').textContent='PLANET '+String(i+1).padStart(2,'0')+' · '+p.type;
+    document.getElementById('pName').textContent=p.n;
+    document.getElementById('pDesc').textContent=p.d;
+    document.getElementById('pDist').textContent=p.dist;
+    document.getElementById('pYear').textContent=p.year;
+    document.getElementById('pDay').textContent=p.day;
+    document.getElementById('pMoons').textContent=p.moons;
+    document.getElementById('pWow').textContent='✦ '+p.wow;
+    svg.querySelectorAll('.planet-dot').forEach(d=>d.classList.toggle('active',+d.dataset.i===i));
+    picker.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));
+  }
+  svg.addEventListener('click',e=>{if(e.target.dataset.i!==undefined)show(+e.target.dataset.i);});
+  picker.addEventListener('click',e=>{if(e.target.dataset.i!==undefined)show(+e.target.dataset.i);});
+  show(2);
+})();
+
+
+
+/* ============ REVEAL ON SCROLL ============ */
+(function(){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';io.observe(el);});
+})();
+
+</script>
+</body></html>

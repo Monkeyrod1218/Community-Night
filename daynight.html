@@ -2,7 +2,7 @@
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Activities · Under the Dome · Community Night</title>
+<title>Day & Night, Right Now · Community Night</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
 <style>
@@ -235,57 +235,22 @@
   .lt-dist{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--mist);margin-bottom:16px}
   .lt-see{color:var(--star);font-size:1.05rem;line-height:1.72;max-width:640px}
 </style>
+
+<style>
+  .back-btn{position:fixed;top:20px;left:20px;z-index:100;display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--star);background:rgba(9,13,30,.72);backdrop-filter:blur(6px);
+    border:1px solid var(--line);border-radius:100px;padding:11px 20px;transition:.25s;text-decoration:none}
+  .back-btn:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-1px)}
+  main{padding-top:92px}
+</style>
 </head>
 <body>
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
-<defs>
-<symbol id="pogueSealReal" viewBox="0 0 600 599.999999"><defs><filter x="0%" y="0%" width="100%" height="100%" id="3325222658"><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" color-interpolation-filters="sRGB"/></filter><filter x="0%" y="0%" width="100%" height="100%" id="d3554b6158"><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.2126 0.7152 0.0722 0 0" color-interpolation-filters="sRGB"/></filter><clipPath id="1bd287a4a4"><path d="M 0 44 L 600 44 L 600 556.578125 L 0 556.578125 Z M 0 44 " clip-rule="nonzero"/></clipPath><mask id="209534b160"><g filter="url(#3325222658)"><g filter="url(#d3554b6158)" transform="matrix(0.917725, 0, 0, 0.91771, -165.056551, 43.576242)"><image x="0" y="0" width="1024" xlink:href="images/209534b160-acc427e6dd.png" height="559" preserveAspectRatio="xMidYMid meet"/></g></g></mask></defs><g clip-path="url(#1bd287a4a4)"><g mask="url(#209534b160)"><g transform="matrix(0.917725, 0, 0, 0.91771, -165.056551, 43.576242)"><image x="0" y="0" width="1024" xlink:href="images/img-9acdcfc131.png" height="559" preserveAspectRatio="xMidYMid meet"/></g></g></g></symbol>
-</defs>
-</svg>
-<canvas id="sky" width="1352" height="760"></canvas>
+<canvas id="sky"></canvas>
 <div class="scrim"></div>
-
-<header>
-  <nav class="wrap">
-    <a class="brand" href="index.html"><img class="brand-logo" src="images/sky-864964c609.png" alt="Grand Prairie ISD"></a>
-    <div class="navlinks">
-      <span class="navitem"><a href="english.html">&larr; All Activities</a></span>
-      <span class="navitem"><a href="index.html">Home</a></span>
-    </div>
-  </nav>
-</header>
-
+<a class="back-btn" href="english.html">&larr; Back</a>
 <main id="top">
-  <!-- HERO -->
-  <section class="hero wrap">
-    <h1 class="reveal in" style="transition-delay: 60ms;">Explore the <em>Sky</em></h1>
-  </section>
-
-  <!-- TONIGHT'S SKY -->
-  <section id="tonight" class="wrap">
-    <h2 class="sec-title reveal" style="transition-delay: 60ms;">Tonight's Sky</h2>
-    <p class="sec-intro reveal" style="transition-delay: 120ms;">The Moon changes a little every night. This panel calculates today's phase right in your browser: the same math our planetarium projector uses to set the dome.</p>
-    <div class="tonight reveal" style="transition-delay: 180ms;">
-      <div class="moonwrap">
-        <svg id="moonsvg" width="180" height="180" viewBox="0 0 180 180"><defs><radialgradient id="ml" cx="38%" cy="35%"><stop offset="0%" stop-color="#ffffff"></stop><stop offset="70%" stop-color="#d7ddf2"></stop><stop offset="100%" stop-color="#aab2d6"></stop></radialgradient></defs><circle cx="90" cy="90" r="78" fill="url(#ml)"></circle><path d="M 90 12 A 78 78 0 0 0 90 168 A 23.744713911846283 78 0 0 1 90 12 Z" fill="#161d33" opacity="0.93"></path><circle cx="70" cy="60" r="7" fill="#000" opacity="0.06"></circle><circle cx="110" cy="80" r="5" fill="#000" opacity="0.06"></circle><circle cx="95" cy="120" r="9" fill="#000" opacity="0.06"></circle><circle cx="60" cy="100" r="4" fill="#000" opacity="0.06"></circle><circle cx="125" cy="55" r="4" fill="#000" opacity="0.06"></circle><circle cx="90" cy="90" r="78" fill="none" stroke="rgba(238,242,255,.25)" stroke-width="1"></circle></svg>
-        <div class="moon-name" id="moonName">Waxing Crescent</div>
-        <div class="moon-illum" id="moonIllum">35% lit</div>
-      </div>
-      <div>
-        <h3 id="dateTitle">Monday, July 20</h3>
-        <p class="sky-now" id="skyNow">A thin sliver returns to the evening sky just after sunset. Look west.</p>
-        <div class="factgrid">
-          <div class="fact"><div class="k">Moon age</div><div class="v" id="fAge">5.9 days</div></div>
-          <div class="fact"><div class="k">Next full moon</div><div class="v" id="fFull">in 9 days</div></div>
-          <div class="fact"><div class="k">Sun is a</div><div class="v">G-type star</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- DAY & NIGHT MAP -->
-  <section id="daynight" class="wrap">
+<section id="daynight" class="wrap">
     <h2 class="sec-title reveal">Day &amp; Night, Right Now</h2>
     <p class="sec-intro reveal">Watch the shadow of night sweep across the Earth. This map is live: the lit half faces the Sun, the dark half is in night, and the gold dot marks the spot where the Sun is directly overhead this very moment. Click anywhere on the map and a small box pops open showing the nearest city and its state or country, along with the live, current local date and time there.</p>
     <div class="daynight-wrap reveal">
@@ -299,114 +264,8 @@
       </div>
     </div>
   </section>
-
-  <!-- SOLAR SYSTEM -->
-  <section id="solar" class="wrap">
-    <h2 class="sec-title reveal" style="transition-delay: 60ms;">The Solar System, up close</h2>
-    <p class="sec-intro reveal" style="transition-delay: 120ms;">Eight planets orbit our star. Tap any glowing world below to pull its real numbers, and a fact that tends to make a planetarium audience gasp.</p>
-    <div class="solar-stage reveal" style="transition-delay: 180ms;">
-      <div class="orrery">
-        <svg id="orrerySvg" viewBox="0 0 200 200" aria-label="Interactive solar system"><defs><radialgradient id="sun" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff7e0"></stop><stop offset="40%" stop-color="#f4c15b"></stop><stop offset="100%" stop-color="#e07a2a"></stop></radialgradient></defs><circle class="orbit" cx="100" cy="100" r="26"></circle><circle class="orbit" cx="100" cy="100" r="36"></circle><circle class="orbit" cx="100" cy="100" r="47"></circle><circle class="orbit" cx="100" cy="100" r="58"></circle><circle class="orbit" cx="100" cy="100" r="74"></circle><circle class="orbit" cx="100" cy="100" r="90"></circle><circle class="orbit" cx="100" cy="100" r="106"></circle><circle class="orbit" cx="100" cy="100" r="120"></circle><circle class="sun-core" cx="100" cy="100" r="13" fill="url(#sun)"></circle><circle class="planet-dot" data-i="0" cx="124.43200814043362" cy="108.89252372646739" r="2.6" fill="#b8a88f" style="color:#b8a88f"></circle><circle class="planet-dot" data-i="1" cx="106.2513343960095" cy="135.45307910843948" r="2.6" fill="#e7c97a" style="color:#e7c97a"></circle><circle class="planet-dot active" data-i="2" cx="59.29680602213138" cy="123.5" r="2.6" fill="#5aa9e6" style="color:#5aa9e6"></circle><circle class="planet-dot" data-i="3" cx="49.77052658050256" cy="71" r="2.6" fill="#d2603f" style="color:#d2603f"></circle><circle class="planet-dot" data-i="4" cx="137" cy="35.91412011995155" r="4.2" fill="#d9a679" style="color:#d9a679"></circle><circle class="planet-dot" data-i="5" cx="168.94399988070802" cy="157.85088487178854" r="4.2" fill="#e3d2a0" style="color:#e3d2a0"></circle><circle class="planet-dot" data-i="6" cx="47.00000000000002" cy="191.7986928011505" r="3.4" fill="#9fe0e6" style="color:#9fe0e6"></circle><circle class="planet-dot" data-i="7" cx="58.957582800919674" cy="-12.76311449430898" r="3.4" fill="#4f6dd6" style="color:#4f6dd6"></circle></svg>
-      </div>
-      <div class="info-card">
-        <div class="ptag" id="pTag">PLANET 03 · ROCKY</div>
-        <h3 id="pName">Earth</h3>
-        <div class="pdesc" id="pDesc">Our home: the only world we know of with liquid water oceans and life.</div>
-        <div class="stat-row">
-          <div class="stat"><div class="sk">Distance from Sun</div><div class="sv" id="pDist">150 million km</div></div>
-          <div class="stat"><div class="sk">A year lasts</div><div class="sv" id="pYear">365.25 days</div></div>
-          <div class="stat"><div class="sk">A day lasts</div><div class="sv" id="pDay">24 hours</div></div>
-          <div class="stat"><div class="sk">Moons</div><div class="sv" id="pMoons">1</div></div>
-        </div>
-        <div class="wow" id="pWow">✦ That 150-million-km distance has a name: one Astronomical Unit (AU), the ruler astronomers use to measure the whole solar system.</div>
-        <div class="picker" id="picker"><button data-i="0">Mercury</button><button data-i="1">Venus</button><button data-i="2" class="on">Earth</button><button data-i="3">Mars</button><button data-i="4">Jupiter</button><button data-i="5">Saturn</button><button data-i="6">Uranus</button><button data-i="7">Neptune</button></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- WEIGHT ACROSS THE SOLAR SYSTEM -->
-  <section id="weight" class="wrap">
-    <h2 class="sec-title reveal">Your Weight Across the Solar System</h2>
-    <p class="sec-intro reveal">Gravity is different on every world. Type your weight and watch it change: you could practically fly on the Moon, and the Sun would flatten you.</p>
-    <div class="weight-box reveal">
-      <div class="weight-input">
-        <label for="wIn">My weight on Earth is</label>
-        <input id="wIn" type="number" min="1" max="2000" step="1" value="100" inputmode="decimal">
-        <span class="unit-toggle"><button type="button" class="ubtn on" data-u="lb">lb</button><button type="button" class="ubtn" data-u="kg">kg</button></span>
-      </div>
-      <div class="weight-grid" id="weightGrid"></div>
-    </div>
-  </section>
-
-  <!-- CONSTELLATIONS -->
-  <section id="stars" class="wrap">
-    <h2 class="sec-title reveal" style="transition-delay: 60ms;">Stories written in stars</h2>
-    <p class="sec-intro reveal" style="transition-delay: 120ms;">Long before phones, people used patterns of stars to tell time, find their way, and pass down stories. Here are three you can spot from Texas.</p>
-    <div class="const-grid" id="constGrid"><div class="const-card"><svg viewBox="0 0 100 95"><line class="cline" x1="30" y1="25" x2="62" y2="22"></line><line class="cline" x1="30" y1="25" x2="40" y2="52"></line><line class="cline" x1="62" y1="22" x2="54" y2="54"></line><line class="cline" x1="40" y1="52" x2="47" y2="53"></line><line class="cline" x1="47" y1="53" x2="54" y2="54"></line><line class="cline" x1="40" y1="52" x2="38" y2="80"></line><line class="cline" x1="54" y1="54" x2="65" y2="82"></line><circle class="cstar" cx="30" cy="25" r="2.847988499589623"></circle><circle class="cstar" cx="62" cy="22" r="2.2643355776576466"></circle><circle class="cstar" cx="40" cy="52" r="1.8802943845655122"></circle><circle class="cstar" cx="47" cy="53" r="2.2722666504168796"></circle><circle class="cstar" cx="54" cy="54" r="2.7336616244755314"></circle><circle class="cstar" cx="38" cy="80" r="1.889795468256203"></circle><circle class="cstar" cx="65" cy="82" r="2.520387781411137"></circle></svg><span class="latin">The Hunter</span><h3>Orion</h3><p>Easiest to find in winter. The three stars in a tidy row are Orion’s Belt. The bright reddish shoulder, Betelgeuse, is a dying supergiant.</p></div><div class="const-card"><svg viewBox="0 0 100 95"><line class="cline" x1="20" y1="30" x2="38" y2="38"></line><line class="cline" x1="38" y1="38" x2="40" y2="52"></line><line class="cline" x1="40" y1="52" x2="22" y2="48"></line><line class="cline" x1="22" y1="48" x2="20" y2="30"></line><line class="cline" x1="38" y1="38" x2="55" y2="40"></line><line class="cline" x1="55" y1="40" x2="70" y2="36"></line><line class="cline" x1="70" y1="36" x2="85" y2="42"></line><circle class="cstar" cx="20" cy="30" r="2.1582280832675593"></circle><circle class="cstar" cx="22" cy="48" r="2.6104884678381697"></circle><circle class="cstar" cx="40" cy="52" r="2.489662064858507"></circle><circle class="cstar" cx="38" cy="38" r="2.1660902603763703"></circle><circle class="cstar" cx="55" cy="40" r="2.860284694214165"></circle><circle class="cstar" cx="70" cy="36" r="1.9851487602551339"></circle><circle class="cstar" cx="85" cy="42" r="2.9535457046040072"></circle></svg><span class="latin">Ursa Major</span><h3>Big Dipper</h3><p>A scoop of seven stars. Follow the two stars at the end of the bowl and they point straight to Polaris, the North Star.</p></div><div class="const-card"><svg viewBox="0 0 100 95"><line class="cline" x1="15" y1="42" x2="33" y2="30"></line><line class="cline" x1="33" y1="30" x2="50" y2="46"></line><line class="cline" x1="50" y1="46" x2="68" y2="28"></line><line class="cline" x1="68" y1="28" x2="85" y2="44"></line><circle class="cstar" cx="15" cy="42" r="2.1663899661760078"></circle><circle class="cstar" cx="33" cy="30" r="2.967818694712987"></circle><circle class="cstar" cx="50" cy="46" r="2.9657501670714543"></circle><circle class="cstar" cx="68" cy="28" r="2.8258685430733825"></circle><circle class="cstar" cx="85" cy="44" r="2.8021495109593966"></circle></svg><span class="latin">The Queen</span><h3>Cassiopeia</h3><p>A bright “W” (or “M”) that circles the North Star all year, so from Texas you can spot it on almost any clear night.</p></div></div>
-  </section>
-
-  <!-- COSMIC SCALE -->
-  <section id="scale" class="wrap">
-    <h2 class="sec-title reveal" style="transition-delay: 0ms;">How big is big?</h2>
-    <p class="sec-intro reveal" style="transition-delay: 60ms;">Space is almost impossible to picture. Drag the slider to leap from a single grain of dust all the way to the entire observable universe.</p>
-    <div class="scale-box reveal" style="transition-delay: 120ms;">
-      <div class="scale-readout">
-        <span id="scaleObj">A human</span>
-        <span id="scaleSize">≈ 1.7 meters</span>
-      </div>
-      <p id="scaleDesc">That’s you, a good place to start measuring the cosmos.</p>
-      <input type="range" id="scaleSlider" min="0" max="10" value="2" step="1">
-      <div class="scale-ticks"><span style="left:0;transform:none">dust</span><span style="left:20%">you</span><span style="left:40%">Earth</span><span style="left:50%">Sun</span><span style="left:80%">galaxy</span><span style="left:100%;transform:translateX(-100%)">universe</span></div>
-    </div>
-  </section>
-
-  <!-- LIGHT TRAVEL TIME -->
-  <section id="light" class="wrap">
-    <h2 class="sec-title reveal">Light Travel Time</h2>
-    <p class="sec-intro reveal">Light is the fastest thing there is, but space is so vast that it still takes time to arrive. Tap an object to see how old its light is when it reaches your eyes. You are always seeing the past.</p>
-    <div class="lt-box reveal">
-      <div class="lt-chips" id="ltChips"></div>
-      <div class="lt-panel">
-        <div class="lt-obj" id="ltObj"></div>
-        <div class="lt-time" id="ltTime"></div>
-        <div class="lt-dist" id="ltDist"></div>
-        <div class="lt-see" id="ltSee"></div>
-      </div>
-    </div>
-  </section>
 </main>
-
-<footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <div class="brand" style="margin-bottom:14px"><svg class="badge" viewBox="0 0 600 599.999999" role="img" aria-label="John Carl Pogue Planetarium seal"><use href="#pogueSealReal"></use></svg> John Carl Pogue Planetarium</div>
-        <p>A learning theater of the Grand Prairie Independent School District, bringing the wonder of astronomy to students and the community.</p>
-        <p class="note">Logistics shown are placeholders for demonstration.</p>
-      </div>
-      <div>
-        <h4>Explore</h4>
-        <a href="#tonight">Tonight's Sky</a>
-        <a href="#solar">Solar System</a>
-        <a href="#stars">Constellations</a>
-      </div>
-      <div>
-        <h4>Visit</h4>
-        <a href="index.html">Community Night</a>
-        <p class="ph">[ phone ]</p>
-        <p class="ph">[ address ]</p>
-      </div>
-    </div>
-    <div class="foot-bottom">
-      <span>&copy; <span id="yr">2026</span> Grand Prairie ISD &middot; Pogue Planetarium</span>
-      <span class="mono">Ad astra per aspera &#10022;</span>
-    </div>
-  </div>
-</footer>
-
 <script>
-document.getElementById('yr').textContent = new Date().getFullYear();
-
 /* ============ STARFIELD ============ */
 (function(){
   const c=document.getElementById('sky'),x=c.getContext('2d');
@@ -445,264 +304,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     requestAnimationFrame(draw);
   }
   addEventListener('resize',size);size();draw();
-})();
-
-/* ============ SOLAR SYSTEM ============ */
-(function(){
-  const planets=[{
-    n:'Mercury',type:'ROCKY',col:'#b8a88f',dist:'58 million km',year:'88 days',day:'59 days',moons:'0',
-    d:'The smallest planet and the fastest: it whips around the Sun in just three Earth months.',
-    wow:'A day on Mercury is longer than its year. It spins so slowly that the Sun-to-Sun day lasts about 176 Earth days.'
-  },{
-    n:'Venus',type:'ROCKY',col:'#e7c97a',dist:'108 million km',year:'225 days',day:'243 days',moons:'0',
-    d:'Earth\u2019s twin in size, but wrapped in thick, toxic clouds that trap heat.',
-    wow:'Venus is the hottest planet at about 465\u00B0C \u2014 hot enough to melt lead \u2014 even though Mercury is closer to the Sun.'
-  },{
-    n:'Earth',type:'ROCKY',col:'#5aa9e6',dist:'150 million km',year:'365.25 days',day:'24 hours',moons:'1',
-    d:'Our home: the only world we know of with liquid water oceans and life.',
-    wow:'That 150-million-km distance has a name \u2014 one Astronomical Unit (AU) \u2014 the ruler astronomers use to measure the whole solar system.'
-  },{
-    n:'Mars',type:'ROCKY',col:'#d2603f',dist:'228 million km',year:'687 days',day:'24.6 hours',moons:'2',
-    d:'The rusty Red Planet, home to the tallest volcano and the deepest canyon in the solar system.',
-    wow:'Olympus Mons on Mars is about three times the height of Mount Everest \u2014 a volcano nearly as wide as Texas.'
-  },{
-    n:'Jupiter',type:'GAS GIANT',col:'#d9a679',dist:'778 million km',year:'12 years',day:'10 hours',moons:'95+',
-    d:'The king of planets \u2014 so massive that all the other planets could fit inside it.',
-    wow:'Its Great Red Spot is a storm wider than Earth that has been raging for at least 350 years.'
-  },{
-    n:'Saturn',type:'GAS GIANT',col:'#e3d2a0',dist:'1.4 billion km',year:'29 years',day:'10.7 hours',moons:'140+',
-    d:'Famous for its dazzling rings made of countless chunks of ice and rock.',
-    wow:'Saturn is so light for its size that, if you had a bathtub big enough, it would float in water.'
-  },{
-    n:'Uranus',type:'ICE GIANT',col:'#9fe0e6',dist:'2.9 billion km',year:'84 years',day:'17 hours',moons:'28',
-    d:'A pale blue-green ice giant that spins on its side, like a rolling ball.',
-    wow:'Uranus is tipped over 98\u00B0 \u2014 each pole gets about 42 years of sunlight followed by 42 years of darkness.'
-  },{
-    n:'Neptune',type:'ICE GIANT',col:'#4f6dd6',dist:'4.5 billion km',year:'165 years',day:'16 hours',moons:'16',
-    d:'The most distant planet \u2014 a deep blue world with the fiercest winds in the solar system.',
-    wow:'Winds on Neptune scream at over 2,000 km/h \u2014 faster than the speed of sound on Earth.'
-  }];
-
-  const svg=document.getElementById('orrerySvg');
-  const cx=100,cy=100;
-  const radii=[26,36,47,58,74,90,106,120];
-  let ns='http://www.w3.org/2000/svg';
-  let html='<defs><radialGradient id="sun" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff7e0"/><stop offset="40%" stop-color="#f4c15b"/><stop offset="100%" stop-color="#e07a2a"/></radialGradient></defs>';
-  // orbits
-  radii.forEach(r=>html+=`<circle class="orbit" cx="${cx}" cy="${cy}" r="${r}"/>`);
-  // sun
-  html+=`<circle class="sun-core" cx="${cx}" cy="${cy}" r="13" fill="url(#sun)"/>`;
-  // planets placed at varied angles
-  const angs=[20,80,150,210,300,40,120,250];
-  planets.forEach((p,i)=>{
-    const a=angs[i]*Math.PI/180;
-    const px=cx+Math.cos(a)*radii[i], py=cy+Math.sin(a)*radii[i];
-    const pr=i<4?2.6:(i<6?4.2:3.4);
-    html+=`<circle class="planet-dot" data-i="${i}" cx="${px}" cy="${py}" r="${pr}" fill="${p.col}" style="color:${p.col}"/>`;
-  });
-  svg.innerHTML=html;
-
-  const picker=document.getElementById('picker');
-  picker.innerHTML='';
-  planets.forEach((p,i)=>{
-    const b=document.createElement('button');b.textContent=p.n;b.dataset.i=i;picker.appendChild(b);
-  });
-
-  function show(i){
-    const p=planets[i];
-    document.getElementById('pTag').textContent='PLANET '+String(i+1).padStart(2,'0')+' · '+p.type;
-    document.getElementById('pName').textContent=p.n;
-    document.getElementById('pDesc').textContent=p.d;
-    document.getElementById('pDist').textContent=p.dist;
-    document.getElementById('pYear').textContent=p.year;
-    document.getElementById('pDay').textContent=p.day;
-    document.getElementById('pMoons').textContent=p.moons;
-    document.getElementById('pWow').textContent='✦ '+p.wow;
-    svg.querySelectorAll('.planet-dot').forEach(d=>d.classList.toggle('active',+d.dataset.i===i));
-    picker.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));
-  }
-  svg.addEventListener('click',e=>{if(e.target.dataset.i!==undefined)show(+e.target.dataset.i);});
-  picker.addEventListener('click',e=>{if(e.target.dataset.i!==undefined)show(+e.target.dataset.i);});
-  show(2);
-})();
-
-
-/* ============ CONSTELLATIONS ============ */
-(function(){
-  const data=[{
-    n:'Orion',latin:'The Hunter',
-    stars:[[30,25],[62,22],[40,52],[47,53],[54,54],[38,80],[65,82]],
-    lines:[[0,1],[0,2],[1,4],[2,3],[3,4],[2,5],[4,6]],
-    p:'Easiest to find in winter. The three stars in a tidy row are Orion\u2019s Belt. The bright reddish shoulder, Betelgeuse, is a dying supergiant.'
-  },{
-    n:'Big Dipper',latin:'Ursa Major',
-    stars:[[20,30],[22,48],[40,52],[38,38],[55,40],[70,36],[85,42]],
-    lines:[[0,3],[3,2],[2,1],[1,0],[3,4],[4,5],[5,6]],
-    p:'A scoop of seven stars. Follow the two stars at the end of the bowl and they point straight to Polaris, the North Star.'
-  },{
-    n:'Cassiopeia',latin:'The Queen',
-    stars:[[15,42],[33,30],[50,46],[68,28],[85,44]],
-    lines:[[0,1],[1,2],[2,3],[3,4]],
-    p:'A bright \u201CW\u201D (or \u201CM\u201D) that circles the North Star all year, so from Texas you can spot it on almost any clear night.'
-  }];
-  const grid=document.getElementById('constGrid');
-  grid.innerHTML='';
-  data.forEach(c=>{
-    let s='<svg viewBox="0 0 100 95">';
-    c.lines.forEach(l=>{const a=c.stars[l[0]],b=c.stars[l[1]];s+=`<line class="cline" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`;});
-    c.stars.forEach(st=>s+=`<circle class="cstar" cx="${st[0]}" cy="${st[1]}" r="${1.8+Math.random()*1.2}"/>`);
-    s+='</svg>';
-    const card=document.createElement('div');card.className='const-card';
-    card.innerHTML=s+`<span class="latin">${c.latin}</span><h3>${c.n}</h3><p>${c.p}</p>`;
-    grid.appendChild(card);
-  });
-})();
-
-
-/* ============ COSMIC SCALE ============ */
-(function(){
-  const steps=[
-    ['A grain of dust','≈ 0.05 millimeters','Smaller than this dot, but home to billions of atoms. Our journey starts here.'],
-    ['A house cat','≈ 0.3 meters','Cozy. Now we zoom outward and things get strange fast.'],
-    ['A human','≈ 1.7 meters','That\u2019s you, a good place to start measuring the cosmos.'],
-    ['Mount Everest','≈ 8.8 kilometers','Earth\u2019s tallest peak. You could stack about 5,000 people to reach the top.'],
-    ['Planet Earth','≈ 12,742 km wide','Our whole world is a pale blue dot, and it\u2019s the biggest thing most of us will ever stand on.'],
-    ['The Sun','≈ 1.39 million km wide','About 109 Earths would fit across it. It holds 99.8% of all the mass in the solar system.'],
-    ['The Solar System','≈ 9 billion km across','Out to Neptune. Light from the Sun takes over 4 hours to reach the edge.'],
-    ['A light-year','≈ 9.46 trillion km','The distance light travels in one year. The nearest star is 4.2 of these away.'],
-    ['The Milky Way','≈ 100,000 light-years','Our home galaxy: a swirl of 100–400 billion stars. Our Sun is just one of them.'],
-    ['The Local Group','≈ 10 million light-years','Our galaxy plus Andromeda and dozens of smaller galaxies, all bound by gravity.'],
-    ['The Observable Universe','≈ 93 billion light-years','Everything we can possibly see, and we\u2019re still only scratching the surface.']
-  ];
-  const sl=document.getElementById('scaleSlider');
-  function up(){
-    const s=steps[+sl.value];
-    document.getElementById('scaleObj').textContent=s[0];
-    document.getElementById('scaleSize').textContent=s[1];
-    document.getElementById('scaleDesc').textContent=s[2];
-  }
-  sl.addEventListener('input',up);up();
-})();
-
-/* ============ MOON PHASE: calibrated to timeanddate.com (Dallas, TX) ============ */
-(function(){
-  const now=new Date();
-  document.getElementById('yr').textContent=now.getFullYear();
-
-  // Exact principal Moon phases for Dallas, 2026-2027 (source: timeanddate.com), converted to UTC.
-  const U=Date.UTC;
-  const EV=[
-    [U(2026,0,18,19,51),'new'],[U(2026,1,17,12,1),'new'],[U(2026,2,19,1,23),'new'],
-    [U(2026,3,17,11,51),'new'],[U(2026,4,16,20,1),'new'],[U(2026,5,15,2,54),'new'],
-    [U(2026,6,14,9,43),'new'],[U(2026,7,12,17,36),'new'],[U(2026,8,11,3,26),'new'],
-    [U(2026,9,10,15,50),'new'],[U(2026,10,9,7,2),'new'],[U(2026,11,9,0,51),'new'],
-    [U(2026,0,26,4,47),'first'],[U(2026,1,24,12,27),'first'],[U(2026,2,25,19,17),'first'],
-    [U(2026,3,24,2,31),'first'],[U(2026,4,23,11,10),'first'],[U(2026,5,21,21,55),'first'],
-    [U(2026,6,21,11,5),'first'],[U(2026,7,20,2,46),'first'],[U(2026,8,18,20,43),'first'],
-    [U(2026,9,18,16,12),'first'],[U(2026,10,17,11,47),'first'],[U(2026,11,17,5,42),'first'],
-    [U(2026,0,3,10,2),'full'],[U(2026,1,1,22,9),'full'],[U(2026,2,3,11,37),'full'],
-    [U(2026,3,2,2,11),'full'],[U(2026,4,1,17,23),'full'],[U(2026,4,31,8,45),'full'],
-    [U(2026,5,29,23,56),'full'],[U(2026,6,29,14,35),'full'],[U(2026,7,28,4,18),'full'],
-    [U(2026,8,26,16,49),'full'],[U(2026,9,26,4,11),'full'],[U(2026,10,24,14,53),'full'],
-    [U(2026,11,24,1,28),'full'],
-    [U(2026,0,10,15,48),'third'],[U(2026,1,9,12,43),'third'],[U(2026,2,11,10,38),'third'],
-    [U(2026,3,10,4,51),'third'],[U(2026,4,9,21,10),'third'],[U(2026,5,8,10,0),'third'],
-    [U(2026,6,7,19,29),'third'],[U(2026,7,6,2,21),'third'],[U(2026,8,4,7,51),'third'],
-    [U(2026,9,3,13,25),'third'],[U(2026,10,1,20,28),'third'],[U(2026,11,1,6,8),'third'],
-    [U(2026,11,30,18,59),'third'],
-    [U(2027,0,7,20,24),'new'],[U(2027,1,6,15,56),'new'],[U(2027,2,8,9,29),'new'],
-    [U(2027,3,6,23,51),'new'],[U(2027,4,6,10,58),'new'],[U(2027,5,4,19,40),'new'],
-    [U(2027,6,4,3,2),'new'],[U(2027,7,2,10,5),'new'],[U(2027,7,31,17,41),'new'],
-    [U(2027,8,30,2,36),'new'],[U(2027,9,29,13,36),'new'],[U(2027,10,28,3,24),'new'],
-    [U(2027,11,27,20,12),'new'],
-    [U(2027,0,15,20,34),'first'],[U(2027,1,14,7,58),'first'],[U(2027,2,15,16,25),'first'],
-    [U(2027,3,13,22,56),'first'],[U(2027,4,13,4,43),'first'],[U(2027,5,11,10,56),'first'],
-    [U(2027,6,10,18,39),'first'],[U(2027,7,9,4,54),'first'],[U(2027,8,7,18,31),'first'],
-    [U(2027,9,7,11,47),'first'],[U(2027,10,6,7,59),'first'],[U(2027,11,6,5,22),'first'],
-    [U(2027,0,22,12,17),'full'],[U(2027,1,20,23,23),'full'],[U(2027,2,22,10,43),'full'],
-    [U(2027,3,20,22,27),'full'],[U(2027,4,20,10,59),'full'],[U(2027,5,19,0,44),'full'],
-    [U(2027,6,18,15,44),'full'],[U(2027,7,17,7,28),'full'],[U(2027,8,15,23,3),'full'],
-    [U(2027,9,15,13,47),'full'],[U(2027,10,14,3,25),'full'],[U(2027,11,13,16,8),'full'],
-    [U(2027,0,29,10,55),'third'],[U(2027,1,28,5,16),'third'],[U(2027,2,30,0,53),'third'],
-    [U(2027,3,28,20,17),'third'],[U(2027,4,28,13,58),'third'],[U(2027,5,27,4,54),'third'],
-    [U(2027,6,26,16,54),'third'],[U(2027,7,25,2,27),'third'],[U(2027,8,23,10,20),'third'],
-    [U(2027,9,22,17,29),'third'],[U(2027,10,21,0,48),'third'],[U(2027,11,20,9,11),'third']
-  ].sort((a,b)=>a[0]-b[0]);
-
-  const T=now.getTime(), DAY=86400000, SYN=29.530588853;
-  const nextOf=(k)=>{for(const e of EV){if(e[1]===k&&e[0]>T)return e;}return null;};
-  let lastNew=null; for(const e of EV){ if(e[1]==='new'&&e[0]<=T) lastNew=e; }
-  const nextNew=nextOf('new');
-
-  const EXACT={'new':'New Moon','first':'First Quarter','full':'Full Moon','third':'Last Quarter'};
-  const SEG={'new>first':'Waxing Crescent','first>full':'Waxing Gibbous','full>third':'Waning Gibbous','third>new':'Waning Crescent'};
-  const ANG={'new':0,'first':90,'full':180,'third':270};
-
-  let phase, age, illum, name;
-  if(lastNew&&nextNew){
-    // bracketing principal phases
-    let prev=null,next=null;
-    for(const e of EV){ if(e[0]<=T) prev=e; else { next=e; break; } }
-    const base=ANG[prev[1]];
-    const top=(prev[1]==='third'&&next[1]==='new')?360:ANG[next[1]];
-    const seg=(T-prev[0])/(next[0]-prev[0]);
-    const angle=base+(top-base)*seg;        // 0..360 deg, anchored to real event times
-    phase=angle/360;
-    illum=(1-Math.cos(angle*Math.PI/180))/2;
-    age=(T-lastNew[0])/DAY;
-    // label "tonight" like timeanddate: snap to a principal phase within ~1 day, else the between-name
-    if(Math.abs(T-prev[0])<DAY) name=EXACT[prev[1]];
-    else if(Math.abs(next[0]-T)<DAY) name=EXACT[next[1]];
-    else name=SEG[prev[1]+'>'+next[1]];
-  } else {
-    const ref=U(2026,6,14,9,43);            // fallback: calibrated to the Jul 14 2026 new moon
-    phase=(((T-ref)/DAY)%SYN)/SYN; if(phase<0)phase+=1; age=phase*SYN;
-    illum=(1-Math.cos(2*Math.PI*phase))/2;
-    if(phase<.03||phase>.97)name='New Moon';
-    else if(phase<.23)name='Waxing Crescent';
-    else if(phase<.27)name='First Quarter';
-    else if(phase<.48)name='Waxing Gibbous';
-    else if(phase<.52)name='Full Moon';
-    else if(phase<.73)name='Waning Gibbous';
-    else if(phase<.77)name='Last Quarter';
-    else name='Waning Crescent';
-  }
-
-  // draw moon: lit region over dark disk (verified against illuminated-fraction targets)
-  const R=78,cx=90,cy=90;
-  const svg=document.getElementById('moonsvg');
-  const waxing = phase<0.5;
-  const xt=R*(1-2*illum), a=Math.abs(xt);
-  const limbSweep = waxing?1:0;
-  const termSweep = waxing ? (xt>0?0:1) : (xt>0?1:0);
-  let lit;
-  if(illum<=0.005) lit='';
-  else if(illum>=0.995) lit=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="url(#ml)"/>`;
-  else lit=`<path d="M ${cx},${cy-R} A ${R},${R} 0 0 ${limbSweep} ${cx},${cy+R} A ${a.toFixed(2)},${R} 0 0 ${termSweep} ${cx},${cy-R} Z" fill="url(#ml)"/>`;
-  let inner='<defs><radialGradient id="ml" cx="38%" cy="35%"><stop offset="0%" stop-color="#ffffff"/><stop offset="70%" stop-color="#d7ddf2"/><stop offset="100%" stop-color="#aab2d6"/></radialGradient></defs>';
-  inner+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="#161d33"/>`+lit;
-  const craters=[[70,60,7],[110,80,5],[95,120,9],[60,100,4],[125,55,4]];
-  let crSvg='';craters.forEach(c=>crSvg+=`<circle cx="${c[0]}" cy="${c[1]}" r="${c[2]}" fill="#000" opacity="0.06"/>`);
-  svg.innerHTML=inner+crSvg+`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(238,242,255,.25)" stroke-width="1"/>`;
-
-  document.getElementById('moonName').textContent=name;
-  document.getElementById('moonIllum').textContent=Math.round(illum*100)+'% lit';
-  document.getElementById('fAge').textContent=age.toFixed(1)+' days';
-  const nf=nextOf('full');
-  let toFull = nf ? Math.round((nf[0]-T)/DAY) : Math.round(((.5-phase+1)%1)*SYN);
-  document.getElementById('fFull').textContent = toFull<=0 ? 'today' : ('in '+toFull+' day'+(toFull===1?'':'s'));
-  document.getElementById('dateTitle').textContent=now.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
-  const blurbs={
-    'New Moon':'The Moon sits between Earth and Sun: its lit side faces away from us, so the sky is darkest and best for stargazing.',
-    'Waxing Crescent':'A thin sliver returns to the evening sky just after sunset. Look west.',
-    'First Quarter':'Half-lit and high overhead at sunset: the craters along the terminator look stunning in a telescope.',
-    'Waxing Gibbous':'Growing fuller each night and bright well past dark.',
-    'Full Moon':'Fully lit and up all night. Beautiful, but it washes out fainter stars.',
-    'Waning Gibbous':'Still bright, now rising later in the evening.',
-    'Last Quarter':'Half-lit again, best seen in the early morning before sunrise.',
-    'Waning Crescent':'A fading sliver in the pre-dawn east before the new cycle begins.'
-  };
-  document.getElementById('skyNow').textContent=blurbs[name]||blurbs['Waxing Crescent'];
 })();
 
 
@@ -809,66 +410,6 @@ const DN_CITIES=[["'s-Hertogenbosch",51.7,5.3,"The Netherlands","Europe/Amsterda
 })();
 
 
-/* ============ WEIGHT ACROSS THE SOLAR SYSTEM ============ */
-(function(){
-  const wIn=document.getElementById('wIn'); if(!wIn) return;
-  const grid=document.getElementById('weightGrid');
-  let unit='lb';
-  // surface gravity relative to Earth (from NASA planetary fact sheet)
-  const BODIES=[
-    ['The Sun',28.0],['Mercury',0.38],['Venus',0.91],['Earth',1.0],['The Moon',0.17],
-    ['Mars',0.38],['Jupiter',2.36],['Saturn',0.92],['Uranus',0.89],['Neptune',1.12],['Pluto',0.07]
-  ];
-  function fmt(v){ return v>=100 ? Math.round(v).toLocaleString() : (v>=10 ? v.toFixed(1) : v.toFixed(2)); }
-  function render(){
-    const w=Math.max(0, parseFloat(wIn.value)||0);
-    grid.innerHTML=BODIES.map(function(b){
-      const name=b[0], f=b[1], val=w*f;
-      const pct=Math.min(100, f/2.36*100);
-      const cls = name==='Earth' ? ' earth' : (f>=5 ? ' hot' : '');
-      return '<div class="wcard'+cls+'"><div class="wname">'+name+'</div>'+
-             '<div class="wval">'+fmt(val)+'<span class="wu">'+unit+'</span></div>'+
-             '<div class="wbar"><span style="width:'+pct.toFixed(0)+'%"></span></div>'+
-             '<div class="wg">gravity &times;'+f+'</div></div>';
-    }).join('');
-  }
-  wIn.addEventListener('input',render);
-  document.querySelectorAll('.unit-toggle .ubtn').forEach(function(b){
-    b.addEventListener('click',function(){
-      document.querySelectorAll('.unit-toggle .ubtn').forEach(function(x){x.classList.remove('on');});
-      b.classList.add('on'); unit=b.dataset.u; render();
-    });
-  });
-  render();
-})();
-
-
-/* ============ LIGHT TRAVEL TIME ============ */
-(function(){
-  const chips=document.getElementById('ltChips'); if(!chips) return;
-  const Y=new Date().getFullYear();
-  const O=[
-    {n:'The Moon', t:'1.3 seconds old', d:'384,400 km away', s:'The Moon you look at is always about a second in the past.'},
-    {n:'The Sun', t:'8 minutes, 19 seconds old', d:'150 million km away', s:'If the Sun suddenly went dark, Earth would keep basking in sunlight for more than eight minutes before anyone could tell.'},
-    {n:'Mars', t:'3 to 22 minutes old', d:'55 to 400 million km (it changes as we orbit)', s:'Because Earth and Mars are always moving, the light from Mars reaches us anywhere from 3 to 22 minutes old.'},
-    {n:'Jupiter', t:'about 35 to 52 minutes old', d:'590 to 970 million km away', s:'Jupiter is so distant that its light is nearly an hour old by the time it lands in a telescope.'},
-    {n:'Proxima Centauri', t:'4.25 years old', d:'40 trillion km away, the closest star beyond the Sun', s:'This starlight left around '+(Y-4)+'. The nearest star is so far that its light spends more than four years crossing to us.'},
-    {n:'The Andromeda Galaxy', t:'2.5 million years old', d:'2.5 million light-years away', s:'The faint smudge you can spot with the naked eye left Andromeda about 2.5 million years ago, long before modern humans existed. It is the most distant thing you can see without a telescope.'}
-  ];
-  function show(i){
-    const o=O[i];
-    document.getElementById('ltObj').textContent='Light from '+o.n;
-    document.getElementById('ltTime').textContent=o.t;
-    document.getElementById('ltDist').textContent=o.d;
-    document.getElementById('ltSee').textContent=o.s;
-    chips.querySelectorAll('.lt-chip').forEach(function(c,k){c.classList.toggle('on',k===i);});
-  }
-  O.forEach(function(o,i){
-    const b=document.createElement('button'); b.type='button'; b.className='lt-chip'; b.textContent=o.n;
-    b.addEventListener('click',function(){show(i);}); chips.appendChild(b);
-  });
-  show(1);
-})();
 
 /* ============ REVEAL ON SCROLL ============ */
 (function(){
@@ -877,5 +418,6 @@ const DN_CITIES=[["'s-Hertogenbosch",51.7,5.3,"The Netherlands","Europe/Amsterda
   },{threshold:.12});
   document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';io.observe(el);});
 })();
+
 </script>
 </body></html>
