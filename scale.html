@@ -243,6 +243,10 @@
     border:1px solid var(--line);border-radius:100px;padding:11px 20px;transition:.25s;text-decoration:none}
   .back-btn:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-1px)}
   main{padding-top:92px}
+  @media (hover:none) and (pointer:coarse), (max-width:1024px){
+    main{padding-top:72px}
+    main section.wrap:not(.hero){padding-top:14px}
+  }
 </style>
 </head>
 <body>
