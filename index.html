@@ -25,6 +25,8 @@
     background:radial-gradient(120% 80% at 70% -10%, rgba(116,219,232,.10), transparent 55%),
                radial-gradient(90% 60% at 10% 110%, rgba(244,193,91,.07), transparent 60%)}
   main{position:relative;z-index:2}
+  .site-logo{position:absolute;top:24px;left:26px;z-index:4;
+    height:clamp(34px,5vw,48px);width:auto;display:block}
 
   /* ---------- hero ---------- */
   .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -54,6 +56,7 @@
   <div class="scrim"></div>
 
   <main>
+    <img class="site-logo" src="images/gpisd-logo.png" alt="Grand Prairie ISD">
     <section class="hero">
       <div class="eyebrow">GPISD &middot; John Carl Pogue Planetarium</div>
       <h1><img class="dome-word" src="images/under-the-dome.png" alt="Under the Dome"></h1>
