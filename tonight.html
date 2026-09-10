@@ -269,6 +269,38 @@
         </div>
       </div>
     </div>
+
+    <style>
+      .future{margin-top:48px;text-align:center}
+      .future-h{font-family:'Fraunces',serif;font-size:clamp(1.5rem,3.4vw,2.1rem);color:var(--gold-soft);margin-bottom:20px}
+      .future-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+      .fbtn{font-family:'JetBrains Mono',monospace;font-size:.84rem;letter-spacing:.06em;color:var(--star);
+        background:rgba(20,29,61,.7);border:1px solid var(--line);border-radius:100px;padding:13px 26px;cursor:pointer;transition:.2s}
+      .fbtn:hover{border-color:var(--gold);color:var(--gold-soft);transform:translateY(-2px)}
+      .fbtn.on{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#241704;border-color:transparent}
+      .future-panel{margin-top:30px;text-align:left}
+      #futureMoonSvg{filter:drop-shadow(0 0 40px rgba(238,242,255,.18))}
+    </style>
+    <div class="future reveal">
+      <h3 class="future-h">Moon in the Future</h3>
+      <div class="future-btns">
+        <button class="fbtn" data-w="1">In 1 week</button>
+        <button class="fbtn" data-w="2">In 2 weeks</button>
+        <button class="fbtn" data-w="3">In 3 weeks</button>
+        <button class="fbtn" data-w="4">In 4 weeks</button>
+      </div>
+      <div class="tonight future-panel" id="futurePanel" hidden>
+        <div class="moonwrap">
+          <svg id="futureMoonSvg" width="180" height="180" viewBox="0 0 180 180"></svg>
+          <div class="moon-name" id="fMoonName"></div>
+          <div class="moon-illum" id="fMoonIllum"></div>
+        </div>
+        <div>
+          <h3 id="fDateTitle"></h3>
+          <p class="sky-now" id="fSkyNow"></p>
+        </div>
+      </div>
+    </div>
   </section>
 </main>
 <script>
@@ -315,9 +347,6 @@
 
 /* ============ MOON PHASE: calibrated to timeanddate.com (Dallas, TX) ============ */
 (function(){
-  const now=new Date();
-
-  // Exact principal Moon phases for Dallas, 2026-2027 (source: timeanddate.com), converted to UTC.
   const U=Date.UTC;
   const EV=[
     [U(2026,0,18,19,51),'new'],[U(2026,1,17,12,1),'new'],[U(2026,2,19,1,23),'new'],
@@ -356,70 +385,52 @@
     [U(2027,6,26,16,54),'third'],[U(2027,7,25,2,27),'third'],[U(2027,8,23,10,20),'third'],
     [U(2027,9,22,17,29),'third'],[U(2027,10,21,0,48),'third'],[U(2027,11,20,9,11),'third']
   ].sort((a,b)=>a[0]-b[0]);
-
-  const T=now.getTime(), DAY=86400000, SYN=29.530588853;
-  const nextOf=(k)=>{for(const e of EV){if(e[1]===k&&e[0]>T)return e;}return null;};
-  let lastNew=null; for(const e of EV){ if(e[1]==='new'&&e[0]<=T) lastNew=e; }
-  const nextNew=nextOf('new');
-
+  const DAY=86400000, SYN=29.530588853;
   const EXACT={'new':'New Moon','first':'First Quarter','full':'Full Moon','third':'Last Quarter'};
   const SEG={'new>first':'Waxing Crescent','first>full':'Waxing Gibbous','full>third':'Waning Gibbous','third>new':'Waning Crescent'};
   const ANG={'new':0,'first':90,'full':180,'third':270};
-
-  let phase, age, illum, name;
-  if(lastNew&&nextNew){
-    // bracketing principal phases
-    let prev=null,next=null;
-    for(const e of EV){ if(e[0]<=T) prev=e; else { next=e; break; } }
-    const base=ANG[prev[1]];
-    const top=(prev[1]==='third'&&next[1]==='new')?360:ANG[next[1]];
-    const seg=(T-prev[0])/(next[0]-prev[0]);
-    const angle=base+(top-base)*seg;        // 0..360 deg, anchored to real event times
-    phase=angle/360;
-    illum=(1-Math.cos(angle*Math.PI/180))/2;
-    age=(T-lastNew[0])/DAY;
-    // label "tonight" like timeanddate: snap to a principal phase within ~1 day, else the between-name
-    if(Math.abs(T-prev[0])<DAY) name=EXACT[prev[1]];
-    else if(Math.abs(next[0]-T)<DAY) name=EXACT[next[1]];
-    else name=SEG[prev[1]+'>'+next[1]];
-  } else {
-    const ref=U(2026,6,14,9,43);            // fallback: calibrated to the Jul 14 2026 new moon
-    phase=(((T-ref)/DAY)%SYN)/SYN; if(phase<0)phase+=1; age=phase*SYN;
-    illum=(1-Math.cos(2*Math.PI*phase))/2;
-    if(phase<.03||phase>.97)name='New Moon';
-    else if(phase<.23)name='Waxing Crescent';
-    else if(phase<.27)name='First Quarter';
-    else if(phase<.48)name='Waxing Gibbous';
-    else if(phase<.52)name='Full Moon';
-    else if(phase<.73)name='Waning Gibbous';
-    else if(phase<.77)name='Last Quarter';
-    else name='Waning Crescent';
+  const nextOfAfter=(k,T)=>{for(const e of EV){if(e[1]===k&&e[0]>T)return e;}return null;};
+  function computeMoon(T){
+    let lastNew=null; for(const e of EV){ if(e[1]==='new'&&e[0]<=T) lastNew=e; }
+    const nextNew=nextOfAfter('new',T);
+    let phase,age,illum,name;
+    if(lastNew&&nextNew){
+      let prev=null,next=null;
+      for(const e of EV){ if(e[0]<=T) prev=e; else { next=e; break; } }
+      const base=ANG[prev[1]];
+      const top=(prev[1]==='third'&&next[1]==='new')?360:ANG[next[1]];
+      const seg=(T-prev[0])/(next[0]-prev[0]);
+      const angle=base+(top-base)*seg;
+      phase=angle/360; illum=(1-Math.cos(angle*Math.PI/180))/2; age=(T-lastNew[0])/DAY;
+      if(Math.abs(T-prev[0])<DAY) name=EXACT[prev[1]];
+      else if(Math.abs(next[0]-T)<DAY) name=EXACT[next[1]];
+      else name=SEG[prev[1]+'>'+next[1]];
+    } else {
+      const ref=U(2026,6,14,9,43);
+      phase=(((T-ref)/DAY)%SYN)/SYN; if(phase<0)phase+=1; age=phase*SYN;
+      illum=(1-Math.cos(2*Math.PI*phase))/2;
+      if(phase<.03||phase>.97)name='New Moon';
+      else if(phase<.23)name='Waxing Crescent'; else if(phase<.27)name='First Quarter';
+      else if(phase<.48)name='Waxing Gibbous'; else if(phase<.52)name='Full Moon';
+      else if(phase<.73)name='Waning Gibbous'; else if(phase<.77)name='Last Quarter';
+      else name='Waning Crescent';
+    }
+    const nf=nextOfAfter('full',T);
+    let toFull = nf ? Math.round((nf[0]-T)/DAY) : Math.round(((.5-phase+1)%1)*SYN);
+    return {phase,age,illum,name,toFull};
   }
-
-  // draw moon: lit region over dark disk (verified against illuminated-fraction targets)
-  const R=78,cx=90,cy=90;
-  const svg=document.getElementById('moonsvg');
-  const waxing = phase<0.5;
-  const xt=R*(1-2*illum), a=Math.abs(xt);
-  const limbSweep = waxing?1:0;
-  const termSweep = waxing ? (xt>0?0:1) : (xt>0?1:0);
-  let lit;
-  if(illum<=0.005) lit='';
-  else if(illum>=0.995) lit=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="url(#ml)"/>`;
-  else lit=`<path d="M ${cx},${cy-R} A ${R},${R} 0 0 ${limbSweep} ${cx},${cy+R} A ${a.toFixed(2)},${R} 0 0 ${termSweep} ${cx},${cy-R} Z" fill="url(#ml)"/>`;
-  let inner='<defs><radialGradient id="ml" cx="38%" cy="35%"><stop offset="0%" stop-color="#ffffff"/><stop offset="70%" stop-color="#d7ddf2"/><stop offset="100%" stop-color="#aab2d6"/></radialGradient></defs>';
-  inner+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="#161d33"/>`+lit;
-  const craters=[[70,60,7],[110,80,5],[95,120,9],[60,100,4],[125,55,4]];
-  let crSvg='';craters.forEach(c=>crSvg+=`<circle cx="${c[0]}" cy="${c[1]}" r="${c[2]}" fill="#000" opacity="0.06"/>`);
-  svg.innerHTML=inner+crSvg+`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(238,242,255,.25)" stroke-width="1"/>`;
-
-  document.getElementById('moonName').textContent=name;
-  document.getElementById('moonIllum').textContent=Math.round(illum*100)+'% lit';
-  document.getElementById('fAge').textContent=age.toFixed(1)+' days';
-  const nf=nextOf('full');
-  let toFull = nf ? Math.round((nf[0]-T)/DAY) : Math.round(((.5-phase+1)%1)*SYN);
-  document.getElementById('fFull').textContent = toFull<=0 ? 'today' : ('in '+toFull+' day'+(toFull===1?'':'s'));
-  document.getElementById('dateTitle').textContent=now.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+  function drawMoon(svg,phase,illum){
+    const R=78,cx=90,cy=90, waxing=phase<0.5, xt=R*(1-2*illum), a=Math.abs(xt);
+    const limbSweep=waxing?1:0, termSweep=waxing?(xt>0?0:1):(xt>0?1:0);
+    let lit;
+    if(illum<=0.005) lit='';
+    else if(illum>=0.995) lit=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="url(#ml)"/>`;
+    else lit=`<path d="M ${cx},${cy-R} A ${R},${R} 0 0 ${limbSweep} ${cx},${cy+R} A ${a.toFixed(2)},${R} 0 0 ${termSweep} ${cx},${cy-R} Z" fill="url(#ml)"/>`;
+    let inner='<defs><radialGradient id="ml" cx="38%" cy="35%"><stop offset="0%" stop-color="#ffffff"/><stop offset="70%" stop-color="#d7ddf2"/><stop offset="100%" stop-color="#aab2d6"/></radialGradient></defs>';
+    inner+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="#161d33"/>`+lit;
+    [[70,60,7],[110,80,5],[95,120,9],[60,100,4],[125,55,4]].forEach(c=>inner+=`<circle cx="${c[0]}" cy="${c[1]}" r="${c[2]}" fill="#000" opacity="0.06"/>`);
+    svg.innerHTML=inner+`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(238,242,255,.25)" stroke-width="1"/>`;
+  }
   const blurbs={
     'New Moon':'The Moon sits between Earth and Sun: its lit side faces away from us, so the sky is darkest and best for stargazing.',
     'Waxing Crescent':'A thin sliver returns to the evening sky just after sunset. Look west.',
@@ -430,9 +441,31 @@
     'Last Quarter':'Half-lit again, best seen in the early morning before sunrise.',
     'Waning Crescent':'A fading sliver in the pre-dawn east before the new cycle begins.'
   };
-  document.getElementById('skyNow').textContent=blurbs[name]||blurbs['Waxing Crescent'];
+  // ---- now ----
+  const now=new Date(); const m=computeMoon(now.getTime());
+  drawMoon(document.getElementById('moonsvg'),m.phase,m.illum);
+  document.getElementById('moonName').textContent=m.name;
+  document.getElementById('moonIllum').textContent=Math.round(m.illum*100)+'% lit';
+  document.getElementById('fAge').textContent=m.age.toFixed(1)+' days';
+  document.getElementById('fFull').textContent=m.toFull<=0?'today':('in '+m.toFull+' day'+(m.toFull===1?'':'s'));
+  document.getElementById('dateTitle').textContent=now.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('skyNow').textContent=blurbs[m.name]||blurbs['Waxing Crescent'];
+  // ---- future ----
+  const panel=document.getElementById('futurePanel');
+  document.querySelectorAll('.fbtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('on'));
+      btn.classList.add('on');
+      const wk=+btn.dataset.w, d=new Date(now.getTime()+wk*7*DAY), fm=computeMoon(d.getTime());
+      drawMoon(document.getElementById('futureMoonSvg'),fm.phase,fm.illum);
+      document.getElementById('fMoonName').textContent=fm.name;
+      document.getElementById('fMoonIllum').textContent=Math.round(fm.illum*100)+'% lit';
+      document.getElementById('fDateTitle').textContent=d.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+      document.getElementById('fSkyNow').textContent=(wk===1?'In 1 week: ':'In '+wk+' weeks: ')+(blurbs[fm.name]||'');
+      panel.hidden=false;
+    });
+  });
 })();
-
 
 
 /* ============ REVEAL ON SCROLL ============ */
