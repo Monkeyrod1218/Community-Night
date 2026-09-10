@@ -257,7 +257,7 @@
     <section id="travel" class="wrap">
       <h2 class="sec-title reveal">Speed of Travel Calculator</h2>
       <p class="sec-intro reveal">Space is huge, and how long a trip takes depends entirely on how fast you go. A car, a jet, a rocket, and a beam of light are wildly different speeds.</p>
-      <p class="sec-intro reveal" style="color:var(--gold);font-weight:600;margin-top:14px">Pick a destination and a vehicle to race across space and see how long the journey takes.</p>
+      <p class="sec-intro reveal" style="color:var(--gold);font-weight:600;margin-top:14px">Pick a destination and watch the car, airplane, rocket, and light beam race to see how long the journey takes.</p>
       <style>
         .tc-box{max-width:900px;margin:0 auto;background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:24px;padding:clamp(22px,4vw,40px)}
         .tc-row{margin-bottom:20px}
@@ -282,7 +282,6 @@
       </style>
       <div class="tc-box reveal">
         <div class="tc-row"><div class="tc-lab">Destination</div><div class="chips" id="destChips"></div></div>
-        <div class="tc-row"><div class="tc-lab">Vehicle</div><div class="chips" id="vehChips"></div></div>
         <div class="tc-head" id="tcHead"></div>
         <div class="lanes" id="lanes"></div>
         <button type="button" class="tc-replay" id="tcReplay">&#8635; Replay race</button>
@@ -337,12 +336,11 @@
 (function(){
   const box=document.getElementById('tcBox') || document.querySelector('.tc-box'); if(!box) return;
   // [name, distance_km, emoji]
-  const DEST=[['The Moon',384400,'🌕'],['Mars',225000000,'🔴'],['Pluto',5900000000,'🟣'],['Nearest Star',40135000000000,'⭐']];
+  const DEST=[['Moon',384400,'🌕','the Moon'],['Sun',149600000,'☀️','the Sun'],['Neptune',4300000000,'🔵','Neptune'],['Proxima Centauri',40135000000000,'⭐','Proxima Centauri, the nearest star'],['Andromeda Galaxy',23650000000000000000,'🌌','the Andromeda Galaxy, the nearest galaxy']];
   // [name, emoji, speed_km_per_s]
-  const VEH=[['Car','🚗',0.0277778],['Airplane','✈️',0.25],['Apollo Rocket','🚀',10.8333],['Light Beam','⚡',299792.458]];
-  let dI=1, vI=0;
+  const VEH=[['Car','🚗',0.0277778],['Airplane','✈️',0.25],['Artemis II Rocket','🚀',11.111],['Light Beam','⚡',299792.458]];
+  let dI=1;
   const destChips=document.getElementById('destChips');
-  const vehChips=document.getElementById('vehChips');
   const head=document.getElementById('tcHead');
   const lanes=document.getElementById('lanes');
   function fmt(sec){
@@ -361,14 +359,13 @@
   function emoji(arr){ return arr===DEST?2:1; }
   function render(){
     chips(destChips,DEST,dI,i=>{dI=i;render();});
-    chips(vehChips,VEH,vI,i=>{vI=i;render();});
-    const dist=DEST[dI][1], v=VEH[vI], vtime=dist/v[2];
-    head.innerHTML=v[1]+' By <strong>'+v[0].toLowerCase()+'</strong>, reaching <strong>'+DEST[dI][0]+'</strong> takes <strong>'+fmt(vtime)+'</strong>.';
+    const dist=DEST[dI][1];
+    head.innerHTML='Racing to <strong>'+DEST[dI][3]+'</strong>. Which speed gets there first?';
     const times=VEH.map(x=>dist/x[2]);
     const L=times.map(t=>Math.log10(t)), Lmin=Math.min.apply(null,L), Lmax=Math.max.apply(null,L);
     lanes.innerHTML='';
     VEH.forEach((x,i)=>{
-      const lane=document.createElement('div');lane.className='lane'+(i===vI?' on':'');
+      const lane=document.createElement('div');lane.className='lane';
       lane.innerHTML='<div class="lane-head"><span class="lane-name">'+x[1]+' '+x[0]+'</span><span class="lane-time">'+fmt(times[i])+'</span></div>'
         +'<div class="track"><span class="vehicle">'+x[1]+'</span><span class="flag">'+DEST[dI][2]+'</span></div>';
       lanes.appendChild(lane);
