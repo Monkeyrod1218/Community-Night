@@ -257,9 +257,9 @@
     <section id="spaceage" class="wrap">
       <h2 class="sec-title reveal">Your Age in Space Years</h2>
       <p class="sec-intro reveal">A year is one trip around the Sun — and every planet takes a different amount of time. On Mercury a year is only 88 days; on Neptune it is almost 165 Earth years.</p>
-      <p class="sec-intro reveal" style="color:var(--gold);font-weight:600;margin-top:14px">Enter your birthday to print your Space Passport and see your age on every planet.</p>
+      <p class="sec-intro reveal" style="color:var(--gold);font-weight:600;margin-top:14px">Enter the year you were born to print your Space Passport and see your age on every planet.</p>
       <style>
-        #bIn{font-family:'JetBrains Mono',monospace;font-size:1.05rem;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(5,7,15,.5);color:var(--star);color-scheme:dark}
+        #bIn{width:150px;font-family:'JetBrains Mono',monospace;font-size:1.05rem;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(5,7,15,.5);color:var(--star);color-scheme:dark}
         #bIn:focus{outline:none;border-color:var(--gold)}
         .passport-head{font-family:'Fraunces',serif;font-size:clamp(1.2rem,3vw,1.6rem);color:var(--gold-soft);margin-bottom:22px}
         .passport-head strong{color:var(--star)}
@@ -272,8 +272,8 @@
       </style>
       <div class="weight-box reveal">
         <div class="weight-input">
-          <label for="bIn">My birthday is</label>
-          <input id="bIn" type="date">
+          <label for="bIn">Year I was born</label>
+          <input id="bIn" type="number" min="1900" step="1" placeholder="e.g. 2015" inputmode="numeric">
         </div>
         <div class="passport-head" id="ageHead"></div>
         <div class="weight-grid" id="ageGrid"></div>
@@ -350,16 +350,14 @@
   });
   function fmt(v){ return v>=100 ? Math.round(v).toLocaleString() : (v>=10 ? v.toFixed(1) : v.toFixed(2)); }
   // set max = today
-  const t=new Date(); const iso=d=>d.toISOString().slice(0,10);
-  bIn.max=iso(t);
-  bIn.value='2015-06-15';
+  bIn.max=new Date().getFullYear();
+  bIn.value='2015';
   function render(){
-    if(!bIn.value){ head.textContent='Pick your birthday to print your passport.'; return; }
-    const bd=new Date(bIn.value+'T00:00:00'); const now=new Date();
-    let earthYears=(now-bd)/YEAR;
-    if(isNaN(earthYears)){ head.textContent='Pick your birthday to print your passport.'; return; }
-    if(earthYears<0){ head.textContent='That birthday is in the future — pick an earlier date!'; return; }
-    head.innerHTML='You are <strong>'+fmt(earthYears)+'</strong> Earth years old — here is your Space Passport:';
+    const yr=parseInt(bIn.value,10); const nowY=new Date().getFullYear();
+    if(!bIn.value||isNaN(yr)){ head.textContent='Enter the year you were born to print your passport.'; return; }
+    let earthYears=nowY-yr;
+    if(earthYears<0){ head.textContent='That year is in the future — enter an earlier year!'; return; }
+    head.innerHTML='You are about <strong>'+fmt(earthYears)+'</strong> Earth years old — here is your Space Passport:';
     grid.querySelectorAll('.wcard').forEach(card=>{
       const p=PL.find(x=>x[0]===card.dataset.n);
       card.querySelector('.pl-age').textContent=fmt(earthYears/p[2]);
