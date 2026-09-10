@@ -257,7 +257,18 @@
 <section id="stars" class="wrap">
     <h2 class="sec-title reveal" style="transition-delay: 60ms;">Stories written in stars</h2>
     <p class="sec-intro reveal" style="transition-delay: 120ms;">Long before phones, people used patterns of stars to tell time, find their way, and pass down stories.</p>
-    <p class="sec-intro reveal" style="color:var(--gold);font-weight:600;margin-top:14px">Here are three you can spot from Texas.</p>
+    <p class="sec-intro reveal" style="color:var(--gold);font-weight:600;margin-top:14px">Tap a constellation to see when and where to find it from Grand Prairie, Texas.</p>
+    <style>
+      .const-card{cursor:pointer;transition:border-color .2s}
+      .const-card:hover{border-color:var(--cyan)}
+      .const-hint{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-top:12px}
+      .const-card.open .const-hint{display:none}
+      .const-see{display:none;margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+      .const-card.open .const-see{display:block}
+      .const-see p{font-size:.92rem;color:var(--mist);margin-top:8px}
+      .const-see strong{color:var(--star);font-weight:600}
+      .const-see .dir{color:var(--gold);font-weight:700}
+    </style>
     <div class="const-grid" id="constGrid"><div class="const-card"><svg viewBox="0 0 100 95"><line class="cline" x1="30" y1="25" x2="62" y2="22"></line><line class="cline" x1="30" y1="25" x2="40" y2="52"></line><line class="cline" x1="62" y1="22" x2="54" y2="54"></line><line class="cline" x1="40" y1="52" x2="47" y2="53"></line><line class="cline" x1="47" y1="53" x2="54" y2="54"></line><line class="cline" x1="40" y1="52" x2="38" y2="80"></line><line class="cline" x1="54" y1="54" x2="65" y2="82"></line><circle class="cstar" cx="30" cy="25" r="2.847988499589623"></circle><circle class="cstar" cx="62" cy="22" r="2.2643355776576466"></circle><circle class="cstar" cx="40" cy="52" r="1.8802943845655122"></circle><circle class="cstar" cx="47" cy="53" r="2.2722666504168796"></circle><circle class="cstar" cx="54" cy="54" r="2.7336616244755314"></circle><circle class="cstar" cx="38" cy="80" r="1.889795468256203"></circle><circle class="cstar" cx="65" cy="82" r="2.520387781411137"></circle></svg><span class="latin">The Hunter</span><h3>Orion</h3><p>Easiest to find in winter. The three stars in a tidy row are Orion’s Belt. The bright reddish shoulder, Betelgeuse, is a dying supergiant.</p></div><div class="const-card"><svg viewBox="0 0 100 95"><line class="cline" x1="20" y1="30" x2="38" y2="38"></line><line class="cline" x1="38" y1="38" x2="40" y2="52"></line><line class="cline" x1="40" y1="52" x2="22" y2="48"></line><line class="cline" x1="22" y1="48" x2="20" y2="30"></line><line class="cline" x1="38" y1="38" x2="55" y2="40"></line><line class="cline" x1="55" y1="40" x2="70" y2="36"></line><line class="cline" x1="70" y1="36" x2="85" y2="42"></line><circle class="cstar" cx="20" cy="30" r="2.1582280832675593"></circle><circle class="cstar" cx="22" cy="48" r="2.6104884678381697"></circle><circle class="cstar" cx="40" cy="52" r="2.489662064858507"></circle><circle class="cstar" cx="38" cy="38" r="2.1660902603763703"></circle><circle class="cstar" cx="55" cy="40" r="2.860284694214165"></circle><circle class="cstar" cx="70" cy="36" r="1.9851487602551339"></circle><circle class="cstar" cx="85" cy="42" r="2.9535457046040072"></circle></svg><span class="latin">Ursa Major</span><h3>Big Dipper</h3><p>A scoop of seven stars. Follow the two stars at the end of the bowl and they point straight to Polaris, the North Star.</p></div><div class="const-card"><svg viewBox="0 0 100 95"><line class="cline" x1="15" y1="42" x2="33" y2="30"></line><line class="cline" x1="33" y1="30" x2="50" y2="46"></line><line class="cline" x1="50" y1="46" x2="68" y2="28"></line><line class="cline" x1="68" y1="28" x2="85" y2="44"></line><circle class="cstar" cx="15" cy="42" r="2.1663899661760078"></circle><circle class="cstar" cx="33" cy="30" r="2.967818694712987"></circle><circle class="cstar" cx="50" cy="46" r="2.9657501670714543"></circle><circle class="cstar" cx="68" cy="28" r="2.8258685430733825"></circle><circle class="cstar" cx="85" cy="44" r="2.8021495109593966"></circle></svg><span class="latin">The Queen</span><h3>Cassiopeia</h3><p>A bright “W” (or “M”) that circles the North Star all year, so from Texas you can spot it on almost any clear night.</p></div></div>
   </section>
 </main>
@@ -309,17 +320,23 @@
     n:'Orion',latin:'The Hunter',
     stars:[[30,25],[62,22],[40,52],[47,53],[54,54],[38,80],[65,82]],
     lines:[[0,1],[0,2],[1,4],[2,3],[3,4],[2,5],[4,6]],
-    p:'Easiest to find in winter. The three stars in a tidy row are Orion\u2019s Belt. The bright reddish shoulder, Betelgeuse, is a dying supergiant.'
+    p:'Easiest to find in winter. The three stars in a tidy row are Orion’s Belt. The bright reddish shoulder, Betelgeuse, is a dying supergiant.',
+    when:'Best on winter evenings, about December through March.',
+    dir:'Look south, roughly halfway up the sky.'
   },{
     n:'Big Dipper',latin:'Ursa Major',
     stars:[[20,30],[22,48],[40,52],[38,38],[55,40],[70,36],[85,42]],
     lines:[[0,3],[3,2],[2,1],[1,0],[3,4],[4,5],[5,6]],
-    p:'A scoop of seven stars. Follow the two stars at the end of the bowl and they point straight to Polaris, the North Star.'
+    p:'A scoop of seven stars. Follow the two stars at the end of the bowl and they point straight to Polaris, the North Star.',
+    when:'Highest on spring evenings, about April through June (visible most of the year).',
+    dir:'Look north to northeast, high up.'
   },{
     n:'Cassiopeia',latin:'The Queen',
     stars:[[15,42],[33,30],[50,46],[68,28],[85,44]],
     lines:[[0,1],[1,2],[2,3],[3,4]],
-    p:'A bright \u201CW\u201D (or \u201CM\u201D) that circles the North Star all year, so from Texas you can spot it on almost any clear night.'
+    p:'A bright “W” (or “M”) that circles the North Star all year, so from Texas you can spot it on almost any clear night.',
+    when:'Highest on autumn evenings, about October through December (up most clear nights).',
+    dir:'Look north.'
   }];
   const grid=document.getElementById('constGrid');
   grid.innerHTML='';
@@ -329,11 +346,14 @@
     c.stars.forEach(st=>s+=`<circle class="cstar" cx="${st[0]}" cy="${st[1]}" r="${1.8+Math.random()*1.2}"/>`);
     s+='</svg>';
     const card=document.createElement('div');card.className='const-card';
-    card.innerHTML=s+`<span class="latin">${c.latin}</span><h3>${c.n}</h3><p>${c.p}</p>`;
+    card.innerHTML=s+`<span class="latin">${c.latin}</span><h3>${c.n}</h3><p>${c.p}</p>`
+      +`<div class="const-hint">Tap for when &amp; where &darr;</div>`
+      +`<div class="const-see"><p><strong>When to see it:</strong> ${c.when}</p>`
+      +`<p><strong>Where to look:</strong> <span class="dir">${c.dir}</span></p></div>`;
+    card.addEventListener('click',()=>{card.classList.toggle('open');});
     grid.appendChild(card);
   });
 })();
-
 
 
 /* ============ REVEAL ON SCROLL ============ */
