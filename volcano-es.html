@@ -401,8 +401,6 @@ var RC={"ui": {"silica": "Sílice", "gas": "Contenido de gas", "explosivity": "E
     verdict.innerHTML=R.verdicts[key];
     const t=R.types[type];
     cards.innerHTML=
-      '<div class="vl-card"><div class="vl-k">'+R.ui.magma+'</div><div class="vl-vv">'+R.magma[magmaBand()]+'</div></div>'+
-      '<div class="vl-card"><div class="vl-k">'+R.ui.viscosity+'</div><div class="vl-vv">'+R.visc[viscBand()]+'</div></div>'+
       '<div class="vl-card"><div class="vl-k">'+R.ui.style+'</div><div class="vl-vv">'+R.styles[key]+'</div></div>'+
       '<div class="vl-card"><div class="vl-k">'+R.ui.volcano+'</div><div class="vl-vv">'+t.name+'<small>'+t.example+'</small></div></div>'+
       '<div class="vl-card wide"><div class="vl-desc">'+t.desc+'</div></div>';
