@@ -33,11 +33,14 @@
   h1 .em{font-style:italic;color:var(--gold-soft)}
   .intro{color:var(--mist);max-width:52ch;margin:18px auto 0;font-size:clamp(1rem,2.2vw,1.18rem)}
 
-  .soon{margin-top:44px;background:linear-gradient(160deg,var(--panel),var(--night));
-    border:1px solid var(--line);border-radius:24px;padding:clamp(30px,6vw,54px) 28px}
-  .soon .glyph{font-size:clamp(2.6rem,9vw,4rem);line-height:1;margin-bottom:14px}
-  .soon h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.4rem,4vw,2rem);color:var(--gold-soft)}
-  .soon p{color:var(--mist);max-width:46ch;margin:12px auto 0;font-size:clamp(1rem,2.2vw,1.12rem)}
+  .games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:44px}
+  @media(max-width:620px){.games{grid-template-columns:1fr}}
+  .game-btn{display:flex;align-items:center;justify-content:center;text-align:center;min-height:88px;
+    padding:20px 24px;border-radius:18px;font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(1.15rem,2.6vw,1.5rem);color:#241704;
+    background:linear-gradient(180deg,var(--gold-soft),var(--gold));
+    box-shadow:0 10px 30px rgba(244,193,91,.28);transition:transform .2s, box-shadow .2s}
+  .game-btn:hover{transform:translateY(-3px);box-shadow:0 18px 44px rgba(244,193,91,.45)}
 
   .back{display:inline-block;margin-top:46px;font-family:'JetBrains Mono',monospace;font-size:.8rem;
     letter-spacing:.14em;text-transform:uppercase;color:var(--mist);border:1px solid var(--line);
@@ -55,12 +58,10 @@
     <div class="wrap">
       <div class="eyebrow">GPISD &middot; Community Night</div>
       <h1>Earth <span class="em">Science</span></h1>
-      <p class="intro">Explore our home planet &mdash; its weather, water, rocks, and the forces that shape the ground beneath your feet.</p>
+      <p class="intro">Explore our home planet &mdash; its rocks, water, weather, and the forces that shape the ground beneath your feet.</p>
 
-      <div class="soon">
-        <div class="glyph">🌎</div>
-        <h2>Activities coming soon</h2>
-        <p>New hands-on Earth Science activities are on their way. Check back soon to dig in!</p>
+      <div class="games">
+        <a class="game-btn" href="rockcycle.html">The Rock Cycle Transformer</a>
       </div>
 
       <a class="back" href="index.html">&larr; Back home</a>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Transformador del Ciclo de las Rocas · Noche Comunitaria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<style>
+  :root{
+    --void:#05070f;
+    --night:#0a0f22;
+    --deep:#111935;
+    --panel:#141d3d;
+    --line:#27325c;
+    --star:#eef2ff;
+    --mist:#9aa5cf;
+    --dim:#5d6794;
+    --gold:#f4c15b;
+    --gold-soft:#ffd98a;
+    --cyan:#74dbe8;
+    --rose:#f08fb0;
+    --ember:#ff8a5c;
+    --r:18px;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--void);
+    color:var(--star);
+    font-family:'Spline Sans',sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold);color:var(--void)}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;line-height:1.05;letter-spacing:-.01em}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* ---------- starfield ---------- */
+  #sky{position:fixed;inset:0;z-index:0;display:block}
+  .scrim{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 80% at 70% -10%, rgba(116,219,232,.08), transparent 55%),
+               radial-gradient(90% 60% at 10% 110%, rgba(244,193,91,.06), transparent 60%)}
+  main,header,footer{position:relative;z-index:2}
+
+  /* ---------- nav ---------- */
+  header{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:linear-gradient(to bottom, rgba(5,7,15,.85), rgba(5,7,15,.4));
+    border-bottom:1px solid rgba(39,50,92,.6)}
+  nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{display:flex;align-items:center;gap:12px;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem}
+  .brand-logo{height:38px;width:auto;display:block}
+  .badge{width:34px;height:34px;border-radius:50%;flex:0 0 auto;display:block;
+    filter:drop-shadow(0 0 8px rgba(244,193,91,.45))}
+  .navlinks{display:flex;gap:28px;font-size:.92rem;color:var(--mist)}
+  .navlinks a{position:relative;transition:color .2s}
+  .navlinks a:hover{color:var(--star)}
+  .navlinks a::after{content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;background:var(--gold);transition:width .25s}
+  .navlinks a:hover::after{width:100%}
+  .navitem{position:relative;display:inline-flex;align-items:center}
+  .navcaret{font-size:.7em;opacity:.8;margin-left:3px}
+  .dropmenu{position:absolute;top:100%;left:0;min-width:196px;display:flex;flex-direction:column;padding:8px;background:rgba(9,13,30,.98);border:1px solid var(--line);border-radius:12px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s,transform .18s,visibility .18s;box-shadow:0 16px 40px rgba(0,0,0,.55);z-index:60}
+  .navitem:hover .dropmenu,.navitem:focus-within .dropmenu{opacity:1;visibility:visible;transform:translateY(0)}
+  .dropmenu a{white-space:nowrap;padding:9px 12px;border-radius:8px;font-size:.9rem;color:var(--mist)}
+  .dropmenu a::after{display:none!important}
+  .dropmenu a:hover{background:rgba(244,193,91,.14);color:var(--star)}
+  .navcta{padding:9px 18px;border:1px solid var(--gold);border-radius:100px;color:var(--gold);font-size:.85rem;font-weight:500;transition:.25s}
+  .navcta:hover{background:var(--gold);color:var(--void)}
+  @media(max-width:760px){.navlinks{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{padding:clamp(80px,14vh,160px) 0 90px;text-align:center}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:var(--cyan);margin-bottom:22px}
+  .hero h1{font-size:clamp(2.8rem,9vw,6.2rem);font-weight:600}
+  .hero h1 em{font-style:italic;color:var(--gold-soft)}
+  .hero p{max-width:600px;margin:26px auto 0;color:var(--mist);font-size:clamp(1rem,2.4vw,1.2rem)}
+  .hero-cta{display:flex;gap:14px;justify-content:center;margin-top:38px;flex-wrap:wrap}
+  .btn{padding:14px 28px;border-radius:100px;font-weight:500;font-size:.95rem;transition:.25s;cursor:pointer;border:1px solid transparent}
+  .btn-gold{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#241704;box-shadow:0 10px 30px rgba(244,193,91,.3)}
+  .btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(244,193,91,.45)}
+  .btn-ghost{border-color:var(--line);color:var(--star)}
+  .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- section frame ---------- */
+  section{padding:clamp(100px,16vh,170px) 0}
+  main section.wrap:not(.hero){padding-top:clamp(55px,8.5vh,95px);padding-bottom:clamp(55px,8.5vh,95px)}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--gold);opacity:.6}
+  .sec-title{font-size:clamp(2rem,5vw,3.2rem);margin-bottom:14px}
+  .sec-intro{max-width:620px;color:var(--mist);margin-bottom:46px}
+
+  /* ---------- tonight panel ---------- */
+  .tonight{display:grid;grid-template-columns:300px 1fr;gap:36px;align-items:center;
+    background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);
+    border-radius:26px;padding:40px;overflow:hidden;position:relative}
+  .tonight::before{content:"";position:absolute;right:-120px;top:-120px;width:300px;height:300px;border-radius:50%;
+    background:radial-gradient(circle,rgba(116,219,232,.12),transparent 70%)}
+  .moonwrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+  #moonsvg{filter:drop-shadow(0 0 40px rgba(238,242,255,.18))}
+  .moon-name{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold-soft)}
+  .moon-illum{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--mist)}
+  .tonight h3{font-size:1.7rem;margin-bottom:8px}
+  .sky-now{color:var(--mist);margin-bottom:22px}
+  .factgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .fact{background:rgba(10,15,34,.6);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .fact .k{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  .fact .v{font-family:'Fraunces',serif;font-size:1.35rem;color:var(--star);margin-top:4px}
+  @media(max-width:720px){.tonight{grid-template-columns:1fr;text-align:center}.moonwrap{margin:0 auto}.factgrid{grid-template-columns:1fr}}
+
+  /* ---------- solar system ---------- */
+  .solar-stage{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+  .orrery{position:relative;aspect-ratio:1;width:100%;max-width:560px;margin:0 auto}
+  .orrery svg{width:100%;height:100%;overflow:visible}
+  .orbit{fill:none;stroke:rgba(154,165,207,.18);stroke-width:.4}
+  .planet-dot{cursor:pointer;transition:r .2s, filter .2s}
+  .planet-dot:hover{filter:brightness(1.4) drop-shadow(0 0 8px currentColor)}
+  .planet-dot.active{filter:brightness(1.5) drop-shadow(0 0 14px currentColor)}
+  .sun-core{filter:drop-shadow(0 0 28px rgba(244,193,91,.8))}
+  .planet-label{font-family:'JetBrains Mono',monospace;font-size:3px;fill:var(--mist);pointer-events:none}
+  .info-card{background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:22px;padding:34px;min-height:340px}
+  .info-card .ptag{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
+  .info-card h3{font-size:2.4rem;margin:6px 0 4px}
+  .info-card .pdesc{color:var(--mist);margin:14px 0 24px}
+  .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .stat{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:rgba(5,7,15,.4)}
+  .stat .sk{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .stat .sv{font-family:'Fraunces',serif;font-size:1.15rem;margin-top:2px}
+  .wow{margin-top:20px;padding:14px 16px;border-left:2px solid var(--gold);background:rgba(244,193,91,.06);border-radius:0 10px 10px 0;font-size:.92rem;color:var(--gold-soft)}
+  .picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .picker button{font-family:'JetBrains Mono',monospace;font-size:.74rem;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--mist);cursor:pointer;transition:.2s}
+  .picker button:hover{border-color:var(--cyan);color:var(--cyan)}
+  .picker button.on{background:var(--gold);border-color:var(--gold);color:var(--void)}
+  @media(max-width:860px){.solar-stage{grid-template-columns:1fr}}
+
+  /* ---------- constellations ---------- */
+  .const-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .const-card{background:linear-gradient(165deg,var(--night),var(--void));border:1px solid var(--line);border-radius:20px;padding:24px;cursor:pointer;transition:.3s;position:relative;overflow:hidden}
+  .const-card:hover{border-color:var(--gold);transform:translateY(-4px)}
+  .const-card svg{width:100%;height:150px;display:block;margin-bottom:16px}
+  .cline{stroke:rgba(116,219,232,.4);stroke-width:.5}
+  .cstar{fill:var(--star)}
+  .const-card:hover .cstar{fill:var(--gold-soft)}
+  .const-card:hover .cline{stroke:rgba(244,193,91,.6)}
+  .const-card h3{font-size:1.4rem}
+  .const-card .latin{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--cyan);letter-spacing:.15em;text-transform:uppercase}
+  .const-card p{color:var(--mist);font-size:.9rem;margin-top:10px}
+  @media(max-width:820px){.const-grid{grid-template-columns:1fr}}
+
+  /* ---------- scale slider ---------- */
+  .scale-box{background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:24px;padding:40px}
+  .scale-readout{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  #scaleObj{font-family:'Fraunces',serif;font-size:clamp(2rem,6vw,3.6rem);color:var(--gold-soft)}
+  #scaleSize{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:1rem}
+  #scaleDesc{color:var(--mist);min-height:48px;margin:10px 0 26px}
+  input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--gold));outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--star);cursor:pointer;box-shadow:0 0 18px rgba(238,242,255,.6);border:3px solid var(--gold)}
+  input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--star);cursor:pointer;border:3px solid var(--gold)}
+  .scale-ticks{position:relative;height:1.1rem;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--dim)}
+  .scale-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+
+  /* ---------- visit / schedule ---------- */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .card{background:linear-gradient(165deg,var(--night),var(--void));border:1px solid var(--line);border-radius:20px;padding:30px}
+  .card h3{font-size:1.5rem;margin-bottom:8px}
+  .ph{color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(244,193,91,.07);border:1px dashed var(--line);border-radius:6px;padding:2px 8px;display:inline-block}
+  .sched-row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(39,50,92,.5);gap:16px}
+  .sched-row:last-child{border:none}
+  .sched-row .when{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--cyan);white-space:nowrap}
+  .sched-row .what b{display:block;font-family:'Fraunces',serif;font-size:1.05rem}
+  .sched-row .what span{color:var(--mist);font-size:.85rem}
+  .pill{font-size:.66rem;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:100px;border:1px solid var(--line);color:var(--mist);align-self:center;white-space:nowrap}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+
+  footer{border-top:1px solid var(--line);padding:60px 0 40px;margin-top:40px}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;margin-bottom:40px}
+  footer h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  footer a,footer p{color:var(--mist);font-size:.9rem;display:block;margin-bottom:8px;transition:color .2s}
+  footer a:hover{color:var(--star)}
+  .foot-bottom{border-top:1px solid var(--line);padding-top:24px;color:var(--dim);font-size:.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  @media(max-width:760px){.foot-grid{grid-template-columns:1fr}}
+  .note{font-size:.74rem;color:var(--dim);font-style:italic;margin-top:6px}
+
+  /* day & night map */
+  .daynight-wrap{max-width:980px;margin:0 auto;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#0a0f22;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .daynight-wrap canvas{display:block;width:100%;height:auto}
+  .dn-caption{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--mist);padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .dn-caption b{color:var(--gold)}
+
+  .daynight-wrap{position:relative}
+  .daynight-wrap canvas{cursor:crosshair}
+  .dn-pop{position:absolute;z-index:6;width:214px;background:#f6f3ea;color:#1a2036;border:2px solid var(--gold);border-radius:12px;padding:12px 30px 12px 14px;box-shadow:0 14px 38px rgba(0,0,0,.6);transform:translate(-50%,-100%) translateY(-14px)}
+  .dn-pop.below{transform:translate(-50%,0) translateY(0)}
+  .dn-pop .dn-pop-city{font-family:'Fraunces',serif;font-weight:600;font-size:1.12rem;line-height:1.12;color:#141a2e}
+  .dn-pop .dn-pop-region{font-size:.82rem;color:#6a5c2f;margin-top:2px}
+  .dn-pop .dn-pop-time{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#141a2e;margin-top:9px;border-top:1px solid rgba(0,0,0,.14);padding-top:8px;line-height:1.35}
+  .dn-pop-x{position:absolute;top:5px;right:8px;background:none;border:none;font-size:1.15rem;line-height:1;color:#6a5c2f;cursor:pointer;padding:0}
+  .dn-pop::after{content:"";position:absolute;left:50%;transform:translateX(-50%);border:9px solid transparent}
+  .dn-pop:not(.below)::after{bottom:-9px;border-top-color:var(--gold);border-bottom:0}
+  .dn-pop.below::after{top:-9px;border-bottom-color:var(--gold);border-top:0}
+
+  /* weight across the solar system */
+  .weight-box{max-width:900px;margin:0 auto;background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:24px;padding:clamp(22px,4vw,40px)}
+  .weight-input{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+  .weight-input label{font-size:1rem;color:var(--star)}
+  #wIn{width:130px;font-family:'JetBrains Mono',monospace;font-size:1.1rem;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(5,7,15,.5);color:var(--star)}
+  #wIn:focus{outline:none;border-color:var(--gold)}
+  .unit-toggle{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .ubtn{padding:9px 16px;background:transparent;color:var(--mist);border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:.85rem}
+  .ubtn.on{background:var(--gold);color:var(--void)}
+  .weight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+  .wcard{background:rgba(5,7,15,.42);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .wcard.hot{border-color:var(--gold);box-shadow:inset 0 0 0 1px rgba(244,193,91,.25)}
+  .wcard.earth{border-color:var(--cyan)}
+  .wname{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mist)}
+  .wval{font-family:'Fraunces',serif;font-size:1.9rem;color:var(--gold-soft);margin:2px 0 8px;line-height:1}
+  .wval .wu{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--mist);margin-left:4px}
+  .wbar{height:6px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}
+  .wbar span{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--gold))}
+  .wg{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--dim);margin-top:8px}
+
+  /* light travel time */
+  .lt-box{max-width:900px;margin:0 auto}
+  .lt-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+  .lt-chip{padding:10px 16px;border-radius:100px;border:1px solid var(--line);background:rgba(5,7,15,.4);color:var(--mist);cursor:pointer;font-size:.92rem;transition:.2s;font-family:inherit}
+  .lt-chip:hover{border-color:var(--cyan);color:var(--star)}
+  .lt-chip.on{background:var(--gold);border-color:var(--gold);color:var(--void)}
+  .lt-panel{background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:20px;padding:clamp(24px,4vw,40px)}
+  .lt-obj{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+  .lt-time{font-family:'Fraunces',serif;font-size:clamp(2rem,5.5vw,3.4rem);color:var(--gold-soft);line-height:1.05;margin:6px 0 4px}
+  .lt-dist{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--mist);margin-bottom:16px}
+  .lt-see{color:var(--star);font-size:1.05rem;line-height:1.72;max-width:640px}
+</style>
+
+<style>
+  .back-btn{position:fixed;top:20px;left:20px;z-index:100;display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--star);background:rgba(9,13,30,.72);backdrop-filter:blur(6px);
+    border:1px solid var(--line);border-radius:100px;padding:11px 20px;transition:.25s;text-decoration:none}
+  .back-btn:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-1px)}
+  main{padding-top:92px}
+  @media (hover:none) and (pointer:coarse), (max-width:1024px){
+    main{padding-top:72px}
+    main section.wrap:not(.hero){padding-top:14px}
+  }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="scrim"></div>
+<a class="back-btn" href="earth-spanish.html">&larr; Atrás</a>
+<main id="top">
+<section id="rockcycle" class="wrap">
+  <h2 class="sec-title reveal">El Transformador del Ciclo de las Rocas</h2>
+  <p class="sec-intro reveal">Las rocas siempre están en un viaje lento. El calor, la presión, la fusión y la erosión convierten un tipo de roca en otro, una y otra vez por el ciclo de las rocas.</p>
+  <p class="sec-intro reveal" style="color:var(--gold);font-weight:600;margin-top:14px">Aplica una fuerza para transformar tu roca y recolecta cada espécimen del álbum de abajo.</p>
+  <style>
+    .rc-box{max-width:1000px;margin:0 auto;background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:24px;padding:clamp(20px,3.5vw,34px)}
+    .rc-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+    @media(max-width:820px){.rc-grid{grid-template-columns:1fr;gap:26px}}
+    .rc-stage{text-align:center}
+    #rcCanvas{width:240px;height:240px;max-width:100%;background:radial-gradient(circle at 50% 45%, rgba(116,219,232,.06), transparent 60%);border:1px solid var(--line);border-radius:20px;touch-action:none}
+    .rc-tag{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-top:14px}
+    .rc-name{font-family:'Fraunces',serif;font-size:clamp(1.4rem,4vw,1.9rem);color:var(--gold-soft);margin-top:2px;line-height:1.1}
+    .rc-blurb{color:var(--mist);font-size:.92rem;max-width:34ch;margin:8px auto 0;min-height:3.4em}
+    .rc-h{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+    .rc-forces{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .rc-force{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:rgba(5,7,15,.5);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;transition:border-color .2s, transform .15s;font-family:inherit;color:var(--star)}
+    .rc-force:hover{border-color:var(--cyan);transform:translateY(-2px)}
+    .rc-force .fl{font-family:'Fraunces',serif;font-size:1.02rem;display:flex;align-items:center;gap:7px}
+    .rc-force .fd{font-size:.71rem;color:var(--dim);line-height:1.35}
+    .rc-force.shake{animation:rcShake .4s}
+    @keyframes rcShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}60%{transform:translateX(6px)}}
+    .rc-msg{margin-top:16px;min-height:1.6em;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--cyan);line-height:1.4}
+    .rc-msg.new{color:var(--gold-soft)}
+    .rc-diagram{margin-bottom:22px}
+    .rc-diagram svg{width:100%;height:auto;display:block}
+    .rc-node circle{transition:stroke .25s, stroke-width .25s}
+    .rc-node text{font-family:'JetBrains Mono',monospace;fill:var(--mist);transition:fill .25s}
+    .rc-node.on circle{stroke:var(--gold);stroke-width:3.2}
+    .rc-node.on text{fill:var(--gold-soft)}
+    .rc-alab{font-family:'JetBrains Mono',monospace;fill:var(--dim)}
+    .rc-album{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .rc-cat{grid-column:1/-1;font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-top:8px}
+    .rc-cat:first-child{margin-top:0}
+    .rc-slot{aspect-ratio:1;border-radius:10px;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:rgba(5,7,15,.4);padding:5px;text-align:center;transition:border-color .25s, background .25s}
+    .rc-slot.got{border-color:var(--gold);background:rgba(244,193,91,.08)}
+    .rc-slot.flash{animation:rcPop .5s}
+    @keyframes rcPop{0%{transform:scale(1)}45%{transform:scale(1.16)}100%{transform:scale(1)}}
+    .rc-slot .dot{width:26px;height:26px;border-radius:8px;border:1px solid rgba(255,255,255,.14)}
+    .rc-slot.locked .dot{background:repeating-linear-gradient(45deg,rgba(154,165,207,.14),rgba(154,165,207,.14) 4px,transparent 4px,transparent 8px)}
+    .rc-slot .sn{font-size:.58rem;color:var(--mist);line-height:1.12}
+    .rc-slot.locked .sn{color:var(--dim)}
+    .rc-prog{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--gold-soft);margin-top:16px;text-align:center;min-height:1.4em}
+  </style>
+  <div class="rc-box reveal">
+    <div class="rc-grid">
+      <div class="rc-stage">
+        <canvas id="rcCanvas" width="240" height="240"></canvas>
+        <div class="rc-tag" id="rcTag"></div>
+        <div class="rc-name" id="rcName"></div>
+        <div class="rc-blurb" id="rcBlurb"></div>
+        <div class="rc-h" style="margin-top:18px" id="rcForcesTitle"></div>
+        <div class="rc-forces" id="rcForces"></div>
+        <div class="rc-msg" id="rcMsg"></div>
+      </div>
+      <div class="rc-side">
+        <div class="rc-h" id="rcDiagramTitle"></div>
+        <div class="rc-diagram" id="rcDiagram"></div>
+        <div class="rc-h" id="rcAlbumTitle"></div>
+        <div class="rc-album" id="rcAlbum"></div>
+        <div class="rc-prog" id="rcProg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<script>
+/* ============ STARFIELD ============ */
+(function(){
+  const c=document.getElementById('sky'),x=c.getContext('2d');
+  let w,h,stars=[],shoot=null,t=0;
+  function size(){w=c.width=innerWidth;h=c.height=innerHeight;build();}
+  function build(){
+    stars=[];const n=Math.min(260,Math.floor(w*h/8000));
+    for(let i=0;i<n;i++)stars.push({
+      x:Math.random()*w,y:Math.random()*h,
+      r:Math.random()*1.3+.2,
+      tw:Math.random()*Math.PI*2,sp:Math.random()*.03+.005,
+      hue:Math.random()<.15?'200,225,255':(Math.random()<.3?'255,225,180':'238,242,255')
+    });
+  }
+  function maybeShoot(){
+    if(shoot||Math.random()>.004)return;
+    shoot={x:Math.random()*w*.6,y:Math.random()*h*.3,len:0,a:Math.random()*.5+.2,life:0};
+  }
+  function draw(){
+    t++;x.clearRect(0,0,w,h);
+    for(const s of stars){
+      const a=.4+Math.sin(s.tw+t*s.sp)*.4;
+      x.beginPath();x.arc(s.x,s.y,s.r,0,7);
+      x.fillStyle='rgba('+s.hue+','+a.toFixed(2)+')';x.fill();
+    }
+    maybeShoot();
+    if(shoot){
+      shoot.life++;shoot.len=Math.min(shoot.len+9,140);
+      const ex=shoot.x+Math.cos(shoot.a)*shoot.len, ey=shoot.y+Math.sin(shoot.a)*shoot.len;
+      const g=x.createLinearGradient(shoot.x,shoot.y,ex,ey);
+      g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(255,235,200,.9)');
+      x.strokeStyle=g;x.lineWidth=1.6;x.beginPath();x.moveTo(shoot.x,shoot.y);x.lineTo(ex,ey);x.stroke();
+      shoot.x+=Math.cos(shoot.a)*7;shoot.y+=Math.sin(shoot.a)*7;
+      if(shoot.life>40||ex>w||ey>h)shoot=null;
+    }
+    requestAnimationFrame(draw);
+  }
+  addEventListener('resize',size);size();draw();
+})();
+
+
+
+var RC={"states": {"magma": {"label": "Magma", "tag": "Roca fundida", "blurb": "En las profundidades, la roca está tan caliente que se funde en un líquido brillante. Enfríala despacio para formar tus primeros cristales."}, "igneous": {"label": "Roca ígnea", "tag": "Roca ígnea", "blurb": "Magma enfriado con cristales entrelazados: cuanto más lento se enfrió, más grandes son los cristales."}, "sedimentary": {"label": "Roca sedimentaria", "tag": "Roca sedimentaria", "blurb": "Capas de sedimento prensadas y cementadas: a menudo con franjas y llenas de fósiles."}, "metamorphic": {"label": "Roca metamórfica", "tag": "Roca metamórfica", "blurb": "Roca recocida y comprimida hasta que sus minerales se alinean en cintas y bandas."}}, "forces": [{"id": "cool", "emoji": "🧊", "label": "Enfriar y Cristalizar", "short": "Enfriar", "desc": "El magma se enfría despacio y crecen cristales que forman roca ígnea."}, {"id": "hp", "emoji": "🔥", "label": "Calor y Presión", "short": "Calor y Presión", "desc": "El enterramiento profundo hornea y comprime la roca en roca metamórfica."}, {"id": "melt", "emoji": "🌋", "label": "Fundir", "short": "Fundir", "desc": "El calor intenso funde la roca por completo de nuevo en magma."}, {"id": "erode", "emoji": "🌧️", "label": "Meteorizar y Erosionar", "short": "Erosión", "desc": "El agua y el viento rompen la roca en sedimentos que se endurecen en roca sedimentaria."}], "specimens": {"igneous": [{"id": "granite", "name": "Granito", "blurb": "Cristales sal y pimienta; la clásica roca de las encimeras."}, {"id": "basalt", "name": "Basalto", "blurb": "Roca de lava oscura y fina que cubre el fondo del océano."}, {"id": "obsidian", "name": "Obsidiana", "blurb": "Vidrio volcánico que se enfrió demasiado rápido para formar cristales."}, {"id": "pumice", "name": "Piedra Pómez", "blurb": "¡Tan llena de burbujas de gas que flota en el agua!"}], "sedimentary": [{"id": "sandstone", "name": "Arenisca", "blurb": "Granos de arena cementados que a veces se desprenden."}, {"id": "limestone", "name": "Caliza", "blurb": "Hecha de conchas y vida marina; burbujea con el ácido."}, {"id": "shale", "name": "Lutita", "blurb": "Barro endurecido que se parte en láminas finas y planas."}, {"id": "conglomerate", "name": "Conglomerado", "blurb": "Guijarros pegados como un concreto natural."}], "metamorphic": [{"id": "marble", "name": "Mármol", "blurb": "Caliza transformada — lisa y apreciada por los escultores."}, {"id": "slate", "name": "Pizarra", "blurb": "Lutita bajo presión; se parte en tejas planas."}, {"id": "gneiss", "name": "Gneis", "blurb": "Roca bandeada con sus minerales ordenados en franjas."}, {"id": "quartzite", "name": "Cuarcita", "blurb": "Arenisca fusionada en una de las rocas más duras."}]}, "diag": {"magma": "Magma", "igneous": "Ígnea", "sedimentary": "Sediment.", "metamorphic": "Metamórf."}, "catName": {"igneous": "ígneas", "sedimentary": "sedimentarias", "metamorphic": "metamórficas"}, "hints": {"already_molten": "¡Ya es magma fundido! 🌋", "cool_first": "El magma es líquido — enfríalo primero en roca sólida. 🧊", "molten_needed": "Esta roca no está fundida — fúndela primero en magma. 🌋"}, "ui": {"forcesTitle": "Aplica una fuerza", "albumTitle": "Álbum del Coleccionista", "diagramTitle": "El ciclo de las rocas", "progress": "{n} / {t} especímenes recolectados", "complete": "🏆 ¡Álbum completo! Recolectaste todas las rocas del ciclo.", "newSpecimen": "¡Nuevo espécimen: {name}!", "repeat": "{name} — ya está en tu álbum.", "toMagma": "Todo se funde de nuevo en magma. 🌋", "start": "Empiezas como magma fundido. ¡Enfríalo para empezar tu colección!"}};
+
+/* ============ THE ROCK CYCLE TRANSFORMER ============ */
+(function(){
+  const cv=document.getElementById('rcCanvas'); if(!cv||!window.RC) return;
+  const ctx=cv.getContext('2d'); const R=window.RC;
+  const nameEl=document.getElementById('rcName'), tagEl=document.getElementById('rcTag'),
+        blurbEl=document.getElementById('rcBlurb'), msgEl=document.getElementById('rcMsg'),
+        forcesEl=document.getElementById('rcForces'), albumEl=document.getElementById('rcAlbum'),
+        progEl=document.getElementById('rcProg'), diagEl=document.getElementById('rcDiagram');
+  document.getElementById('rcForcesTitle').textContent=R.ui.forcesTitle;
+  document.getElementById('rcAlbumTitle').textContent=R.ui.albumTitle;
+  document.getElementById('rcDiagramTitle').textContent=R.ui.diagramTitle;
+  const CATS=['igneous','sedimentary','metamorphic'];
+  const COL={magma:'#ff5a2c',igneous:'#7f8794',sedimentary:'#cda86e',metamorphic:'#b491b6'};
+  let state='magma', curSpec=null;
+  const collected={igneous:[],sedimentary:[],metamorphic:[]};
+
+  /* ---- album ---- */
+  function buildAlbum(){
+    let h='';
+    CATS.forEach(cat=>{
+      h+='<div class="rc-cat">'+R.states[cat].tag+'</div>';
+      R.specimens[cat].forEach(sp=>{
+        h+='<div class="rc-slot locked" id="slot-'+sp.id+'"><span class="dot"></span><span class="sn">?</span></div>';
+      });
+    });
+    albumEl.innerHTML=h;
+  }
+  function markCollected(cat,sp,isNew){
+    const el=document.getElementById('slot-'+sp.id);
+    if(!el) return;
+    el.classList.remove('locked'); el.classList.add('got');
+    el.querySelector('.dot').style.background=COL[cat];
+    el.querySelector('.sn').textContent=sp.name;
+    el.querySelector('.sn').style.color='var(--star)';
+    if(isNew){ el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+  }
+  function totalCollected(){ return CATS.reduce((n,c)=>n+collected[c].length,0); }
+  function updateProg(){
+    const n=totalCollected(), t=12;
+    progEl.textContent=R.ui.progress.replace('{n}',n).replace('{t}',t);
+    if(n>=t){ progEl.textContent=R.ui.complete; }
+  }
+
+  /* ---- rock diagram ---- */
+  const DN={magma:[150,30],igneous:[256,124],sedimentary:[150,218],metamorphic:[44,124]};
+  const LOOP=[['magma','igneous','cool'],['igneous','sedimentary','erode'],
+              ['sedimentary','metamorphic','hp'],['metamorphic','magma','melt']];
+  function edgePoint(a,b){ // point on circle a (r22) toward b
+    const dx=b[0]-a[0], dy=b[1]-a[1], d=Math.hypot(dx,dy);
+    return [a[0]+dx/d*24, a[1]+dy/d*24];
+  }
+  function buildDiagram(){
+    let svg='<svg viewBox="0 0 300 250" role="img"><defs><marker id="rcArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--dim)"/></marker></defs>';
+    LOOP.forEach(([a,b,f])=>{
+      const pa=edgePoint(DN[a],DN[b]), pb=edgePoint(DN[b],DN[a]);
+      svg+='<line x1="'+pa[0].toFixed(1)+'" y1="'+pa[1].toFixed(1)+'" x2="'+pb[0].toFixed(1)+'" y2="'+pb[1].toFixed(1)+'" stroke="var(--dim)" stroke-width="1.3" marker-end="url(#rcArr)"/>';
+      let mx=(pa[0]+pb[0])/2, my=(pa[1]+pb[1])/2;
+      const ox=(mx-150), oy=(my-124); const ol=Math.hypot(ox,oy)||1;
+      mx+=ox/ol*16; my+=oy/ol*16;
+      svg+='<text class="rc-alab" x="'+mx.toFixed(1)+'" y="'+my.toFixed(1)+'" font-size="8.5" text-anchor="middle" dominant-baseline="middle">'+R.forces.find(x=>x.id===f).short+'</text>';
+    });
+    ['magma','igneous','sedimentary','metamorphic'].forEach(k=>{
+      const p=DN[k];
+      svg+='<g class="rc-node" id="node-'+k+'">'+
+           '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="22" fill="'+COL[k]+'" fill-opacity="0.9" stroke="var(--line)" stroke-width="1.4"/>'+
+           '<text x="'+p[0]+'" y="'+(p[1]+38)+'" font-size="9" text-anchor="middle">'+R.diag[k]+'</text></g>';
+    });
+    svg+='</svg>';
+    diagEl.innerHTML=svg;
+  }
+  function highlightNode(){
+    document.querySelectorAll('.rc-node').forEach(n=>n.classList.remove('on'));
+    const el=document.getElementById('node-'+state); if(el) el.classList.add('on');
+  }
+
+  /* ---- rock rendering ---- */
+  function rockPath(){
+    const cx=120, cy=126, W=78, H=64;
+    const pts=[[-1,-.5],[-.4,-1],[.45,-.92],[1,-.25],[.82,.62],[.1,1],[-.72,.72],[-1,.1]];
+    ctx.beginPath();
+    pts.forEach((p,i)=>{const x=cx+p[0]*W, y=cy+p[1]*H; i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.closePath();
+  }
+  function drawRock(t){
+    ctx.clearRect(0,0,240,240);
+    ctx.save(); rockPath();
+    // shadow
+    ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=18; ctx.shadowOffsetY=8;
+    ctx.fillStyle='#000'; ctx.fill(); ctx.shadowColor='transparent';
+    rockPath(); ctx.clip();
+    if(state==='magma'){
+      const pulse=0.5+0.5*Math.sin(t/380);
+      const g=ctx.createRadialGradient(110,110,10,120,126,120);
+      g.addColorStop(0,'#ffd9a0'); g.addColorStop(.35,'#ff8b3d'); g.addColorStop(.75,'#e0451c'); g.addColorStop(1,'#7a1408');
+      ctx.fillStyle=g; ctx.fillRect(0,0,240,240);
+      for(let i=0;i<8;i++){
+        const a=t/600+i*0.9; const x=120+Math.cos(a)*(34+i*4); const y=126+Math.sin(a*1.3)*(28+i*3);
+        const rr=8+6*Math.abs(Math.sin(a*2+i));
+        const gg=ctx.createRadialGradient(x,y,0,x,y,rr);
+        gg.addColorStop(0,'rgba(255,245,200,'+(0.5+0.4*pulse)+')'); gg.addColorStop(1,'rgba(255,140,60,0)');
+        ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(x,y,rr,0,7); ctx.fill();
+      }
+    } else if(state==='igneous'){
+      ctx.fillStyle='#5b6472'; ctx.fillRect(0,0,240,240);
+      const cols=['#e6e9f2','#cdd3e2','#2c313f','#8b93a5','#b0708a'];
+      for(let i=0;i<170;i++){
+        ctx.fillStyle=cols[i%cols.length];
+        const x=44+Math.random()*152, y=64+Math.random()*124, s=1.4+Math.random()*3.4;
+        ctx.save(); ctx.translate(x,y); ctx.rotate(Math.random()*3.14);
+        ctx.fillRect(-s/2,-s/2,s,s*0.8); ctx.restore();
+      }
+    } else if(state==='sedimentary'){
+      const bands=['#e0c08a','#d3ad72','#c49a5e','#dcbb84','#c9a35f','#e6c894'];
+      const n=bands.length, bh=150/n;
+      for(let i=0;i<n;i++){ ctx.fillStyle=bands[i]; ctx.fillRect(40,54+i*bh,164,bh+1); }
+      ctx.strokeStyle='rgba(90,60,25,.35)'; ctx.lineWidth=1;
+      for(let i=1;i<n;i++){ ctx.beginPath(); ctx.moveTo(40,54+i*bh); for(let x=40;x<=204;x+=8){ctx.lineTo(x,54+i*bh+Math.sin(x/18+i)*2);} ctx.stroke(); }
+      ctx.fillStyle='rgba(70,45,20,.4)';
+      for(let i=0;i<40;i++){ctx.beginPath();ctx.arc(46+Math.random()*150,60+Math.random()*136,0.8+Math.random()*1.4,0,7);ctx.fill();}
+    } else { // metamorphic
+      ctx.fillStyle='#8f96ab'; ctx.fillRect(0,0,240,240);
+      const bands=['#c7bcd6','#7f869c','#b58fb0','#9aa0b8','#6f7690','#cbb6c9'];
+      for(let i=0;i<26;i++){
+        ctx.strokeStyle=bands[i%bands.length]; ctx.lineWidth=3.4; ctx.globalAlpha=.85;
+        ctx.beginPath();
+        for(let x=36;x<=206;x+=6){ const y=58+i*5+Math.sin(x/26+i*0.6)*9; (x===36?ctx.moveTo(x,y):ctx.lineTo(x,y)); }
+        ctx.stroke();
+      }
+      ctx.globalAlpha=1;
+    }
+    ctx.restore();
+    // rim light
+    ctx.save(); rockPath(); ctx.strokeStyle='rgba(238,242,255,.28)'; ctx.lineWidth=1.4; ctx.stroke(); ctx.restore();
+  }
+  let raf=null, t0=performance.now();
+  function loop(now){ drawRock(now-t0); raf=requestAnimationFrame(loop); }
+  function startAnim(){ if(!raf){ t0=performance.now(); raf=requestAnimationFrame(loop);} }
+  function stopAnim(){ if(raf){ cancelAnimationFrame(raf); raf=null;} drawRock(0); }
+
+  /* ---- state / specimens ---- */
+  function showState(){
+    tagEl.textContent=R.states[state].tag;
+    tagEl.style.color=COL[state];
+    nameEl.textContent = curSpec? curSpec.name : R.states.magma.label;
+    blurbEl.textContent = curSpec? curSpec.blurb : R.states[state].blurb;
+    highlightNode();
+    if(state==='magma') startAnim(); else stopAnim();
+  }
+  function awardSpecimen(cat){
+    const owned=collected[cat];
+    const remaining=R.specimens[cat].filter(s=>!owned.some(o=>o.id===s.id));
+    if(remaining.length){
+      const sp=remaining[0]; owned.push(sp); curSpec=sp;
+      markCollected(cat,sp,true); updateProg();
+      const done=totalCollected()>=12;
+      msgEl.textContent=(done?'🏆 ':'✨ ')+R.ui.newSpecimen.replace('{name}',sp.name);
+      msgEl.classList.add('new');
+    } else {
+      const sp=R.specimens[cat][Math.floor(Math.random()*R.specimens[cat].length)];
+      curSpec=sp;
+      msgEl.textContent=R.ui.repeat.replace('{name}',sp.name).replace('{cat}',R.catName[cat]);
+      msgEl.classList.remove('new');
+    }
+  }
+  function setMagma(){ state='magma'; curSpec=null; msgEl.textContent=R.ui.toMagma; msgEl.classList.remove('new'); showState(); }
+  function invalid(btn,hint){ btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake'); msgEl.textContent=hint; msgEl.classList.remove('new'); }
+
+  function applyForce(id,btn){
+    if(state==='magma'){
+      if(id==='cool'){ state='igneous'; awardSpecimen('igneous'); showState(); }
+      else if(id==='melt'){ invalid(btn,R.hints.already_molten); }
+      else { invalid(btn,R.hints.cool_first); }
+    } else {
+      if(id==='cool'){ invalid(btn,R.hints.molten_needed); }
+      else if(id==='melt'){ setMagma(); }
+      else if(id==='hp'){ state='metamorphic'; awardSpecimen('metamorphic'); showState(); }
+      else if(id==='erode'){ state='sedimentary'; awardSpecimen('sedimentary'); showState(); }
+    }
+  }
+
+  /* ---- forces UI ---- */
+  R.forces.forEach(f=>{
+    const b=document.createElement('button'); b.type='button'; b.className='rc-force';
+    b.innerHTML='<span class="fl"><span>'+f.emoji+'</span>'+f.label+'</span><span class="fd">'+f.desc+'</span>';
+    b.addEventListener('click',()=>applyForce(f.id,b));
+    forcesEl.appendChild(b);
+  });
+
+  buildAlbum(); buildDiagram(); updateProg();
+  msgEl.textContent=R.ui.start;
+  showState();
+})();
+/* ============ REVEAL ON SCROLL ============ */
+(function(){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';io.observe(el);});
+})();
+
+
+</script>
+</body></html>
