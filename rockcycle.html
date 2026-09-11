@@ -257,14 +257,14 @@
 <section id="rockcycle" class="wrap">
   <h2 class="sec-title reveal">The Rock Cycle Transformer</h2>
   <p class="sec-intro reveal">Rocks are always on a slow journey. Heat, pressure, melting, and erosion turn one kind of rock into another, around and around the rock cycle.</p>
-  <p class="sec-intro reveal" style="color:var(--gold);font-weight:600;margin-top:14px">Apply a force to transform your rock, and collect every specimen in the album below.</p>
+  <p class="sec-intro reveal" style="color:var(--gold);font-weight:600;margin-top:14px">Apply a force to transform your rock and travel around the cycle.</p>
   <div class="rc-howto reveal">
       <h3>How to play</h3>
       <ol>
         <li>You start as glowing <b>magma</b>. Look at the rock on the left &mdash; its name, its type, and what it&rsquo;s made of.</li>
-        <li>Press one of the four <b>force</b> buttons. The rock will transform, and the matching <b>arrow on the rock-cycle wheel</b> will flash gold so you can see which process you used.</li>
-        <li>Each new rock you make drops into your <b>Collector&rsquo;s Album</b> on the right. Watch the slot light up.</li>
-        <li>Keep going around the cycle. Each rock type hides <b>four</b> different rocks &mdash; return to it again and again until you&rsquo;ve collected all <b>12</b>.</li>
+        <li>Press one of the four <b>force</b> buttons. The rock will transform, and the matching <b>arrow on the rock-cycle diagram</b> will flash gold so you can see which process you used.</li>
+        <li>Watch the <b>ring on the diagram</b> jump to the new rock &mdash; that&rsquo;s where you are now in the cycle.</li>
+        <li>Keep applying forces to travel all the way around. Each rock type has <b>several real examples</b> &mdash; cool magma again, or erode different rocks, to meet them all.</li>
       </ol>
       <div class="look"><b>What to look for:</b> <i>Igneous</i> rocks are speckled with crystals, <i>sedimentary</i> rocks form flat stacked layers, and <i>metamorphic</i> rocks bend into ribbons and bands. Not every force works on every rock &mdash; if a button <i>shakes</i>, read the message to learn why (you can&rsquo;t erode molten magma!).</div>
     </div>
@@ -341,9 +341,6 @@
       <div class="rc-side">
         <div class="rc-h" id="rcDiagramTitle"></div>
         <div class="rc-diagram" id="rcDiagram"></div>
-        <div class="rc-h" id="rcAlbumTitle"></div>
-        <div class="rc-album" id="rcAlbum"></div>
-        <div class="rc-prog" id="rcProg"></div>
       </div>
     </div>
   </div>
@@ -393,7 +390,7 @@
 
 
 
-var RC={"states": {"magma": {"label": "Magma", "tag": "Molten rock", "blurb": "Deep underground, rock is so hot it melts into a glowing liquid. Cool it slowly to grow your first crystals."}, "igneous": {"label": "Igneous rock", "tag": "Igneous rock", "blurb": "Cooled magma with interlocking crystals — the slower it cooled, the bigger the crystals."}, "sedimentary": {"label": "Sedimentary rock", "tag": "Sedimentary rock", "blurb": "Layers of sediment pressed and cemented together — often striped and full of fossils."}, "metamorphic": {"label": "Metamorphic rock", "tag": "Metamorphic rock", "blurb": "Rock re-cooked and squeezed until its minerals line up into ribbons and bands."}}, "forces": [{"id": "cool", "emoji": "🧊", "label": "Cool &amp; Crystallize", "short": "Cool", "desc": "Magma cools slowly and crystals grow into igneous rock."}, {"id": "hp", "emoji": "🔥", "label": "Heat &amp; Pressure", "short": "Heat &amp; Pressure", "desc": "Deep burial bakes and squeezes rock into metamorphic rock."}, {"id": "melt", "emoji": "🌋", "label": "Melt", "short": "Melt", "desc": "Intense heat melts rock all the way back into magma."}, {"id": "erode", "emoji": "🌧️", "label": "Weather &amp; Erode", "short": "Erosion", "desc": "Water and wind break rock into sediment that hardens into sedimentary rock."}], "specimens": {"igneous": [{"id": "granite", "name": "Granite", "blurb": "Salt-and-pepper crystals; the classic countertop rock."}, {"id": "basalt", "name": "Basalt", "blurb": "Fine, dark lava rock that paves the ocean floor."}, {"id": "obsidian", "name": "Obsidian", "blurb": "Volcanic glass that cooled too fast to form crystals."}, {"id": "pumice", "name": "Pumice", "blurb": "So full of gas bubbles that it floats on water!"}], "sedimentary": [{"id": "sandstone", "name": "Sandstone", "blurb": "Cemented sand grains you can sometimes rub loose."}, {"id": "limestone", "name": "Limestone", "blurb": "Made from shells and sea life; it fizzes in acid."}, {"id": "shale", "name": "Shale", "blurb": "Hardened mud that splits into thin flat sheets."}, {"id": "conglomerate", "name": "Conglomerate", "blurb": "Pebbles glued together like natural concrete."}], "metamorphic": [{"id": "marble", "name": "Marble", "blurb": "Limestone transformed — smooth and prized by sculptors."}, {"id": "slate", "name": "Slate", "blurb": "Shale under pressure; splits into flat roofing tiles."}, {"id": "gneiss", "name": "Gneiss", "blurb": "Banded rock with its minerals sorted into stripes."}, {"id": "quartzite", "name": "Quartzite", "blurb": "Sandstone fused into one of the hardest rocks."}]}, "diag": {"magma": "Magma", "igneous": "Igneous", "sedimentary": "Sedimentary", "metamorphic": "Metamorphic"}, "catName": {"igneous": "igneous", "sedimentary": "sedimentary", "metamorphic": "metamorphic"}, "hints": {"already_molten": "It's already molten magma! 🌋", "cool_first": "Magma is liquid — cool it into solid rock first. 🧊", "molten_needed": "This rock isn't molten — melt it into magma first. 🌋"}, "ui": {"forcesTitle": "Apply a force", "albumTitle": "Collector's Album", "diagramTitle": "The rock cycle", "progress": "{n} / {t} specimens collected", "complete": "🏆 Album complete! You collected every rock in the cycle.", "newSpecimen": "New specimen: {name}!", "repeat": "{name} — already in your album.", "toMagma": "Everything melts back into magma. 🌋", "start": "You start as molten magma. Cool it to begin your collection!"}};
+var RC={"states": {"magma": {"label": "Magma", "tag": "Molten rock", "blurb": "Deep underground, rock is so hot it melts into a glowing liquid. Cool it slowly to grow your first crystals."}, "igneous": {"label": "Igneous rock", "tag": "Igneous rock", "blurb": "Cooled magma with interlocking crystals — the slower it cooled, the bigger the crystals."}, "sedimentary": {"label": "Sedimentary rock", "tag": "Sedimentary rock", "blurb": "Layers of sediment pressed and cemented together — often striped and full of fossils."}, "metamorphic": {"label": "Metamorphic rock", "tag": "Metamorphic rock", "blurb": "Rock re-cooked and squeezed until its minerals line up into ribbons and bands."}}, "forces": [{"id": "cool", "emoji": "🧊", "label": "Cool &amp; Crystallize", "short": "Cool", "desc": "Magma cools slowly and crystals grow into igneous rock."}, {"id": "hp", "emoji": "🔥", "label": "Heat &amp; Pressure", "short": "Heat &amp; Pressure", "desc": "Deep burial bakes and squeezes rock into metamorphic rock."}, {"id": "melt", "emoji": "🌋", "label": "Melt", "short": "Melt", "desc": "Intense heat melts rock all the way back into magma."}, {"id": "erode", "emoji": "🌧️", "label": "Weather &amp; Erode", "short": "Erosion", "desc": "Water and wind break rock into sediment that hardens into sedimentary rock."}], "specimens": {"igneous": [{"id": "granite", "name": "Granite", "blurb": "Salt-and-pepper crystals; the classic countertop rock."}, {"id": "basalt", "name": "Basalt", "blurb": "Fine, dark lava rock that paves the ocean floor."}, {"id": "obsidian", "name": "Obsidian", "blurb": "Volcanic glass that cooled too fast to form crystals."}, {"id": "pumice", "name": "Pumice", "blurb": "So full of gas bubbles that it floats on water!"}], "sedimentary": [{"id": "sandstone", "name": "Sandstone", "blurb": "Cemented sand grains you can sometimes rub loose."}, {"id": "limestone", "name": "Limestone", "blurb": "Made from shells and sea life; it fizzes in acid."}, {"id": "shale", "name": "Shale", "blurb": "Hardened mud that splits into thin flat sheets."}, {"id": "conglomerate", "name": "Conglomerate", "blurb": "Pebbles glued together like natural concrete."}], "metamorphic": [{"id": "marble", "name": "Marble", "blurb": "Limestone transformed — smooth and prized by sculptors."}, {"id": "slate", "name": "Slate", "blurb": "Shale under pressure; splits into flat roofing tiles."}, {"id": "gneiss", "name": "Gneiss", "blurb": "Banded rock with its minerals sorted into stripes."}, {"id": "quartzite", "name": "Quartzite", "blurb": "Sandstone fused into one of the hardest rocks."}]}, "diag": {"magma": "Magma", "igneous": "Igneous", "sedimentary": "Sedimentary", "metamorphic": "Metamorphic"}, "catName": {"igneous": "igneous", "sedimentary": "sedimentary", "metamorphic": "metamorphic"}, "hints": {"already_molten": "It's already molten magma! 🌋", "cool_first": "Magma is liquid — cool it into solid rock first. 🧊", "molten_needed": "This rock isn't molten — melt it into magma first. 🌋"}, "ui": {"forcesTitle": "Apply a force", "diagramTitle": "The rock cycle", "made": "You made {name}!", "toMagma": "Everything melts back into magma. 🌋", "start": "You start as molten magma. Cool it to make your first rock!"}};
 
 /* ============ THE ROCK CYCLE TRANSFORMER ============ */
 (function(){
@@ -401,42 +398,12 @@ var RC={"states": {"magma": {"label": "Magma", "tag": "Molten rock", "blurb": "D
   const ctx=cv.getContext('2d'); const R=window.RC;
   const nameEl=document.getElementById('rcName'), tagEl=document.getElementById('rcTag'),
         blurbEl=document.getElementById('rcBlurb'), msgEl=document.getElementById('rcMsg'),
-        forcesEl=document.getElementById('rcForces'), albumEl=document.getElementById('rcAlbum'),
-        progEl=document.getElementById('rcProg'), diagEl=document.getElementById('rcDiagram');
+        forcesEl=document.getElementById('rcForces'), diagEl=document.getElementById('rcDiagram');
   document.getElementById('rcForcesTitle').textContent=R.ui.forcesTitle;
-  document.getElementById('rcAlbumTitle').textContent=R.ui.albumTitle;
   document.getElementById('rcDiagramTitle').textContent=R.ui.diagramTitle;
-  const CATS=['igneous','sedimentary','metamorphic'];
   const COL={magma:'#ff5a2c',igneous:'#7f8794',sedimentary:'#cda86e',metamorphic:'#b491b6'};
   let state='magma', curSpec=null;
-  const collected={igneous:[],sedimentary:[],metamorphic:[]};
-
-  /* ---- album ---- */
-  function buildAlbum(){
-    let h='';
-    CATS.forEach(cat=>{
-      h+='<div class="rc-cat">'+R.states[cat].tag+'</div>';
-      R.specimens[cat].forEach(sp=>{
-        h+='<div class="rc-slot locked" id="slot-'+sp.id+'"><span class="dot"></span><span class="sn">?</span></div>';
-      });
-    });
-    albumEl.innerHTML=h;
-  }
-  function markCollected(cat,sp,isNew){
-    const el=document.getElementById('slot-'+sp.id);
-    if(!el) return;
-    el.classList.remove('locked'); el.classList.add('got');
-    el.querySelector('.dot').style.background=COL[cat];
-    el.querySelector('.sn').textContent=sp.name;
-    el.querySelector('.sn').style.color='var(--star)';
-    if(isNew){ el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
-  }
-  function totalCollected(){ return CATS.reduce((n,c)=>n+collected[c].length,0); }
-  function updateProg(){
-    const n=totalCollected(), t=12;
-    progEl.textContent=R.ui.progress.replace('{n}',n).replace('{t}',t);
-    if(n>=t){ progEl.textContent=R.ui.complete; }
-  }
+  const specIdx={igneous:0,sedimentary:0,metamorphic:0};
 
   /* ---- rock diagram ---- */
   // Boxes are % of the 1092x1092 rock-cycle illustration {l,t,w,h}.
@@ -555,35 +522,26 @@ var RC={"states": {"magma": {"label": "Magma", "tag": "Molten rock", "blurb": "D
     highlightNode();
     if(state==='magma') startAnim(); else stopAnim();
   }
-  function awardSpecimen(cat){
-    const owned=collected[cat];
-    const remaining=R.specimens[cat].filter(s=>!owned.some(o=>o.id===s.id));
-    if(remaining.length){
-      const sp=remaining[0]; owned.push(sp); curSpec=sp;
-      markCollected(cat,sp,true); updateProg();
-      const done=totalCollected()>=12;
-      msgEl.textContent=(done?'🏆 ':'✨ ')+R.ui.newSpecimen.replace('{name}',sp.name);
-      msgEl.classList.add('new');
-    } else {
-      const sp=R.specimens[cat][Math.floor(Math.random()*R.specimens[cat].length)];
-      curSpec=sp;
-      msgEl.textContent=R.ui.repeat.replace('{name}',sp.name).replace('{cat}',R.catName[cat]);
-      msgEl.classList.remove('new');
-    }
+  function pickSpecimen(cat){
+    // cycle through the real examples in this category so repeat visits vary
+    const list=R.specimens[cat]; const sp=list[specIdx[cat]%list.length]; specIdx[cat]++;
+    curSpec=sp;
+    msgEl.textContent='✨ '+R.ui.made.replace('{name}',sp.name);
+    msgEl.classList.add('new');
   }
   function setMagma(){ state='magma'; curSpec=null; msgEl.textContent=R.ui.toMagma; msgEl.classList.remove('new'); showState(); }
   function invalid(btn,hint){ btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake'); msgEl.textContent=hint; msgEl.classList.remove('new'); }
 
   function applyForce(id,btn){
     if(state==='magma'){
-      if(id==='cool'){ state='igneous'; awardSpecimen('igneous'); showState(); flashRock(); highlightProcess('cool'); }
+      if(id==='cool'){ state='igneous'; pickSpecimen('igneous'); showState(); flashRock(); highlightProcess('cool'); }
       else if(id==='melt'){ invalid(btn,R.hints.already_molten); }
       else { invalid(btn,R.hints.cool_first); }
     } else {
       if(id==='cool'){ invalid(btn,R.hints.molten_needed); }
       else if(id==='melt'){ setMagma(); flashRock(); highlightProcess('melt'); }
-      else if(id==='hp'){ state='metamorphic'; awardSpecimen('metamorphic'); showState(); flashRock(); highlightProcess('hp'); }
-      else if(id==='erode'){ state='sedimentary'; awardSpecimen('sedimentary'); showState(); flashRock(); highlightProcess('erode'); }
+      else if(id==='hp'){ state='metamorphic'; pickSpecimen('metamorphic'); showState(); flashRock(); highlightProcess('hp'); }
+      else if(id==='erode'){ state='sedimentary'; pickSpecimen('sedimentary'); showState(); flashRock(); highlightProcess('erode'); }
     }
   }
 
@@ -595,7 +553,7 @@ var RC={"states": {"magma": {"label": "Magma", "tag": "Molten rock", "blurb": "D
     forcesEl.appendChild(b);
   });
 
-  buildAlbum(); buildDiagram(); updateProg();
+  buildDiagram();
   msgEl.textContent=R.ui.start;
   showState();
 })();
