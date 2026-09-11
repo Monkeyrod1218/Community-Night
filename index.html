@@ -50,7 +50,8 @@
   .tagline{color:var(--mist);font-family:'Dancing Script','Segoe Script',cursive;font-weight:600;
     font-size:clamp(1.63rem,3.58vw,1.99rem);margin-top:18px;max-width:40ch}
 
-  .lang{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-top:46px}
+  .lang{display:flex;flex-direction:column;align-items:center;gap:18px;margin-top:46px}
+  .lang-row{display:flex;flex-wrap:wrap;gap:18px;justify-content:center}
   .btn{font-family:'Spline Sans',sans-serif;font-weight:600;font-size:1.05rem;
     padding:16px 44px;border-radius:100px;border:1px solid transparent;cursor:pointer;
     transition:.25s;min-width:190px;letter-spacing:.01em;display:inline-flex;align-items:center;
@@ -74,10 +75,14 @@
 
       <div class="lang">
         <!-- Destinations to be wired up later (English / Spanish landing pages). -->
-        <a class="btn btn-gold" href="english.html" data-lang="en">Space Science (English)</a>
-        <a class="btn btn-gold" href="spanish.html" data-lang="es">Ciencia Espacial (Español)</a>
-        <a class="btn btn-gold" href="earth-english.html" data-lang="en">Earth Science (English)</a>
-        <a class="btn btn-gold" href="earth-spanish.html" data-lang="es">Ciencia de la Tierra (Español)</a>
+        <div class="lang-row">
+          <a class="btn btn-gold" href="english.html" data-lang="en">Space Science (English)</a>
+          <a class="btn btn-gold" href="spanish.html" data-lang="es">Ciencia Espacial (Español)</a>
+        </div>
+        <div class="lang-row">
+          <a class="btn btn-gold" href="earth-english.html" data-lang="en">Earth Science (English)</a>
+          <a class="btn btn-gold" href="earth-spanish.html" data-lang="es">Ciencia de la Tierra (Español)</a>
+        </div>
       </div>
     </section>
   </main>
