@@ -267,6 +267,10 @@
     .vl-erupt{margin-top:16px;font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;color:#241704;background:linear-gradient(180deg,var(--ember),#ff5a2c);border:none;border-radius:100px;padding:13px 40px;cursor:pointer;box-shadow:0 10px 30px rgba(255,90,44,.34);transition:transform .15s, box-shadow .2s;display:inline-flex;align-items:center;gap:9px}
     .vl-erupt:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(255,90,44,.5)}
     .vl-erupt:disabled{opacity:.6;cursor:default;transform:none}
+    .vl-example{margin-top:12px;min-height:2.8em}
+    .vl-example .k{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+    .vl-example .n{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--gold-soft);margin-top:3px;line-height:1.15}
+    .vl-example .n .loc{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--cyan)}
     .vl-slider{margin-bottom:22px}
     .vl-slabel{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
     .vl-slabel .n{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--star)}
@@ -291,6 +295,7 @@
     <div class="vl-grid">
       <div class="vl-stage">
         <canvas id="vlCanvas" width="440" height="340"></canvas>
+        <div class="vl-example" id="vlExample"></div>
         <button type="button" class="vl-erupt" id="vlErupt">🌋 <span id="vlEruptLab"></span></button>
       </div>
       <div class="vl-controls">
@@ -359,7 +364,7 @@
 
 
 
-var RC={"ui": {"silica": "Sílice", "gas": "Contenido de gas", "explosivity": "Explosividad", "magma": "Magma", "viscosity": "Viscosidad", "style": "Erupción", "volcano": "Volcán", "erupt": "¡Erupción!", "silLo": "bajo · basalto", "silHi": "alto · riolita", "gasLo": "bajo", "gasHi": "alto"}, "gasWords": ["bajo", "medio", "alto"], "magma": ["Basáltico (máfico)", "Andesítico", "Riolítico (félsico)"], "visc": ["Fluida y líquida", "Media", "Espesa y pegajosa"], "styles": {"effusive": "Efusiva &mdash; flujos de lava suaves", "strombolian": "Estromboliana &mdash; fuentes de lava", "dome": "Formación de domo &mdash; lenta y pegajosa", "explosive": "Explosiva &mdash; ceniza y escoria", "plinian": "Pliniana &mdash; columna de ceniza gigante"}, "verdicts": {"effusive": "El magma líquido y con poco gas brota como ríos tranquilos de lava. 🌋", "strombolian": "El gas que escapa de la lava líquida lanza al aire gotas incandescentes en fuentes de fuego.", "dome": "La lava rígida y con poco gas es demasiado espesa para fluir &mdash; se apila en un domo empinado y pastoso.", "explosive": "El magma pegajoso y con mucho gas lanza ceniza y escoria muy alto.", "plinian": "¡Una explosión violenta &mdash; una enorme columna de ceniza, como el Monte Santa Elena!"}, "types": {"shield": {"name": "Volcán en escudo", "example": "como Mauna Loa, Hawái", "desc": "La lava basáltica líquida se extiende por todas partes y forma un domo ancho de laderas suaves."}, "cinder": {"name": "Cono de escoria", "example": "como Par&iacute;cutin, México", "desc": "La lava con gas pero líquida sale en fuentes y apila fragmentos en un cono pequeño y empinado."}, "strato": {"name": "Estratovolcán", "example": "como el Monte Santa Elena", "desc": "El magma espeso y rico en gas tapona el conducto hasta que estalla en explosiones violentas llenas de ceniza."}, "dome": {"name": "Domo de lava", "example": "como Lassen Peak, California", "desc": "La lava rígida y pastosa es demasiado espesa para fluir, así que se abomba en un montículo empinado sobre el conducto."}}};
+var RC={"ui": {"silica": "Sílice", "gas": "Contenido de gas", "explosivity": "Explosividad", "magma": "Magma", "viscosity": "Viscosidad", "style": "Erupción", "volcano": "Volcán", "erupt": "¡Erupción!", "example": "Un volcán real como este", "silLo": "bajo · basalto", "silHi": "alto · riolita", "gasLo": "bajo", "gasHi": "alto"}, "gasWords": ["bajo", "medio", "alto"], "magma": ["Basáltico (máfico)", "Andesítico", "Riolítico (félsico)"], "visc": ["Fluida y líquida", "Media", "Espesa y pegajosa"], "styles": {"effusive": "Efusiva &mdash; flujos de lava suaves", "strombolian": "Estromboliana &mdash; fuentes de lava", "dome": "Formación de domo &mdash; lenta y pegajosa", "explosive": "Explosiva &mdash; ceniza y escoria", "plinian": "Pliniana &mdash; columna de ceniza gigante"}, "verdicts": {"effusive": "El magma líquido y con poco gas brota como ríos tranquilos de lava. 🌋", "strombolian": "El gas que escapa de la lava líquida lanza al aire gotas incandescentes en fuentes de fuego.", "dome": "La lava rígida y con poco gas es demasiado espesa para fluir &mdash; se apila en un domo empinado y pastoso.", "explosive": "El magma pegajoso y con mucho gas lanza ceniza y escoria muy alto.", "plinian": "¡Una explosión violenta &mdash; una enorme columna de ceniza, como el Monte Santa Elena!"}, "types": {"shield": {"name": "Volcán en escudo", "example": "como Mauna Loa, Hawái", "desc": "La lava basáltica líquida se extiende por todas partes y forma un domo ancho de laderas suaves."}, "cinder": {"name": "Cono de escoria", "example": "como Par&iacute;cutin, México", "desc": "La lava con gas pero líquida sale en fuentes y apila fragmentos en un cono pequeño y empinado."}, "strato": {"name": "Estratovolcán", "example": "como el Monte Santa Elena", "desc": "El magma espeso y rico en gas tapona el conducto hasta que estalla en explosiones violentas llenas de ceniza."}, "dome": {"name": "Domo de lava", "example": "como Lassen Peak, California", "desc": "La lava rígida y pastosa es demasiado espesa para fluir, así que se abomba en un montículo empinado sobre el conducto."}}, "examples": {"shield": [{"n": "Mauna Loa", "p": "Hawái, EE.&nbsp;UU."}, {"n": "K&#299;lauea", "p": "Hawái, EE.&nbsp;UU."}, {"n": "Fernandina", "p": "Gal&aacute;pagos, Ecuador"}, {"n": "Piton de la Fournaise", "p": "Reunión"}], "cinder": [{"n": "Sunset Crater", "p": "Arizona, EE.&nbsp;UU."}, {"n": "Par&iacute;cutin", "p": "Michoac&aacute;n, México"}, {"n": "Cerro Negro", "p": "Nicaragua"}, {"n": "Capul&iacute;n", "p": "Nuevo México, EE.&nbsp;UU."}], "strato": [{"n": "Monte Fuji", "p": "Japón"}, {"n": "Monte Rainier", "p": "Washington, EE.&nbsp;UU."}, {"n": "Monte Santa Elena", "p": "Washington, EE.&nbsp;UU."}, {"n": "Monte Pinatubo", "p": "Filipinas"}, {"n": "Krakatoa", "p": "Indonesia"}], "dome": [{"n": "Pico Lassen", "p": "California, EE.&nbsp;UU."}, {"n": "Puy de D&ocirc;me", "p": "Francia"}, {"n": "Domos Mono", "p": "California, EE.&nbsp;UU."}, {"n": "Chait&eacute;n", "p": "Chile"}]}};
 
 /* ============ VOLCANO ERUPTION LAB ============ */
 (function(){
@@ -376,6 +381,7 @@ var RC={"ui": {"silica": "Sílice", "gas": "Contenido de gas", "explosivity": "E
   const silVal=document.getElementById('vlSilVal'), gasVal=document.getElementById('vlGasVal');
   const expVal=document.getElementById('vlExpVal'), bar=document.getElementById('vlBar');
   const verdict=document.getElementById('vlVerdict'), cards=document.getElementById('vlCards');
+  const exampleEl=document.getElementById('vlExample');
 
   let silica=+silEl.value, gasV=+gasEl.value;
   function norms(){ return {s:(silica-45)/30, g:gasV/100}; }
@@ -386,6 +392,12 @@ var RC={"ui": {"silica": "Sílice", "gas": "Contenido de gas", "explosivity": "E
     return 'strato';
   }
   function styleKey(type,E){ return type==='shield'?'effusive':type==='cinder'?'strombolian':type==='dome'?'dome':(E>=80?'plinian':'explosive'); }
+  function pickExample(type,E){
+    const list=R.examples[type]; const {s,g}=norms();
+    let t = (type==='shield'||type==='cinder') ? g : (type==='strato' ? (E-40)/60 : (s-0.75)/0.25);
+    let i=Math.floor(Math.max(0,Math.min(0.999,t))*list.length);
+    return list[Math.max(0,Math.min(list.length-1,i))];
+  }
   function viscBand(){ const s=norms().s; return s<0.33?0:(s<0.66?1:2); }
   function magmaBand(){ const s=norms().s; return s<0.40?0:(s<0.75?1:2); }
   function gasBand(){ const g=norms().g; return g<0.33?0:(g<0.66?1:2); }
@@ -399,10 +411,11 @@ var RC={"ui": {"silica": "Sílice", "gas": "Contenido de gas", "explosivity": "E
     bar.style.width=E+'%';
     bar.style.background = E<35?'linear-gradient(90deg,#74dbe8,#7ee0a0)' : (E<70?'linear-gradient(90deg,#7ee0a0,#f4c15b)' : 'linear-gradient(90deg,#f4c15b,#f0563a)');
     verdict.innerHTML=R.verdicts[key];
-    const t=R.types[type];
+    const t=R.types[type], ex=pickExample(type,E);
+    exampleEl.innerHTML='<div class="k">'+R.ui.example+'</div><div class="n">'+ex.n+' <span class="loc">&middot; '+ex.p+'</span></div>';
     cards.innerHTML=
       '<div class="vl-card"><div class="vl-k">'+R.ui.style+'</div><div class="vl-vv">'+R.styles[key]+'</div></div>'+
-      '<div class="vl-card"><div class="vl-k">'+R.ui.volcano+'</div><div class="vl-vv">'+t.name+'<small>'+t.example+'</small></div></div>'+
+      '<div class="vl-card"><div class="vl-k">'+R.ui.volcano+'</div><div class="vl-vv">'+t.name+'</div></div>'+
       '<div class="vl-card wide"><div class="vl-desc">'+t.desc+'</div></div>';
   }
   silEl.addEventListener('input',()=>{ silica=+silEl.value; render(); });

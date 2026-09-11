@@ -267,6 +267,10 @@
     .vl-erupt{margin-top:16px;font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;color:#241704;background:linear-gradient(180deg,var(--ember),#ff5a2c);border:none;border-radius:100px;padding:13px 40px;cursor:pointer;box-shadow:0 10px 30px rgba(255,90,44,.34);transition:transform .15s, box-shadow .2s;display:inline-flex;align-items:center;gap:9px}
     .vl-erupt:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(255,90,44,.5)}
     .vl-erupt:disabled{opacity:.6;cursor:default;transform:none}
+    .vl-example{margin-top:12px;min-height:2.8em}
+    .vl-example .k{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+    .vl-example .n{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--gold-soft);margin-top:3px;line-height:1.15}
+    .vl-example .n .loc{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--cyan)}
     .vl-slider{margin-bottom:22px}
     .vl-slabel{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
     .vl-slabel .n{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--star)}
@@ -291,6 +295,7 @@
     <div class="vl-grid">
       <div class="vl-stage">
         <canvas id="vlCanvas" width="440" height="340"></canvas>
+        <div class="vl-example" id="vlExample"></div>
         <button type="button" class="vl-erupt" id="vlErupt">🌋 <span id="vlEruptLab"></span></button>
       </div>
       <div class="vl-controls">
@@ -359,7 +364,7 @@
 
 
 
-var RC={"ui": {"silica": "Silica", "gas": "Gas content", "explosivity": "Explosivity", "magma": "Magma", "viscosity": "Viscosity", "style": "Eruption", "volcano": "Volcano", "erupt": "Erupt!", "silLo": "low · basalt", "silHi": "high · rhyolite", "gasLo": "low", "gasHi": "high"}, "gasWords": ["low", "medium", "high"], "magma": ["Basaltic (mafic)", "Andesitic", "Rhyolitic (felsic)"], "visc": ["Thin &amp; runny", "Medium", "Thick &amp; sticky"], "styles": {"effusive": "Effusive &mdash; gentle lava flows", "strombolian": "Strombolian &mdash; lava fountains", "dome": "Dome-building &mdash; slow &amp; sticky", "explosive": "Explosive &mdash; ash &amp; cinders", "plinian": "Plinian &mdash; towering ash column"}, "verdicts": {"effusive": "Runny, low-gas magma oozes out as calm rivers of lava. 🌋", "strombolian": "Gas escaping the runny lava flings glowing blobs into the air in fiery fountains.", "dome": "Stiff, low-gas lava is too thick to flow &mdash; it just piles up into a steep, pasty dome.", "explosive": "Sticky, gas-rich magma blasts ash and cinders high into the sky.", "plinian": "A violently explosive blast &mdash; a huge ash column, like Mount St. Helens!"}, "types": {"shield": {"name": "Shield volcano", "example": "like Mauna Loa, Hawai&lsquo;i", "desc": "Runny basalt lava spreads far and wide, building a broad, gently sloping dome."}, "cinder": {"name": "Cinder cone", "example": "like Par&iacute;cutin, Mexico", "desc": "Gassy but runny lava fountains into the air and piles fragments into a small, steep cone."}, "strato": {"name": "Stratovolcano", "example": "like Mount St. Helens", "desc": "Thick, gas-rich magma plugs the vent until it bursts in violent, ash-rich explosions."}, "dome": {"name": "Lava dome", "example": "like Lassen Peak, California", "desc": "Stiff, pasty lava is too thick to flow, so it squeezes up into a steep mound over the vent."}}};
+var RC={"ui": {"silica": "Silica", "gas": "Gas content", "explosivity": "Explosivity", "magma": "Magma", "viscosity": "Viscosity", "style": "Eruption", "volcano": "Volcano", "erupt": "Erupt!", "example": "A real volcano like this", "silLo": "low · basalt", "silHi": "high · rhyolite", "gasLo": "low", "gasHi": "high"}, "gasWords": ["low", "medium", "high"], "magma": ["Basaltic (mafic)", "Andesitic", "Rhyolitic (felsic)"], "visc": ["Thin &amp; runny", "Medium", "Thick &amp; sticky"], "styles": {"effusive": "Effusive &mdash; gentle lava flows", "strombolian": "Strombolian &mdash; lava fountains", "dome": "Dome-building &mdash; slow &amp; sticky", "explosive": "Explosive &mdash; ash &amp; cinders", "plinian": "Plinian &mdash; towering ash column"}, "verdicts": {"effusive": "Runny, low-gas magma oozes out as calm rivers of lava. 🌋", "strombolian": "Gas escaping the runny lava flings glowing blobs into the air in fiery fountains.", "dome": "Stiff, low-gas lava is too thick to flow &mdash; it just piles up into a steep, pasty dome.", "explosive": "Sticky, gas-rich magma blasts ash and cinders high into the sky.", "plinian": "A violently explosive blast &mdash; a huge ash column, like Mount St. Helens!"}, "types": {"shield": {"name": "Shield volcano", "example": "like Mauna Loa, Hawai&lsquo;i", "desc": "Runny basalt lava spreads far and wide, building a broad, gently sloping dome."}, "cinder": {"name": "Cinder cone", "example": "like Par&iacute;cutin, Mexico", "desc": "Gassy but runny lava fountains into the air and piles fragments into a small, steep cone."}, "strato": {"name": "Stratovolcano", "example": "like Mount St. Helens", "desc": "Thick, gas-rich magma plugs the vent until it bursts in violent, ash-rich explosions."}, "dome": {"name": "Lava dome", "example": "like Lassen Peak, California", "desc": "Stiff, pasty lava is too thick to flow, so it squeezes up into a steep mound over the vent."}}, "examples": {"shield": [{"n": "Mauna Loa", "p": "Hawaii, USA"}, {"n": "K&#299;lauea", "p": "Hawaii, USA"}, {"n": "Fernandina", "p": "Gal&aacute;pagos, Ecuador"}, {"n": "Piton de la Fournaise", "p": "R&eacute;union"}], "cinder": [{"n": "Sunset Crater", "p": "Arizona, USA"}, {"n": "Par&iacute;cutin", "p": "Michoac&aacute;n, Mexico"}, {"n": "Cerro Negro", "p": "Nicaragua"}, {"n": "Capulin", "p": "New Mexico, USA"}], "strato": [{"n": "Mount Fuji", "p": "Japan"}, {"n": "Mount Rainier", "p": "Washington, USA"}, {"n": "Mount St. Helens", "p": "Washington, USA"}, {"n": "Mount Pinatubo", "p": "Philippines"}, {"n": "Krakatoa", "p": "Indonesia"}], "dome": [{"n": "Lassen Peak", "p": "California, USA"}, {"n": "Puy de D&ocirc;me", "p": "France"}, {"n": "Mono Domes", "p": "California, USA"}, {"n": "Chait&eacute;n", "p": "Chile"}]}};
 
 /* ============ VOLCANO ERUPTION LAB ============ */
 (function(){
@@ -376,6 +381,7 @@ var RC={"ui": {"silica": "Silica", "gas": "Gas content", "explosivity": "Explosi
   const silVal=document.getElementById('vlSilVal'), gasVal=document.getElementById('vlGasVal');
   const expVal=document.getElementById('vlExpVal'), bar=document.getElementById('vlBar');
   const verdict=document.getElementById('vlVerdict'), cards=document.getElementById('vlCards');
+  const exampleEl=document.getElementById('vlExample');
 
   let silica=+silEl.value, gasV=+gasEl.value;
   function norms(){ return {s:(silica-45)/30, g:gasV/100}; }
@@ -386,6 +392,12 @@ var RC={"ui": {"silica": "Silica", "gas": "Gas content", "explosivity": "Explosi
     return 'strato';
   }
   function styleKey(type,E){ return type==='shield'?'effusive':type==='cinder'?'strombolian':type==='dome'?'dome':(E>=80?'plinian':'explosive'); }
+  function pickExample(type,E){
+    const list=R.examples[type]; const {s,g}=norms();
+    let t = (type==='shield'||type==='cinder') ? g : (type==='strato' ? (E-40)/60 : (s-0.75)/0.25);
+    let i=Math.floor(Math.max(0,Math.min(0.999,t))*list.length);
+    return list[Math.max(0,Math.min(list.length-1,i))];
+  }
   function viscBand(){ const s=norms().s; return s<0.33?0:(s<0.66?1:2); }
   function magmaBand(){ const s=norms().s; return s<0.40?0:(s<0.75?1:2); }
   function gasBand(){ const g=norms().g; return g<0.33?0:(g<0.66?1:2); }
@@ -399,10 +411,11 @@ var RC={"ui": {"silica": "Silica", "gas": "Gas content", "explosivity": "Explosi
     bar.style.width=E+'%';
     bar.style.background = E<35?'linear-gradient(90deg,#74dbe8,#7ee0a0)' : (E<70?'linear-gradient(90deg,#7ee0a0,#f4c15b)' : 'linear-gradient(90deg,#f4c15b,#f0563a)');
     verdict.innerHTML=R.verdicts[key];
-    const t=R.types[type];
+    const t=R.types[type], ex=pickExample(type,E);
+    exampleEl.innerHTML='<div class="k">'+R.ui.example+'</div><div class="n">'+ex.n+' <span class="loc">&middot; '+ex.p+'</span></div>';
     cards.innerHTML=
       '<div class="vl-card"><div class="vl-k">'+R.ui.style+'</div><div class="vl-vv">'+R.styles[key]+'</div></div>'+
-      '<div class="vl-card"><div class="vl-k">'+R.ui.volcano+'</div><div class="vl-vv">'+t.name+'<small>'+t.example+'</small></div></div>'+
+      '<div class="vl-card"><div class="vl-k">'+R.ui.volcano+'</div><div class="vl-vv">'+t.name+'</div></div>'+
       '<div class="vl-card wide"><div class="vl-desc">'+t.desc+'</div></div>';
   }
   silEl.addEventListener('input',()=>{ silica=+silEl.value; render(); });
