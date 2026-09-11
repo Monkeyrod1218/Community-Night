@@ -288,15 +288,18 @@
     .rc-msg{margin-top:16px;min-height:1.6em;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--cyan);line-height:1.4}
     .rc-msg.new{color:var(--gold-soft)}
     .rc-diagram{margin-bottom:22px}
-    .rc-diagram svg{width:100%;height:auto;display:block}
-    .rc-node circle{transition:stroke .25s, stroke-width .25s}
-    .rc-node text{font-family:'JetBrains Mono',monospace;fill:var(--mist);transition:fill .25s}
-    .rc-node.on circle{stroke:var(--gold);stroke-width:3.2}
-    .rc-node.on text{fill:var(--gold-soft)}
-    .rc-alab{font-family:'JetBrains Mono',monospace;fill:var(--dim);transition:fill .2s}
-    .rc-edge{transition:stroke .2s, stroke-width .2s}
-    .rc-edge.on{stroke:var(--gold);stroke-width:2.8}
-    .rc-alab.on{fill:var(--gold-soft);font-weight:700}
+    .rc-imgwrap{position:relative;background:#faf7f0;border:1px solid var(--line);border-radius:16px;overflow:hidden;line-height:0}
+    .rc-imgwrap img{width:100%;height:auto;display:block}
+    /* persistent ring on the current stage */
+    .rc-state-ring{position:absolute;border:3px solid var(--cyan);border-radius:50%;
+      box-shadow:0 0 16px rgba(116,219,232,.6);opacity:0;transition:all .4s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+    .rc-state-ring.show{opacity:1}
+    /* transient highlight over the process arrow that was just used */
+    .rc-hl{position:absolute;border:3px solid var(--gold);border-radius:16px;
+      box-shadow:0 0 22px rgba(244,193,91,.75), inset 0 0 20px rgba(244,193,91,.3);
+      opacity:0;transition:opacity .2s;pointer-events:none}
+    .rc-hl.on{opacity:1;animation:rcHlPulse 1.7s ease-out}
+    @keyframes rcHlPulse{0%,70%{border-color:var(--gold);box-shadow:0 0 22px rgba(244,193,91,.75), inset 0 0 20px rgba(244,193,91,.3)}100%{border-color:rgba(244,193,91,.5)}}
     /* highlight rock when it transforms */
     #rcCanvas{transition:box-shadow .3s}
     #rcCanvas.lit{animation:rcLit 1.25s ease-out}
@@ -436,43 +439,46 @@ var RC={"states": {"magma": {"label": "Magma", "tag": "Roca fundida", "blurb": "
   }
 
   /* ---- rock diagram ---- */
-  const DN={magma:[150,30],igneous:[256,124],sedimentary:[150,218],metamorphic:[44,124]};
-  const LOOP=[['magma','igneous','cool'],['igneous','sedimentary','erode'],
-              ['sedimentary','metamorphic','hp'],['metamorphic','magma','melt']];
-  function edgePoint(a,b){ // point on circle a (r22) toward b
-    const dx=b[0]-a[0], dy=b[1]-a[1], d=Math.hypot(dx,dy);
-    return [a[0]+dx/d*24, a[1]+dy/d*24];
-  }
+  // Boxes are % of the 1092x1092 rock-cycle illustration {l,t,w,h}.
+  // Process arrows (transient highlight when a force is applied):
+  const PROC={
+    cool:  {l:20, t:12, w:26, h:18},   // "Cooling" arrows, top-left
+    erode: {l:60, t:12, w:34, h:25},   // "Weathering and Erosion", top-right
+    hp:    {l:33, t:36, w:19, h:25},   // "Heat and Pressure", centre vertical
+    melt:  {l:23, t:28, w:19, h:16}    // "Melting", centre red arrow
+  };
+  // Rock piles (persistent ring on the current stage):
+  const STATEBOX={
+    magma:       {l:6,  t:28, w:28, h:22},
+    igneous:     {l:39, t:13, w:22, h:22},
+    sedimentary: {l:54, t:64, w:31, h:24},
+    metamorphic: {l:11, t:63, w:29, h:25}
+  };
   function buildDiagram(){
-    let svg='<svg viewBox="0 0 300 250" role="img"><defs><marker id="rcArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--dim)"/></marker></defs>';
-    LOOP.forEach(([a,b,f])=>{
-      const pa=edgePoint(DN[a],DN[b]), pb=edgePoint(DN[b],DN[a]);
-      svg+='<line class="rc-edge" id="edge-'+f+'" x1="'+pa[0].toFixed(1)+'" y1="'+pa[1].toFixed(1)+'" x2="'+pb[0].toFixed(1)+'" y2="'+pb[1].toFixed(1)+'" stroke="var(--dim)" stroke-width="1.3" marker-end="url(#rcArr)"/>';
-      let mx=(pa[0]+pb[0])/2, my=(pa[1]+pb[1])/2;
-      const ox=(mx-150), oy=(my-124); const ol=Math.hypot(ox,oy)||1;
-      mx+=ox/ol*16; my+=oy/ol*16;
-      svg+='<text class="rc-alab" id="alab-'+f+'" x="'+mx.toFixed(1)+'" y="'+my.toFixed(1)+'" font-size="8.5" text-anchor="middle" dominant-baseline="middle">'+R.forces.find(x=>x.id===f).short+'</text>';
+    let h='<div class="rc-imgwrap"><img src="images/rock-cycle.png" alt="The rock cycle: igneous, sedimentary and metamorphic rocks transform through cooling, weathering and erosion, heat and pressure, and melting.">';
+    h+='<div class="rc-state-ring" id="rcRing"></div>';
+    Object.keys(PROC).forEach(f=>{
+      const b=PROC[f];
+      h+='<div class="rc-hl" id="hl-'+f+'" style="left:'+b.l+'%;top:'+b.t+'%;width:'+b.w+'%;height:'+b.h+'%"></div>';
     });
-    ['magma','igneous','sedimentary','metamorphic'].forEach(k=>{
-      const p=DN[k];
-      svg+='<g class="rc-node" id="node-'+k+'">'+
-           '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="22" fill="'+COL[k]+'" fill-opacity="0.9" stroke="var(--line)" stroke-width="1.4"/>'+
-           '<text x="'+p[0]+'" y="'+(p[1]+38)+'" font-size="9" text-anchor="middle">'+R.diag[k]+'</text></g>';
-    });
-    svg+='</svg>';
-    diagEl.innerHTML=svg;
+    h+='</div>';
+    diagEl.innerHTML=h;
   }
-  function highlightNode(){
-    document.querySelectorAll('.rc-node').forEach(n=>n.classList.remove('on'));
-    const el=document.getElementById('node-'+state); if(el) el.classList.add('on');
+  function highlightNode(){ // move the persistent ring onto the current stage's rock
+    const ring=document.getElementById('rcRing'); if(!ring) return;
+    const b=STATEBOX[state]; if(!b){ ring.classList.remove('show'); return; }
+    ring.style.left=b.l+'%'; ring.style.top=b.t+'%'; ring.style.width=b.w+'%'; ring.style.height=b.h+'%';
+    ring.style.borderColor=COL[state];
+    ring.style.boxShadow='0 0 16px '+COL[state];
+    ring.classList.add('show');
   }
   let procTimer=null;
   function highlightProcess(fid){
-    document.querySelectorAll('.rc-edge.on,.rc-alab.on').forEach(e=>e.classList.remove('on'));
-    const ln=document.getElementById('edge-'+fid), lb=document.getElementById('alab-'+fid);
-    if(ln) ln.classList.add('on'); if(lb) lb.classList.add('on');
+    document.querySelectorAll('.rc-hl.on').forEach(e=>e.classList.remove('on'));
+    const el=document.getElementById('hl-'+fid);
+    if(el){ void el.offsetWidth; el.classList.add('on'); }
     clearTimeout(procTimer);
-    procTimer=setTimeout(()=>{ if(ln)ln.classList.remove('on'); if(lb)lb.classList.remove('on'); },1700);
+    procTimer=setTimeout(()=>{ if(el) el.classList.remove('on'); },1700);
   }
   function flashRock(){ cv.classList.remove('lit'); void cv.offsetWidth; cv.classList.add('lit'); }
 
