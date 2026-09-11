@@ -262,9 +262,9 @@
       <h3>Cómo se juega</h3>
       <ol>
         <li>Empiezas como <b>magma</b> brillante. Observa la roca de la izquierda &mdash; su nombre, su tipo y de qué está hecha.</li>
-        <li>Presiona uno de los cuatro botones de <b>fuerza</b>. La roca se transformará y la <b>flecha correspondiente en el diagrama del ciclo</b> brillará en dorado para que veas qué proceso usaste.</li>
+        <li>Presiona uno de los cinco botones de <b>fuerza</b> de abajo. La roca se transformará y la <b>flecha correspondiente en el diagrama del ciclo</b> brillará en dorado para que veas qué proceso usaste.</li>
         <li>Mira cómo el <b>anillo del diagrama</b> salta a la nueva roca &mdash; ahí es donde estás ahora en el ciclo.</li>
-        <li>Sigue aplicando fuerzas para recorrer todo el ciclo. Cada tipo de roca tiene <b>varios ejemplos reales</b> &mdash; vuelve a enfriar magma, o erosiona distintas rocas, para conocerlos todos.</li>
+        <li>Sigue aplicando fuerzas para recorrer todo el ciclo. El <b>sedimento</b> suelto debe <b>compactarse y cementarse</b> antes de volverse roca sólida &mdash; y cada tipo de roca tiene varios ejemplos reales por descubrir.</li>
       </ol>
       <div class="look"><b>Qué buscar:</b> las rocas <i>ígneas</i> están salpicadas de cristales, las <i>sedimentarias</i> forman capas planas apiladas y las <i>metamórficas</i> se doblan en cintas y bandas. No toda fuerza funciona con toda roca &mdash; si un botón <i>tiembla</i>, lee el mensaje para saber por qué (&iexcl;no puedes erosionar magma fundido!).</div>
     </div>
@@ -278,17 +278,22 @@
     .rc-name{font-family:'Fraunces',serif;font-size:clamp(1.4rem,4vw,1.9rem);color:var(--gold-soft);margin-top:2px;line-height:1.1}
     .rc-blurb{color:var(--mist);font-size:.92rem;max-width:34ch;margin:8px auto 0;min-height:3.4em}
     .rc-h{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
-    .rc-forces{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .rc-force{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:rgba(5,7,15,.5);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;transition:border-color .2s, transform .15s;font-family:inherit;color:var(--star)}
+    /* full-width row of force buttons across the page */
+    .rc-forcebar{margin-top:26px;border-top:1px solid var(--line);padding-top:20px}
+    .rc-forces{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+    @media(max-width:860px){.rc-forces{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:480px){.rc-forces{grid-template-columns:1fr}}
+    .rc-force{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:rgba(5,7,15,.5);border:1px solid var(--line);border-radius:12px;padding:9px 10px;cursor:pointer;transition:border-color .2s, transform .15s;font-family:inherit;color:var(--star)}
     .rc-force:hover{border-color:var(--cyan);transform:translateY(-2px)}
-    .rc-force .fl{font-family:'Fraunces',serif;font-size:1.02rem;display:flex;align-items:center;gap:7px}
-    .rc-force .fd{font-size:.71rem;color:var(--dim);line-height:1.35}
+    .rc-force .fl{font-family:'Fraunces',serif;font-size:.82rem;display:flex;align-items:center;gap:5px;line-height:1.1}
+    .rc-force .fd{font-size:.63rem;color:var(--dim);line-height:1.3}
     .rc-force.shake{animation:rcShake .4s}
     @keyframes rcShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}60%{transform:translateX(6px)}}
-    .rc-msg{margin-top:16px;min-height:1.6em;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--cyan);line-height:1.4}
+    .rc-msg{margin-top:14px;min-height:1.6em;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--cyan);line-height:1.4}
     .rc-msg.new{color:var(--gold-soft)}
-    .rc-diagram{margin-bottom:22px}
-    .rc-imgwrap{position:relative;background:#faf7f0;border:1px solid var(--line);border-radius:16px;overflow:hidden;line-height:0}
+    .rc-diagram{margin-bottom:0}
+    /* rock-cycle graphic, sized 20% smaller and centred */
+    .rc-imgwrap{position:relative;background:#faf7f0;border:1px solid var(--line);border-radius:16px;overflow:hidden;line-height:0;max-width:80%;margin:0 auto}
     .rc-imgwrap img{width:100%;height:auto;display:block}
     /* persistent ring on the current stage */
     .rc-state-ring{position:absolute;border:3px solid var(--cyan);border-radius:50%;
@@ -304,19 +309,6 @@
     #rcCanvas{transition:box-shadow .3s}
     #rcCanvas.lit{animation:rcLit 1.25s ease-out}
     @keyframes rcLit{0%{box-shadow:0 0 0 0 rgba(244,193,91,0)}22%{box-shadow:0 0 0 3px var(--gold),0 0 42px rgba(244,193,91,.6)}100%{box-shadow:0 0 0 0 rgba(244,193,91,0)}}
-    /* smaller collector's album */
-    .rc-album{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:340px}
-    .rc-cat{grid-column:1/-1;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-top:7px}
-    .rc-cat:first-child{margin-top:0}
-    .rc-slot{aspect-ratio:1;border-radius:8px;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:rgba(5,7,15,.4);padding:3px;text-align:center;transition:border-color .25s, background .25s}
-    .rc-slot.got{border-color:var(--gold);background:rgba(244,193,91,.08)}
-    .rc-slot.flash{animation:rcPop .5s}
-    @keyframes rcPop{0%{transform:scale(1)}45%{transform:scale(1.18)}100%{transform:scale(1)}}
-    .rc-slot .dot{width:17px;height:17px;border-radius:5px;border:1px solid rgba(255,255,255,.14)}
-    .rc-slot.locked .dot{background:repeating-linear-gradient(45deg,rgba(154,165,207,.14),rgba(154,165,207,.14) 4px,transparent 4px,transparent 8px)}
-    .rc-slot .sn{font-size:.5rem;color:var(--mist);line-height:1.08}
-    .rc-slot.locked .sn{color:var(--dim)}
-    .rc-prog{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--gold-soft);margin-top:14px;min-height:1.4em}
     /* how-to-play panel */
     .rc-howto{max-width:1000px;margin:0 auto 22px;background:rgba(5,7,15,.42);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:16px;padding:18px 22px}
     .rc-howto h3{font-family:'Fraunces',serif;font-weight:600;font-size:1.08rem;color:var(--star);margin-bottom:9px}
@@ -334,14 +326,16 @@
         <div class="rc-tag" id="rcTag"></div>
         <div class="rc-name" id="rcName"></div>
         <div class="rc-blurb" id="rcBlurb"></div>
-        <div class="rc-h" style="margin-top:18px" id="rcForcesTitle"></div>
-        <div class="rc-forces" id="rcForces"></div>
-        <div class="rc-msg" id="rcMsg"></div>
       </div>
       <div class="rc-side">
         <div class="rc-h" id="rcDiagramTitle"></div>
         <div class="rc-diagram" id="rcDiagram"></div>
       </div>
+    </div>
+    <div class="rc-forcebar">
+      <div class="rc-h" id="rcForcesTitle"></div>
+      <div class="rc-forces" id="rcForces"></div>
+      <div class="rc-msg" id="rcMsg"></div>
     </div>
   </div>
 </section>
@@ -390,7 +384,7 @@
 
 
 
-var RC={"states": {"magma": {"label": "Magma", "tag": "Roca fundida", "blurb": "En las profundidades, la roca está tan caliente que se funde en un líquido brillante. Enfríala despacio para formar tus primeros cristales."}, "igneous": {"label": "Roca ígnea", "tag": "Roca ígnea", "blurb": "Magma enfriado con cristales entrelazados: cuanto más lento se enfrió, más grandes son los cristales."}, "sedimentary": {"label": "Roca sedimentaria", "tag": "Roca sedimentaria", "blurb": "Capas de sedimento prensadas y cementadas: a menudo con franjas y llenas de fósiles."}, "metamorphic": {"label": "Roca metamórfica", "tag": "Roca metamórfica", "blurb": "Roca recocida y comprimida hasta que sus minerales se alinean en cintas y bandas."}}, "forces": [{"id": "cool", "emoji": "🧊", "label": "Enfriar y Cristalizar", "short": "Enfriar", "desc": "El magma se enfría despacio y crecen cristales que forman roca ígnea."}, {"id": "hp", "emoji": "🔥", "label": "Calor y Presión", "short": "Calor y Presión", "desc": "El enterramiento profundo hornea y comprime la roca en roca metamórfica."}, {"id": "melt", "emoji": "🌋", "label": "Fundir", "short": "Fundir", "desc": "El calor intenso funde la roca por completo de nuevo en magma."}, {"id": "erode", "emoji": "🌧️", "label": "Meteorizar y Erosionar", "short": "Erosión", "desc": "El agua y el viento rompen la roca en sedimentos que se endurecen en roca sedimentaria."}], "specimens": {"igneous": [{"id": "granite", "name": "Granito", "blurb": "Cristales sal y pimienta; la clásica roca de las encimeras."}, {"id": "basalt", "name": "Basalto", "blurb": "Roca de lava oscura y fina que cubre el fondo del océano."}, {"id": "obsidian", "name": "Obsidiana", "blurb": "Vidrio volcánico que se enfrió demasiado rápido para formar cristales."}, {"id": "pumice", "name": "Piedra Pómez", "blurb": "¡Tan llena de burbujas de gas que flota en el agua!"}], "sedimentary": [{"id": "sandstone", "name": "Arenisca", "blurb": "Granos de arena cementados que a veces se desprenden."}, {"id": "limestone", "name": "Caliza", "blurb": "Hecha de conchas y vida marina; burbujea con el ácido."}, {"id": "shale", "name": "Lutita", "blurb": "Barro endurecido que se parte en láminas finas y planas."}, {"id": "conglomerate", "name": "Conglomerado", "blurb": "Guijarros pegados como un concreto natural."}], "metamorphic": [{"id": "marble", "name": "Mármol", "blurb": "Caliza transformada — lisa y apreciada por los escultores."}, {"id": "slate", "name": "Pizarra", "blurb": "Lutita bajo presión; se parte en tejas planas."}, {"id": "gneiss", "name": "Gneis", "blurb": "Roca bandeada con sus minerales ordenados en franjas."}, {"id": "quartzite", "name": "Cuarcita", "blurb": "Arenisca fusionada en una de las rocas más duras."}]}, "diag": {"magma": "Magma", "igneous": "Ígnea", "sedimentary": "Sediment.", "metamorphic": "Metamórf."}, "catName": {"igneous": "ígneas", "sedimentary": "sedimentarias", "metamorphic": "metamórficas"}, "hints": {"already_molten": "¡Ya es magma fundido! 🌋", "cool_first": "El magma es líquido — enfríalo primero en roca sólida. 🧊", "molten_needed": "Esta roca no está fundida — fúndela primero en magma. 🌋"}, "ui": {"forcesTitle": "Aplica una fuerza", "diagramTitle": "El ciclo de las rocas", "made": "¡Formaste {name}!", "toMagma": "Todo se funde de nuevo en magma. 🌋", "start": "Empiezas como magma fundido. ¡Enfríalo para formar tu primera roca!"}};
+var RC={"states": {"magma": {"label": "Magma", "tag": "Roca fundida", "blurb": "En las profundidades, la roca está tan caliente que se funde en un líquido brillante. Enfríala despacio para formar tus primeros cristales."}, "igneous": {"label": "Roca ígnea", "tag": "Roca ígnea", "blurb": "Magma enfriado con cristales entrelazados: cuanto más lento se enfrió, más grandes son los cristales."}, "sediment": {"label": "Sedimento", "tag": "Sedimento suelto", "blurb": "Granos sueltos de arena, barro y guijarros desprendidos de otras rocas. Compáctalo y ciméntalo para convertirlo en roca sólida."}, "sedimentary": {"label": "Roca sedimentaria", "tag": "Roca sedimentaria", "blurb": "Capas de sedimento prensadas y cementadas: a menudo con franjas y llenas de fósiles."}, "metamorphic": {"label": "Roca metamórfica", "tag": "Roca metamórfica", "blurb": "Roca recocida y comprimida hasta que sus minerales se alinean en cintas y bandas."}}, "forces": [{"id": "cool", "emoji": "🧊", "label": "Enfriar y Cristalizar", "short": "Enfriar", "desc": "El magma se enfría y crecen cristales que forman roca ígnea."}, {"id": "erode", "emoji": "🌧️", "label": "Meteorizar y Erosionar", "short": "Erosión", "desc": "El agua y el viento rompen la roca en sedimento suelto."}, {"id": "compact", "emoji": "🧱", "label": "Compactación y Cementación", "short": "Compactación", "desc": "El sedimento enterrado se prensa y pega formando roca sedimentaria."}, {"id": "hp", "emoji": "🔥", "label": "Calor y Presión", "short": "Calor y Presión", "desc": "El enterramiento profundo hornea y comprime la roca en roca metamórfica."}, {"id": "melt", "emoji": "🌋", "label": "Fundir", "short": "Fundir", "desc": "El calor intenso funde la roca por completo de nuevo en magma."}], "specimens": {"igneous": [{"id": "granite", "name": "Granito", "blurb": "Cristales sal y pimienta; la clásica roca de las encimeras."}, {"id": "basalt", "name": "Basalto", "blurb": "Roca de lava oscura y fina que cubre el fondo del océano."}, {"id": "obsidian", "name": "Obsidiana", "blurb": "Vidrio volcánico que se enfrió demasiado rápido para formar cristales."}, {"id": "pumice", "name": "Piedra Pómez", "blurb": "¡Tan llena de burbujas de gas que flota en el agua!"}], "sediment": [{"id": "sand", "name": "Arena", "blurb": "Diminutos granos sueltos que el agua y el viento arrancan de la roca."}, {"id": "pebbles", "name": "Guijarros", "blurb": "Piedras redondeadas y pulidas en ríos y olas."}, {"id": "mud", "name": "Barro", "blurb": "Partículas finas y blandas que se asientan en aguas tranquilas."}, {"id": "silt", "name": "Limo", "blurb": "Granos más finos que la arena, llevados lejos por los ríos."}], "sedimentary": [{"id": "sandstone", "name": "Arenisca", "blurb": "Granos de arena cementados que a veces se desprenden."}, {"id": "limestone", "name": "Caliza", "blurb": "Hecha de conchas y vida marina; burbujea con el ácido."}, {"id": "shale", "name": "Lutita", "blurb": "Barro endurecido que se parte en láminas finas y planas."}, {"id": "conglomerate", "name": "Conglomerado", "blurb": "Guijarros pegados como un concreto natural."}], "metamorphic": [{"id": "marble", "name": "Mármol", "blurb": "Caliza transformada — lisa y apreciada por los escultores."}, {"id": "slate", "name": "Pizarra", "blurb": "Lutita bajo presión; se parte en tejas planas."}, {"id": "gneiss", "name": "Gneis", "blurb": "Roca bandeada con sus minerales ordenados en franjas."}, {"id": "quartzite", "name": "Cuarcita", "blurb": "Arenisca fusionada en una de las rocas más duras."}]}, "diag": {"magma": "Magma", "igneous": "Ígnea", "sedimentary": "Sediment.", "metamorphic": "Metamórf."}, "catName": {"igneous": "ígneas", "sedimentary": "sedimentarias", "metamorphic": "metamórficas"}, "hints": {"already_molten": "¡Ya es magma fundido! 🌋", "cool_first": "El magma es líquido — enfríalo primero en roca sólida. 🧊", "molten_needed": "Esta roca no está fundida — fúndela primero en magma. 🌋", "compact_needs_sediment": "Solo el sedimento suelto se puede compactar — primero meteoriza y erosiona una roca en sedimento. 🌧️", "compact_first": "Primero prensa este sedimento suelto en roca (compactación y cementación). 🧱"}, "ui": {"forcesTitle": "Aplica una fuerza", "diagramTitle": "El ciclo de las rocas", "made": "¡Formaste {name}!", "toMagma": "Todo se funde de nuevo en magma. 🌋", "start": "Empiezas como magma fundido. ¡Enfríalo para formar tu primera roca!"}};
 
 /* ============ THE ROCK CYCLE TRANSFORMER ============ */
 (function(){
@@ -401,23 +395,26 @@ var RC={"states": {"magma": {"label": "Magma", "tag": "Roca fundida", "blurb": "
         forcesEl=document.getElementById('rcForces'), diagEl=document.getElementById('rcDiagram');
   document.getElementById('rcForcesTitle').textContent=R.ui.forcesTitle;
   document.getElementById('rcDiagramTitle').textContent=R.ui.diagramTitle;
-  const COL={magma:'#ff5a2c',igneous:'#7f8794',sedimentary:'#cda86e',metamorphic:'#b491b6'};
+  const COL={magma:'#ff5a2c',igneous:'#7f8794',sediment:'#d98a4a',sedimentary:'#cda86e',metamorphic:'#b491b6'};
+  const SOLID=['igneous','sedimentary','metamorphic'];
   let state='magma', curSpec=null;
-  const specIdx={igneous:0,sedimentary:0,metamorphic:0};
+  const specIdx={igneous:0,sediment:0,sedimentary:0,metamorphic:0};
 
   /* ---- rock diagram ---- */
   // Boxes are % of the 1092x1092 rock-cycle illustration {l,t,w,h}.
   // Process arrows (transient highlight when a force is applied):
   const PROC={
-    cool:  {l:20, t:12, w:26, h:18},   // "Cooling" arrows, top-left
-    erode: {l:60, t:12, w:34, h:25},   // "Weathering and Erosion", top-right
-    hp:    {l:33, t:36, w:19, h:25},   // "Heat and Pressure", centre vertical
-    melt:  {l:23, t:28, w:19, h:16}    // "Melting", centre red arrow
+    cool:    {l:20, t:12, w:26, h:18},   // "Cooling" arrows, top-left
+    erode:   {l:60, t:12, w:34, h:25},   // "Weathering and Erosion", top-right
+    compact: {l:80, t:44, w:18, h:34},   // "Compaction and Cementation", right vertical
+    hp:      {l:33, t:36, w:19, h:25},   // "Heat and Pressure", centre vertical
+    melt:    {l:23, t:28, w:19, h:16}    // "Melting", centre red arrow
   };
   // Rock piles (persistent ring on the current stage):
   const STATEBOX={
     magma:       {l:6,  t:28, w:28, h:22},
     igneous:     {l:39, t:13, w:22, h:22},
+    sediment:    {l:61, t:30, w:32, h:23},
     sedimentary: {l:54, t:64, w:31, h:24},
     metamorphic: {l:11, t:63, w:29, h:25}
   };
@@ -485,6 +482,18 @@ var RC={"states": {"magma": {"label": "Magma", "tag": "Roca fundida", "blurb": "
         ctx.save(); ctx.translate(x,y); ctx.rotate(Math.random()*3.14);
         ctx.fillRect(-s/2,-s/2,s,s*0.8); ctx.restore();
       }
+    } else if(state==='sediment'){
+      // loose sediment: sandy base with scattered pebbles and grains
+      ctx.fillStyle='#c98f52'; ctx.fillRect(0,0,240,240);
+      const peb=['#e0a55f','#d5843c','#b9723a','#8f8578','#c4a179','#a9563a'];
+      for(let i=0;i<26;i++){ // pebbles
+        ctx.fillStyle=peb[i%peb.length];
+        const x=48+Math.random()*144, y=70+Math.random()*116, r=4+Math.random()*8;
+        ctx.beginPath(); ctx.ellipse(x,y,r,r*(0.7+Math.random()*0.4),Math.random()*3.14,0,7); ctx.fill();
+        ctx.strokeStyle='rgba(60,35,15,.25)'; ctx.lineWidth=1; ctx.stroke();
+      }
+      ctx.fillStyle='rgba(70,45,20,.35)'; // fine grains
+      for(let i=0;i<120;i++){ctx.beginPath();ctx.arc(46+Math.random()*150,64+Math.random()*128,0.7+Math.random()*1.3,0,7);ctx.fill();}
     } else if(state==='sedimentary'){
       const bands=['#e0c08a','#d3ad72','#c49a5e','#dcbb84','#c9a35f','#e6c894'];
       const n=bands.length, bh=150/n;
@@ -532,16 +541,24 @@ var RC={"states": {"magma": {"label": "Magma", "tag": "Roca fundida", "blurb": "
   function setMagma(){ state='magma'; curSpec=null; msgEl.textContent=R.ui.toMagma; msgEl.classList.remove('new'); showState(); }
   function invalid(btn,hint){ btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake'); msgEl.textContent=hint; msgEl.classList.remove('new'); }
 
+  function go(newState,cat,proc){ state=newState; if(cat) pickSpecimen(cat); showState(); flashRock(); highlightProcess(proc); }
   function applyForce(id,btn){
     if(state==='magma'){
-      if(id==='cool'){ state='igneous'; pickSpecimen('igneous'); showState(); flashRock(); highlightProcess('cool'); }
+      if(id==='cool'){ go('igneous','igneous','cool'); }
       else if(id==='melt'){ invalid(btn,R.hints.already_molten); }
-      else { invalid(btn,R.hints.cool_first); }
-    } else {
+      else { invalid(btn,R.hints.cool_first); }            // hp, erode, compact
+    } else if(state==='sediment'){
+      if(id==='compact'){ go('sedimentary','sedimentary','compact'); }
+      else if(id==='erode'){ go('sediment','sediment','erode'); }   // more erosion, stays loose
+      else if(id==='melt'){ setMagma(); flashRock(); highlightProcess('melt'); }
+      else if(id==='hp'){ invalid(btn,R.hints.compact_first); }
+      else if(id==='cool'){ invalid(btn,R.hints.molten_needed); }
+    } else {  // solid rock: igneous, sedimentary, metamorphic
       if(id==='cool'){ invalid(btn,R.hints.molten_needed); }
       else if(id==='melt'){ setMagma(); flashRock(); highlightProcess('melt'); }
-      else if(id==='hp'){ state='metamorphic'; pickSpecimen('metamorphic'); showState(); flashRock(); highlightProcess('hp'); }
-      else if(id==='erode'){ state='sedimentary'; pickSpecimen('sedimentary'); showState(); flashRock(); highlightProcess('erode'); }
+      else if(id==='hp'){ go('metamorphic','metamorphic','hp'); }
+      else if(id==='erode'){ go('sediment','sediment','erode'); }
+      else if(id==='compact'){ invalid(btn,R.hints.compact_needs_sediment); }
     }
   }
 
