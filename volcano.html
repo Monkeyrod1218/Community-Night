@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volcano Eruption Lab · Community Night</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<style>
+  :root{
+    --void:#05070f;
+    --night:#0a0f22;
+    --deep:#111935;
+    --panel:#141d3d;
+    --line:#27325c;
+    --star:#eef2ff;
+    --mist:#9aa5cf;
+    --dim:#5d6794;
+    --gold:#f4c15b;
+    --gold-soft:#ffd98a;
+    --cyan:#74dbe8;
+    --rose:#f08fb0;
+    --ember:#ff8a5c;
+    --r:18px;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--void);
+    color:var(--star);
+    font-family:'Spline Sans',sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold);color:var(--void)}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;line-height:1.05;letter-spacing:-.01em}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+  /* ---------- starfield ---------- */
+  #sky{position:fixed;inset:0;z-index:0;display:block}
+  .scrim{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 80% at 70% -10%, rgba(116,219,232,.08), transparent 55%),
+               radial-gradient(90% 60% at 10% 110%, rgba(244,193,91,.06), transparent 60%)}
+  main,header,footer{position:relative;z-index:2}
+
+  /* ---------- nav ---------- */
+  header{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:linear-gradient(to bottom, rgba(5,7,15,.85), rgba(5,7,15,.4));
+    border-bottom:1px solid rgba(39,50,92,.6)}
+  nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{display:flex;align-items:center;gap:12px;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem}
+  .brand-logo{height:38px;width:auto;display:block}
+  .badge{width:34px;height:34px;border-radius:50%;flex:0 0 auto;display:block;
+    filter:drop-shadow(0 0 8px rgba(244,193,91,.45))}
+  .navlinks{display:flex;gap:28px;font-size:.92rem;color:var(--mist)}
+  .navlinks a{position:relative;transition:color .2s}
+  .navlinks a:hover{color:var(--star)}
+  .navlinks a::after{content:"";position:absolute;left:0;bottom:-6px;height:2px;width:0;background:var(--gold);transition:width .25s}
+  .navlinks a:hover::after{width:100%}
+  .navitem{position:relative;display:inline-flex;align-items:center}
+  .navcaret{font-size:.7em;opacity:.8;margin-left:3px}
+  .dropmenu{position:absolute;top:100%;left:0;min-width:196px;display:flex;flex-direction:column;padding:8px;background:rgba(9,13,30,.98);border:1px solid var(--line);border-radius:12px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s,transform .18s,visibility .18s;box-shadow:0 16px 40px rgba(0,0,0,.55);z-index:60}
+  .navitem:hover .dropmenu,.navitem:focus-within .dropmenu{opacity:1;visibility:visible;transform:translateY(0)}
+  .dropmenu a{white-space:nowrap;padding:9px 12px;border-radius:8px;font-size:.9rem;color:var(--mist)}
+  .dropmenu a::after{display:none!important}
+  .dropmenu a:hover{background:rgba(244,193,91,.14);color:var(--star)}
+  .navcta{padding:9px 18px;border:1px solid var(--gold);border-radius:100px;color:var(--gold);font-size:.85rem;font-weight:500;transition:.25s}
+  .navcta:hover{background:var(--gold);color:var(--void)}
+  @media(max-width:760px){.navlinks{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{padding:clamp(80px,14vh,160px) 0 90px;text-align:center}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:var(--cyan);margin-bottom:22px}
+  .hero h1{font-size:clamp(2.8rem,9vw,6.2rem);font-weight:600}
+  .hero h1 em{font-style:italic;color:var(--gold-soft)}
+  .hero p{max-width:600px;margin:26px auto 0;color:var(--mist);font-size:clamp(1rem,2.4vw,1.2rem)}
+  .hero-cta{display:flex;gap:14px;justify-content:center;margin-top:38px;flex-wrap:wrap}
+  .btn{padding:14px 28px;border-radius:100px;font-weight:500;font-size:.95rem;transition:.25s;cursor:pointer;border:1px solid transparent}
+  .btn-gold{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#241704;box-shadow:0 10px 30px rgba(244,193,91,.3)}
+  .btn-gold:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(244,193,91,.45)}
+  .btn-ghost{border-color:var(--line);color:var(--star)}
+  .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- section frame ---------- */
+  section{padding:clamp(100px,16vh,170px) 0}
+  main section.wrap:not(.hero){padding-top:clamp(55px,8.5vh,95px);padding-bottom:clamp(55px,8.5vh,95px)}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--gold);opacity:.6}
+  .sec-title{font-size:clamp(2rem,5vw,3.2rem);margin-bottom:14px}
+  .sec-intro{max-width:620px;color:var(--mist);margin-bottom:46px}
+
+  /* ---------- tonight panel ---------- */
+  .tonight{display:grid;grid-template-columns:300px 1fr;gap:36px;align-items:center;
+    background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);
+    border-radius:26px;padding:40px;overflow:hidden;position:relative}
+  .tonight::before{content:"";position:absolute;right:-120px;top:-120px;width:300px;height:300px;border-radius:50%;
+    background:radial-gradient(circle,rgba(116,219,232,.12),transparent 70%)}
+  .moonwrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+  #moonsvg{filter:drop-shadow(0 0 40px rgba(238,242,255,.18))}
+  .moon-name{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold-soft)}
+  .moon-illum{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--mist)}
+  .tonight h3{font-size:1.7rem;margin-bottom:8px}
+  .sky-now{color:var(--mist);margin-bottom:22px}
+  .factgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .fact{background:rgba(10,15,34,.6);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .fact .k{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  .fact .v{font-family:'Fraunces',serif;font-size:1.35rem;color:var(--star);margin-top:4px}
+  @media(max-width:720px){.tonight{grid-template-columns:1fr;text-align:center}.moonwrap{margin:0 auto}.factgrid{grid-template-columns:1fr}}
+
+  /* ---------- solar system ---------- */
+  .solar-stage{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+  .orrery{position:relative;aspect-ratio:1;width:100%;max-width:560px;margin:0 auto}
+  .orrery svg{width:100%;height:100%;overflow:visible}
+  .orbit{fill:none;stroke:rgba(154,165,207,.18);stroke-width:.4}
+  .planet-dot{cursor:pointer;transition:r .2s, filter .2s}
+  .planet-dot:hover{filter:brightness(1.4) drop-shadow(0 0 8px currentColor)}
+  .planet-dot.active{filter:brightness(1.5) drop-shadow(0 0 14px currentColor)}
+  .sun-core{filter:drop-shadow(0 0 28px rgba(244,193,91,.8))}
+  .planet-label{font-family:'JetBrains Mono',monospace;font-size:3px;fill:var(--mist);pointer-events:none}
+  .info-card{background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:22px;padding:34px;min-height:340px}
+  .info-card .ptag{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
+  .info-card h3{font-size:2.4rem;margin:6px 0 4px}
+  .info-card .pdesc{color:var(--mist);margin:14px 0 24px}
+  .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .stat{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:rgba(5,7,15,.4)}
+  .stat .sk{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .stat .sv{font-family:'Fraunces',serif;font-size:1.15rem;margin-top:2px}
+  .wow{margin-top:20px;padding:14px 16px;border-left:2px solid var(--gold);background:rgba(244,193,91,.06);border-radius:0 10px 10px 0;font-size:.92rem;color:var(--gold-soft)}
+  .picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .picker button{font-family:'JetBrains Mono',monospace;font-size:.74rem;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--mist);cursor:pointer;transition:.2s}
+  .picker button:hover{border-color:var(--cyan);color:var(--cyan)}
+  .picker button.on{background:var(--gold);border-color:var(--gold);color:var(--void)}
+  @media(max-width:860px){.solar-stage{grid-template-columns:1fr}}
+
+  /* ---------- constellations ---------- */
+  .const-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .const-card{background:linear-gradient(165deg,var(--night),var(--void));border:1px solid var(--line);border-radius:20px;padding:24px;cursor:pointer;transition:.3s;position:relative;overflow:hidden}
+  .const-card:hover{border-color:var(--gold);transform:translateY(-4px)}
+  .const-card svg{width:100%;height:150px;display:block;margin-bottom:16px}
+  .cline{stroke:rgba(116,219,232,.4);stroke-width:.5}
+  .cstar{fill:var(--star)}
+  .const-card:hover .cstar{fill:var(--gold-soft)}
+  .const-card:hover .cline{stroke:rgba(244,193,91,.6)}
+  .const-card h3{font-size:1.4rem}
+  .const-card .latin{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--cyan);letter-spacing:.15em;text-transform:uppercase}
+  .const-card p{color:var(--mist);font-size:.9rem;margin-top:10px}
+  @media(max-width:820px){.const-grid{grid-template-columns:1fr}}
+
+  /* ---------- scale slider ---------- */
+  .scale-box{background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:24px;padding:40px}
+  .scale-readout{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  #scaleObj{font-family:'Fraunces',serif;font-size:clamp(2rem,6vw,3.6rem);color:var(--gold-soft)}
+  #scaleSize{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:1rem}
+  #scaleDesc{color:var(--mist);min-height:48px;margin:10px 0 26px}
+  input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--gold));outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--star);cursor:pointer;box-shadow:0 0 18px rgba(238,242,255,.6);border:3px solid var(--gold)}
+  input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--star);cursor:pointer;border:3px solid var(--gold)}
+  .scale-ticks{position:relative;height:1.1rem;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--dim)}
+  .scale-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+
+  /* ---------- visit / schedule ---------- */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .card{background:linear-gradient(165deg,var(--night),var(--void));border:1px solid var(--line);border-radius:20px;padding:30px}
+  .card h3{font-size:1.5rem;margin-bottom:8px}
+  .ph{color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:.78rem;background:rgba(244,193,91,.07);border:1px dashed var(--line);border-radius:6px;padding:2px 8px;display:inline-block}
+  .sched-row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(39,50,92,.5);gap:16px}
+  .sched-row:last-child{border:none}
+  .sched-row .when{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--cyan);white-space:nowrap}
+  .sched-row .what b{display:block;font-family:'Fraunces',serif;font-size:1.05rem}
+  .sched-row .what span{color:var(--mist);font-size:.85rem}
+  .pill{font-size:.66rem;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:100px;border:1px solid var(--line);color:var(--mist);align-self:center;white-space:nowrap}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+
+  footer{border-top:1px solid var(--line);padding:60px 0 40px;margin-top:40px}
+  .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;margin-bottom:40px}
+  footer h4{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  footer a,footer p{color:var(--mist);font-size:.9rem;display:block;margin-bottom:8px;transition:color .2s}
+  footer a:hover{color:var(--star)}
+  .foot-bottom{border-top:1px solid var(--line);padding-top:24px;color:var(--dim);font-size:.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  @media(max-width:760px){.foot-grid{grid-template-columns:1fr}}
+  .note{font-size:.74rem;color:var(--dim);font-style:italic;margin-top:6px}
+
+  /* day & night map */
+  .daynight-wrap{max-width:980px;margin:0 auto;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#0a0f22;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .daynight-wrap canvas{display:block;width:100%;height:auto}
+  .dn-caption{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--mist);padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .dn-caption b{color:var(--gold)}
+
+  .daynight-wrap{position:relative}
+  .daynight-wrap canvas{cursor:crosshair}
+  .dn-pop{position:absolute;z-index:6;width:214px;background:#f6f3ea;color:#1a2036;border:2px solid var(--gold);border-radius:12px;padding:12px 30px 12px 14px;box-shadow:0 14px 38px rgba(0,0,0,.6);transform:translate(-50%,-100%) translateY(-14px)}
+  .dn-pop.below{transform:translate(-50%,0) translateY(0)}
+  .dn-pop .dn-pop-city{font-family:'Fraunces',serif;font-weight:600;font-size:1.12rem;line-height:1.12;color:#141a2e}
+  .dn-pop .dn-pop-region{font-size:.82rem;color:#6a5c2f;margin-top:2px}
+  .dn-pop .dn-pop-time{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#141a2e;margin-top:9px;border-top:1px solid rgba(0,0,0,.14);padding-top:8px;line-height:1.35}
+  .dn-pop-x{position:absolute;top:5px;right:8px;background:none;border:none;font-size:1.15rem;line-height:1;color:#6a5c2f;cursor:pointer;padding:0}
+  .dn-pop::after{content:"";position:absolute;left:50%;transform:translateX(-50%);border:9px solid transparent}
+  .dn-pop:not(.below)::after{bottom:-9px;border-top-color:var(--gold);border-bottom:0}
+  .dn-pop.below::after{top:-9px;border-bottom-color:var(--gold);border-top:0}
+
+  /* weight across the solar system */
+  .weight-box{max-width:900px;margin:0 auto;background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:24px;padding:clamp(22px,4vw,40px)}
+  .weight-input{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+  .weight-input label{font-size:1rem;color:var(--star)}
+  #wIn{width:130px;font-family:'JetBrains Mono',monospace;font-size:1.1rem;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(5,7,15,.5);color:var(--star)}
+  #wIn:focus{outline:none;border-color:var(--gold)}
+  .unit-toggle{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .ubtn{padding:9px 16px;background:transparent;color:var(--mist);border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:.85rem}
+  .ubtn.on{background:var(--gold);color:var(--void)}
+  .weight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+  .wcard{background:rgba(5,7,15,.42);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .wcard.hot{border-color:var(--gold);box-shadow:inset 0 0 0 1px rgba(244,193,91,.25)}
+  .wcard.earth{border-color:var(--cyan)}
+  .wname{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mist)}
+  .wval{font-family:'Fraunces',serif;font-size:1.9rem;color:var(--gold-soft);margin:2px 0 8px;line-height:1}
+  .wval .wu{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--mist);margin-left:4px}
+  .wbar{height:6px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}
+  .wbar span{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--gold))}
+  .wg{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--dim);margin-top:8px}
+
+  /* light travel time */
+  .lt-box{max-width:900px;margin:0 auto}
+  .lt-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+  .lt-chip{padding:10px 16px;border-radius:100px;border:1px solid var(--line);background:rgba(5,7,15,.4);color:var(--mist);cursor:pointer;font-size:.92rem;transition:.2s;font-family:inherit}
+  .lt-chip:hover{border-color:var(--cyan);color:var(--star)}
+  .lt-chip.on{background:var(--gold);border-color:var(--gold);color:var(--void)}
+  .lt-panel{background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:20px;padding:clamp(24px,4vw,40px)}
+  .lt-obj{font-family:'JetBrains Mono',monospace;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+  .lt-time{font-family:'Fraunces',serif;font-size:clamp(2rem,5.5vw,3.4rem);color:var(--gold-soft);line-height:1.05;margin:6px 0 4px}
+  .lt-dist{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--mist);margin-bottom:16px}
+  .lt-see{color:var(--star);font-size:1.05rem;line-height:1.72;max-width:640px}
+</style>
+
+<style>
+  .back-btn{position:fixed;top:20px;left:20px;z-index:100;display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--star);background:rgba(9,13,30,.72);backdrop-filter:blur(6px);
+    border:1px solid var(--line);border-radius:100px;padding:11px 20px;transition:.25s;text-decoration:none}
+  .back-btn:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-1px)}
+  main{padding-top:92px}
+  @media (hover:none) and (pointer:coarse), (max-width:1024px){
+    main{padding-top:72px}
+    main section.wrap:not(.hero){padding-top:14px}
+  }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="scrim"></div>
+<a class="back-btn" href="earth-english.html">&larr; Back</a>
+<main id="top">
+<section id="volcano" class="wrap">
+  <h2 class="sec-title reveal">Volcano Eruption Lab</h2>
+  <p class="sec-intro reveal">What makes one volcano ooze rivers of lava while another blows its top? The secret is in the magma &mdash; how much silica makes it thick, and how much gas is trapped inside.</p>
+  <p class="sec-intro reveal" style="color:var(--gold);font-weight:600;margin-top:14px">Mix the silica and gas, then hit Erupt to build anything from a gentle Hawaiian shield to an explosive stratovolcano.</p>
+  <style>
+    .vl-box{max-width:1000px;margin:0 auto;background:linear-gradient(160deg,var(--panel),var(--night));border:1px solid var(--line);border-radius:24px;padding:clamp(20px,3.5vw,34px)}
+    .vl-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:26px;align-items:start}
+    @media(max-width:760px){.vl-grid{grid-template-columns:1fr;gap:22px}}
+    .vl-stage{text-align:center}
+    #vlCanvas{width:100%;max-width:460px;aspect-ratio:440/340;background:linear-gradient(180deg,rgba(116,219,232,.05),rgba(5,7,15,.35));border:1px solid var(--line);border-radius:16px;display:block;margin:0 auto}
+    .vl-erupt{margin-top:16px;font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;color:#241704;background:linear-gradient(180deg,var(--ember),#ff5a2c);border:none;border-radius:100px;padding:13px 40px;cursor:pointer;box-shadow:0 10px 30px rgba(255,90,44,.34);transition:transform .15s, box-shadow .2s;display:inline-flex;align-items:center;gap:9px}
+    .vl-erupt:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(255,90,44,.5)}
+    .vl-erupt:disabled{opacity:.6;cursor:default;transform:none}
+    .vl-slider{margin-bottom:22px}
+    .vl-slabel{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+    .vl-slabel .n{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--star)}
+    .vl-slabel .v{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--gold-soft)}
+    .vl-ends{display:flex;justify-content:space-between;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+    .vl-meter{margin:6px 0 20px}
+    .vl-meter-lab{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+    .vl-meter-lab b{color:var(--gold-soft)}
+    .vl-bar{height:14px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden}
+    .vl-bar span{display:block;height:100%;border-radius:8px;width:0;transition:width .18s, background .18s}
+    .vl-verdict{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--gold-soft);line-height:1.4;margin:4px 0 16px}
+    .vl-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    @media(max-width:420px){.vl-cards{grid-template-columns:1fr}}
+    .vl-card{background:rgba(5,7,15,.42);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:12px;padding:9px 12px}
+    .vl-card.wide{grid-column:1/-1;border-left-color:var(--cyan)}
+    .vl-k{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+    .vl-vv{font-family:'Fraunces',serif;font-size:1.02rem;color:var(--star);margin-top:2px;line-height:1.15}
+    .vl-vv small{display:block;font-family:'JetBrains Mono',monospace;font-size:.64rem;color:var(--cyan);margin-top:2px;letter-spacing:.04em}
+    .vl-desc{color:var(--mist);font-size:.86rem;line-height:1.5;margin-top:5px}
+  </style>
+  <div class="vl-box reveal">
+    <div class="vl-grid">
+      <div class="vl-stage">
+        <canvas id="vlCanvas" width="440" height="340"></canvas>
+        <button type="button" class="vl-erupt" id="vlErupt">🌋 <span id="vlEruptLab"></span></button>
+      </div>
+      <div class="vl-controls">
+        <div class="vl-slider">
+          <div class="vl-slabel"><span class="n" id="vlSilName"></span><span class="v" id="vlSilVal"></span></div>
+          <input type="range" id="vlSil" min="45" max="75" value="52" step="1">
+          <div class="vl-ends"><span id="vlSilLo"></span><span id="vlSilHi"></span></div>
+        </div>
+        <div class="vl-slider">
+          <div class="vl-slabel"><span class="n" id="vlGasName"></span><span class="v" id="vlGasVal"></span></div>
+          <input type="range" id="vlGas" min="0" max="100" value="30" step="1">
+          <div class="vl-ends"><span id="vlGasLo"></span><span id="vlGasHi"></span></div>
+        </div>
+        <div class="vl-meter">
+          <div class="vl-meter-lab"><span id="vlExpLab"></span><b id="vlExpVal"></b></div>
+          <div class="vl-bar"><span id="vlBar"></span></div>
+        </div>
+        <div class="vl-verdict" id="vlVerdict"></div>
+        <div class="vl-cards" id="vlCards"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<script>
+/* ============ STARFIELD ============ */
+(function(){
+  const c=document.getElementById('sky'),x=c.getContext('2d');
+  let w,h,stars=[],shoot=null,t=0;
+  function size(){w=c.width=innerWidth;h=c.height=innerHeight;build();}
+  function build(){
+    stars=[];const n=Math.min(260,Math.floor(w*h/8000));
+    for(let i=0;i<n;i++)stars.push({
+      x:Math.random()*w,y:Math.random()*h,
+      r:Math.random()*1.3+.2,
+      tw:Math.random()*Math.PI*2,sp:Math.random()*.03+.005,
+      hue:Math.random()<.15?'200,225,255':(Math.random()<.3?'255,225,180':'238,242,255')
+    });
+  }
+  function maybeShoot(){
+    if(shoot||Math.random()>.004)return;
+    shoot={x:Math.random()*w*.6,y:Math.random()*h*.3,len:0,a:Math.random()*.5+.2,life:0};
+  }
+  function draw(){
+    t++;x.clearRect(0,0,w,h);
+    for(const s of stars){
+      const a=.4+Math.sin(s.tw+t*s.sp)*.4;
+      x.beginPath();x.arc(s.x,s.y,s.r,0,7);
+      x.fillStyle='rgba('+s.hue+','+a.toFixed(2)+')';x.fill();
+    }
+    maybeShoot();
+    if(shoot){
+      shoot.life++;shoot.len=Math.min(shoot.len+9,140);
+      const ex=shoot.x+Math.cos(shoot.a)*shoot.len, ey=shoot.y+Math.sin(shoot.a)*shoot.len;
+      const g=x.createLinearGradient(shoot.x,shoot.y,ex,ey);
+      g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(255,235,200,.9)');
+      x.strokeStyle=g;x.lineWidth=1.6;x.beginPath();x.moveTo(shoot.x,shoot.y);x.lineTo(ex,ey);x.stroke();
+      shoot.x+=Math.cos(shoot.a)*7;shoot.y+=Math.sin(shoot.a)*7;
+      if(shoot.life>40||ex>w||ey>h)shoot=null;
+    }
+    requestAnimationFrame(draw);
+  }
+  addEventListener('resize',size);size();draw();
+})();
+
+
+
+var RC={"ui": {"silica": "Silica", "gas": "Gas content", "explosivity": "Explosivity", "magma": "Magma", "viscosity": "Viscosity", "style": "Eruption", "volcano": "Volcano", "erupt": "Erupt!", "silLo": "low · basalt", "silHi": "high · rhyolite", "gasLo": "low", "gasHi": "high"}, "gasWords": ["low", "medium", "high"], "magma": ["Basaltic (mafic)", "Andesitic", "Rhyolitic (felsic)"], "visc": ["Thin &amp; runny", "Medium", "Thick &amp; sticky"], "styles": {"effusive": "Effusive &mdash; gentle lava flows", "strombolian": "Strombolian &mdash; lava fountains", "dome": "Dome-building &mdash; slow &amp; sticky", "explosive": "Explosive &mdash; ash &amp; cinders", "plinian": "Plinian &mdash; towering ash column"}, "verdicts": {"effusive": "Runny, low-gas magma oozes out as calm rivers of lava. 🌋", "strombolian": "Gas escaping the runny lava flings glowing blobs into the air in fiery fountains.", "dome": "Stiff, low-gas lava is too thick to flow &mdash; it just piles up into a steep, pasty dome.", "explosive": "Sticky, gas-rich magma blasts ash and cinders high into the sky.", "plinian": "A violently explosive blast &mdash; a huge ash column, like Mount St. Helens!"}, "types": {"shield": {"name": "Shield volcano", "example": "like Mauna Loa, Hawai&lsquo;i", "desc": "Runny basalt lava spreads far and wide, building a broad, gently sloping dome."}, "cinder": {"name": "Cinder cone", "example": "like Par&iacute;cutin, Mexico", "desc": "Gassy but runny lava fountains into the air and piles fragments into a small, steep cone."}, "strato": {"name": "Stratovolcano", "example": "like Mount St. Helens", "desc": "Thick, gas-rich magma plugs the vent until it bursts in violent, ash-rich explosions."}, "dome": {"name": "Lava dome", "example": "like Lassen Peak, California", "desc": "Stiff, pasty lava is too thick to flow, so it squeezes up into a steep mound over the vent."}}};
+
+/* ============ VOLCANO ERUPTION LAB ============ */
+(function(){
+  const cv=document.getElementById('vlCanvas'); if(!cv||!window.RC) return;
+  const ctx=cv.getContext('2d'); const R=window.RC; const DPR=Math.min(window.devicePixelRatio||1,2);
+  const silEl=document.getElementById('vlSil'), gasEl=document.getElementById('vlGas');
+  const eruptBtn=document.getElementById('vlErupt');
+  document.getElementById('vlEruptLab').textContent=R.ui.erupt;
+  document.getElementById('vlSilName').textContent=R.ui.silica;
+  document.getElementById('vlGasName').textContent=R.ui.gas;
+  document.getElementById('vlSilLo').textContent=R.ui.silLo; document.getElementById('vlSilHi').textContent=R.ui.silHi;
+  document.getElementById('vlGasLo').textContent=R.ui.gasLo; document.getElementById('vlGasHi').textContent=R.ui.gasHi;
+  document.getElementById('vlExpLab').textContent=R.ui.explosivity;
+  const silVal=document.getElementById('vlSilVal'), gasVal=document.getElementById('vlGasVal');
+  const expVal=document.getElementById('vlExpVal'), bar=document.getElementById('vlBar');
+  const verdict=document.getElementById('vlVerdict'), cards=document.getElementById('vlCards');
+
+  let silica=+silEl.value, gasV=+gasEl.value;
+  function norms(){ return {s:(silica-45)/30, g:gasV/100}; }
+  function explosivity(){ const {s,g}=norms(); return Math.max(0,Math.min(100, Math.round(100*(g*(0.3+0.7*s)*0.7 + s*0.3)))); }
+  function vtype(){ const {s,g}=norms();
+    if(s<0.30) return g>0.55?'cinder':'shield';
+    if(s>0.75 && g<0.35) return 'dome';
+    return 'strato';
+  }
+  function styleKey(type,E){ return type==='shield'?'effusive':type==='cinder'?'strombolian':type==='dome'?'dome':(E>=80?'plinian':'explosive'); }
+  function viscBand(){ const s=norms().s; return s<0.33?0:(s<0.66?1:2); }
+  function magmaBand(){ const s=norms().s; return s<0.40?0:(s<0.75?1:2); }
+  function gasBand(){ const g=norms().g; return g<0.33?0:(g<0.66?1:2); }
+
+  /* ---------- readout ---------- */
+  function render(){
+    const E=explosivity(), type=vtype(), key=styleKey(type,E);
+    silVal.textContent=silica+'%';
+    gasVal.textContent=R.gasWords[gasBand()];
+    expVal.textContent=E+'%';
+    bar.style.width=E+'%';
+    bar.style.background = E<35?'linear-gradient(90deg,#74dbe8,#7ee0a0)' : (E<70?'linear-gradient(90deg,#7ee0a0,#f4c15b)' : 'linear-gradient(90deg,#f4c15b,#f0563a)');
+    verdict.innerHTML=R.verdicts[key];
+    const t=R.types[type];
+    cards.innerHTML=
+      '<div class="vl-card"><div class="vl-k">'+R.ui.magma+'</div><div class="vl-vv">'+R.magma[magmaBand()]+'</div></div>'+
+      '<div class="vl-card"><div class="vl-k">'+R.ui.viscosity+'</div><div class="vl-vv">'+R.visc[viscBand()]+'</div></div>'+
+      '<div class="vl-card"><div class="vl-k">'+R.ui.style+'</div><div class="vl-vv">'+R.styles[key]+'</div></div>'+
+      '<div class="vl-card"><div class="vl-k">'+R.ui.volcano+'</div><div class="vl-vv">'+t.name+'<small>'+t.example+'</small></div></div>'+
+      '<div class="vl-card wide"><div class="vl-desc">'+t.desc+'</div></div>';
+  }
+  silEl.addEventListener('input',()=>{ silica=+silEl.value; render(); });
+  gasEl.addEventListener('input',()=>{ gasV=+gasEl.value; render(); });
+
+  /* ---------- volcano shape ---------- */
+  const SHAPE={
+    shield:{h:0.34,hw:0.46,f:u=>1-u*u},
+    cinder:{h:0.46,hw:0.22,f:u=>1-u},
+    strato:{h:0.66,hw:0.34,f:u=>Math.pow(1-u,1.5)},
+    dome:{h:0.44,hw:0.28,f:u=>Math.sqrt(Math.max(0,1-u*u))}
+  };
+  function volcanoPath(type,L,Hh,gy){
+    const s=SHAPE[type], cx=L/2, hw=s.hw*L, top=s.h*Hh; const N=44, pts=[];
+    for(let i=0;i<=N;i++){ const d=-1+2*i/N, u=Math.abs(d); pts.push([cx+d*hw, gy - s.f(u)*top]); }
+    return {pts, cx, apexY: gy-top, hw};
+  }
+
+  /* ---------- eruption particles ---------- */
+  let parts=[], erupting=false, eruptStart=0, lavaProg=0;
+  const DUR=6000;
+  function startErupt(){ erupting=true; eruptStart=performance.now(); eruptBtn.disabled=true;
+    setTimeout(()=>{ erupting=false; eruptBtn.disabled=false; }, DUR); }
+  eruptBtn.addEventListener('click',startErupt);
+  function spawn(V,E){
+    const ax=V.cx, ay=V.apexY, n=1+Math.round(E/12);
+    const ashFrac=Math.min(0.85, E/100*0.92);
+    for(let i=0;i<n;i++){
+      if(Math.random()<ashFrac){
+        parts.push({k:'ash',x:ax+(Math.random()-.5)*8,y:ay,vx:(Math.random()-.5)*(0.7+E/55),vy:-(1.2+E/22+Math.random()*1.9),r:5+Math.random()*10,life:0,max:130+Math.random()*70,col:Math.random()<.5?'107,111,122':'74,77,87'});
+      } else {
+        const up=1.4+E/24+Math.random()*2.6;
+        parts.push({k:'bomb',x:ax+(Math.random()-.5)*6,y:ay,vx:(Math.random()-.5)*(1.2+E/20),vy:-up,r:2+Math.random()*3.2,life:0,col:Math.random()<.5?'#ff8a3d':'#ff5a2c'});
+      }
+    }
+    if(parts.length>520) parts=parts.slice(parts.length-520);
+  }
+  function stepParts(gy){
+    for(let i=parts.length-1;i>=0;i--){ const p=parts[i]; p.life++;
+      if(p.k==='ash'){ p.vy+=0.009; p.vx*=0.992; p.x+=p.vx; p.y+=p.vy; p.r+=0.34;
+        if(p.life>p.max||p.y<-30){ parts.splice(i,1); } }
+      else { p.vy+=0.10; p.x+=p.vx; p.y+=p.vy;
+        if(p.y>gy+6){ parts.splice(i,1); } }
+    }
+  }
+  function drawParts(){
+    for(const p of parts){
+      if(p.k==='ash'){ const a=Math.max(0,1-p.life/p.max)*0.8;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fillStyle='rgba('+p.col+','+a.toFixed(2)+')'; ctx.fill(); }
+      else { ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fillStyle=p.col; ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r*0.5,0,7); ctx.fillStyle='#ffe6b0'; ctx.fill(); }
+    }
+  }
+  function drawLava(V,gy){
+    if(lavaProg<=0.01) return;
+    const N=V.pts.length, mid=(N-1)/2;
+    ctx.save(); ctx.lineCap='round'; ctx.shadowColor='rgba(255,120,40,.85)'; ctx.shadowBlur=14;
+    [-1,1].forEach(dir=>{
+      const steps=Math.round(mid*lavaProg); if(steps<1) return;
+      ctx.beginPath();
+      for(let i=0;i<=steps;i++){ const idx=Math.round(mid+dir*i); const p=V.pts[Math.max(0,Math.min(N-1,idx))]; if(i===0)ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]+3); }
+      const g=ctx.createLinearGradient(0,V.apexY,0,gy); g.addColorStop(0,'#ffd27a'); g.addColorStop(.5,'#ff7a2c'); g.addColorStop(1,'#e0431c');
+      ctx.strokeStyle=g; ctx.lineWidth=6; ctx.stroke();
+      const fi=Math.round(mid+dir*steps), fp=V.pts[Math.max(0,Math.min(N-1,fi))];
+      ctx.beginPath(); ctx.arc(fp[0],fp[1]+3,5,0,7); ctx.fillStyle='#ffe08a'; ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  function drawBody(V,gy,E){
+    ctx.beginPath(); ctx.moveTo(V.pts[0][0],V.pts[0][1]);
+    for(let i=1;i<V.pts.length;i++) ctx.lineTo(V.pts[i][0],V.pts[i][1]);
+    ctx.lineTo(V.pts[V.pts.length-1][0],gy); ctx.lineTo(V.pts[0][0],gy); ctx.closePath();
+    const g=ctx.createLinearGradient(0,V.apexY,0,gy); g.addColorStop(0,'#6a5647'); g.addColorStop(1,'#2c2420');
+    ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.35)'; ctx.lineWidth=1; ctx.stroke();
+    // crater glow
+    const glow=ctx.createRadialGradient(V.cx,V.apexY,0,V.cx,V.apexY,16+E*0.14);
+    glow.addColorStop(0,'rgba(255,150,60,'+(0.55+E/300)+')'); glow.addColorStop(1,'rgba(255,90,40,0)');
+    ctx.fillStyle=glow; ctx.beginPath(); ctx.arc(V.cx,V.apexY,16+E*0.14,0,7); ctx.fill();
+  }
+
+  function frame(ts){
+    const L=cv.clientWidth||440, Hh=L*340/440;
+    const need=Math.round(L*DPR); if(cv.width!==need){ cv.width=need; cv.height=Math.round(Hh*DPR); }
+    ctx.setTransform(DPR,0,0,DPR,0,0); ctx.clearRect(0,0,L,Hh);
+    const gy=Hh*0.84, type=vtype(), E=explosivity(), V=volcanoPath(type,L,Hh,gy);
+    // ground
+    const gg=ctx.createLinearGradient(0,gy,0,Hh); gg.addColorStop(0,'#241f1b'); gg.addColorStop(1,'#14100d');
+    ctx.fillStyle=gg; ctx.fillRect(0,gy,L,Hh-gy);
+    // lava progress (grows while erupting for effusive; explosive still shows a little)
+    const target = erupting ? 1 : 0;
+    const lavaRate = (E<55?0.012:0.006);
+    lavaProg += (target-lavaProg)*lavaRate*16*0.06 + (target>lavaProg?lavaRate:-(lavaProg>0?0.02:0));
+    lavaProg=Math.max(0,Math.min(1,lavaProg));
+    drawBody(V,gy,E);
+    // effusive lava mostly for low explosivity
+    if(E<70) drawLava(V,gy);
+    if(erupting) spawn(V,E);
+    stepParts(gy); drawParts();
+    requestAnimationFrame(frame);
+  }
+
+  render(); requestAnimationFrame(frame);
+})();
+/* ============ REVEAL ON SCROLL ============ */
+(function(){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';io.observe(el);});
+})();
+
+
+</script>
+</body></html>
