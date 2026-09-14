@@ -233,17 +233,18 @@
       var shade=(i%2===0)?'#2f6f57':'#3d8a6c';
       s+=R(x,top,bw+0.6,MTOP-top,shade);
     }
-    // ridge bump + central rift
-    s+=P((BX-46)+' '+top+' '+BX+' '+(top-30)+' '+(BX+46)+' '+top,'#3d8a6c');
-    s+=PATH('M'+(BX-8)+' '+(top-30)+' L'+BX+' '+(top-8)+' L'+(BX+8)+' '+(top-30)+' Z','#173a30');
-    // magma upwelling from mantle into the gap
-    s+=P((BX-34)+' '+MTOP+' '+(BX+34)+' '+MTOP+' '+(BX+10)+' '+(top-6)+' '+(BX-10)+' '+(top-6),'url(#magma)',' opacity="0.95"');
-    s+=T(BX,top-40,L.lbl_ridge,'#d8ffe9',14);
+    // ridge bump (built by upwelling magma), grows with motion, + central rift
+    var rh=26+m*24;
+    s+=P((BX-56)+' '+top+' '+(BX-24)+' '+(top-rh*0.7)+' '+BX+' '+(top-rh)+' '+(BX+24)+' '+(top-rh*0.7)+' '+(BX+56)+' '+top,'#3d8a6c',' stroke="#2c6b52" stroke-width="1.5"');
+    s+=PATH('M'+(BX-9)+' '+(top-rh)+' L'+BX+' '+(top-rh+15)+' L'+(BX+9)+' '+(top-rh)+' Z','#173a30');
+    // magma upwelling column from mantle into the gap
+    s+=P((BX-34)+' '+MTOP+' '+(BX+34)+' '+MTOP+' '+(BX+12)+' '+(top-rh+8)+' '+(BX-12)+' '+(top-rh+8),'url(#magma)',' opacity="0.95"');
+    s+=T(BX,top-rh-10,L.lbl_ridge,'#d8ffe9',14);
     if(gap>60) s+=T(BX,top+56,L.lbl_newfloor,'#e9fff4',13);
     s+=T(BX,MTOP+34,L.lbl_magma,'#ffe6b0',13);
     s+=arrow(150,MTOP+34,-1)+arrow(W-150,MTOP+34,1);
     dyn.innerHTML=s;
-    vent={x:BX,y:top-30,on:false};
+    vent={x:BX,y:top-rh+4,on:true,top:top};
   }
 
   // ---------- TRANSFORM (strike-slip fault) ----------
@@ -368,6 +369,7 @@
   // ---- fx loop: quakes, shake, eruption ----
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   var puffs=[];
+  var bubbles=[];
   function loop(now){
     var f='';
     // shake decay
@@ -387,6 +389,25 @@
       var px=p.x+p.vx*a*40, py=p.y+p.vy*a*60, op=(1-a)*0.9;
       if(p.ash) f+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+(3+a*7).toFixed(1)+'" fill="#8a8f99" opacity="'+op.toFixed(2)+'"/>';
       else f+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+(2+a*3).toFixed(1)+'" fill="#ff7a2c" opacity="'+op.toFixed(2)+'"/>';
+    }
+    // divergent: magma bubbling up the ridge column and spilling over to build it
+    if(mode==='diverge' && vent.on){
+      var pulse=0.55+0.45*Math.sin(now*0.006);
+      f+='<ellipse cx="'+vent.x+'" cy="'+vent.y+'" rx="'+(22+7*pulse).toFixed(1)+'" ry="'+(11+4*pulse).toFixed(1)+'" fill="url(#glow)" opacity="'+(0.55*pulse+0.35).toFixed(2)+'"/>';
+      if(!reduce){
+        if(Math.random()<0.6) bubbles.push({t:'rise',x:vent.x+(Math.random()*18-9),born:now,dur:850+Math.random()*550,r:2.5+Math.random()*3});
+        if(Math.random()<0.42){var dir=Math.random()<0.5?-1:1;bubbles.push({t:'spill',dir:dir,born:now,dur:1300+Math.random()*700,r:3+Math.random()*3,reach:26+Math.random()*48});}
+      }
+    }
+    for(var kb=bubbles.length-1;kb>=0;kb--){ var bb=bubbles[kb],ab=(now-bb.born)/bb.dur;
+      if(ab>=1||mode!=='diverge'){bubbles.splice(kb,1);continue;}
+      if(bb.t==='rise'){ var ry2=MTOP-(MTOP-vent.y)*ab, rx=bb.x+Math.sin(ab*12+bb.r)*2.6;
+        var op=(ab<0.8?(0.55+ab*0.45):(1-ab)/0.2).toFixed(2);
+        f+='<circle cx="'+rx.toFixed(1)+'" cy="'+ry2.toFixed(1)+'" r="'+bb.r.toFixed(1)+'" fill="#ffb43a" opacity="'+op+'"/>';
+      } else { var sx=vent.x+bb.dir*bb.reach*ab, sy=vent.y-Math.sin(ab*Math.PI)*13+ab*ab*18;
+        var col=ab<0.55?'#ff7a2c':'#6b3c22', op2=(ab<0.85?0.95:(1-ab)/0.15).toFixed(2);
+        f+='<circle cx="'+sx.toFixed(1)+'" cy="'+sy.toFixed(1)+'" r="'+bb.r.toFixed(1)+'" fill="'+col+'" opacity="'+op2+'"/>';
+      }
     }
     fx.innerHTML=f;
     requestAnimationFrame(loop);
