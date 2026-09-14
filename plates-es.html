@@ -153,7 +153,7 @@
 (function(){
   "use strict";
   var LANG="es";
-  var L={"lbl_melt": "La placa se derrite", "lbl_mantle": "Manto", "lbl_mountains": "Montañas", "lbl_volcano": "Volcán", "lbl_trench": "Fosa", "lbl_oceanplate": "Placa oceánica", "lbl_conplate": "Placa continental", "lbl_ridge": "Dorsal", "lbl_newfloor": "Nuevo suelo marino", "lbl_magma": "Magma", "lbl_fault": "Falla", "mode_converge": "Empujar", "mode_diverge": "Separar", "mode_transform": "Deslizar", "bnd_converge": "Convergente", "bnd_diverge": "Divergente", "bnd_transform": "Transformante", "form_converge": "Fosa, volcanes y montañas", "form_diverge": "Dorsal y nuevo suelo marino", "form_transform": "Falla (sin nueva corteza)", "ex_converge": "Los Andes y las Cascadas", "ex_diverge": "Dorsal Mesoatlántica", "ex_transform": "Falla de San Andrés", "desc_converge": "Las placas <b>chocan</b>. Una se hunde bajo la otra y se derrite en magma que alimenta <b>volcanes</b>, mientras la corteza se pliega formando <b>montañas</b> y una profunda <b>fosa</b> oceánica — con fuertes terremotos.", "desc_diverge": "Las placas <b>se separan</b>. El magma caliente sube para llenar el hueco y se endurece formando <b>nuevo suelo marino</b>, creando una larga <b>dorsal</b> submarina, con terremotos suaves y superficiales.", "desc_transform": "Las placas <b>se deslizan</b> una junto a otra. Se traban, se acumula tensión y de repente se sueltan — y ese salto repentino <b>es un terremoto</b>. No se crea ni se destruye corteza.", "animate": "▶ Animar", "animating": "⏸ Parar"};
+  var L={"lbl_melt": "La placa se derrite", "lbl_mantle": "Manto", "lbl_mountains": "Montañas", "lbl_volcano": "Volcán", "lbl_trench": "Fosa", "lbl_oceanplate": "Placa oceánica", "lbl_conplate": "Placa continental", "lbl_ridge": "Dorsal", "lbl_newfloor": "Nuevo suelo marino", "lbl_magma": "Magma", "lbl_fault": "Falla", "mode_converge": "Empujar", "mode_diverge": "Separar", "mode_transform": "Deslizar", "bnd_converge": "Convergente", "bnd_diverge": "Divergente", "bnd_transform": "Transformante", "form_converge": "Fosa, volcanes y montañas", "form_diverge": "Dorsal y nuevo suelo marino", "form_transform": "Falla (sin nueva corteza)", "ex_converge": "Los Andes y las Cascadas", "ex_diverge": "Dorsal Mesoatlántica", "ex_transform": "Falla de San Andrés", "desc_converge": "Las placas <b>chocan</b>. Una se hunde bajo la otra y se derrite en magma que alimenta <b>volcanes</b>, mientras la corteza se pliega formando <b>montañas</b> y una profunda <b>fosa</b> oceánica — con fuertes terremotos.", "desc_diverge": "Las placas <b>se separan</b>. El magma caliente sube para llenar el hueco y se endurece formando <b>nuevo suelo marino</b>, creando una larga <b>dorsal</b> submarina, con terremotos suaves y superficiales.", "desc_transform": "Las placas <b>se deslizan</b> una junto a otra. Se traban, se acumula tensión y de repente se sueltan — y ese salto repentino <b>es un terremoto</b>. No se crea ni se destruye corteza.", "quakeText": "¡TERREMOTO!", "animate": "▶ Animar", "animating": "⏸ Parar"};
   var NS='http://www.w3.org/2000/svg';
   var $=function(id){return document.getElementById(id);};
 
@@ -254,20 +254,20 @@
 
   // ---------- TRANSFORM (strike-slip fault) ----------
   function renderTransform(m){
-    var s=bg(), top=180, MOVE=120, THRESH=40, d=64, xf=BX;
+    var s=bg(), top=180, MOVE=132, THRESH=64, d=82, xf=BX;
     // elastic rebound: far-field displacement grows; fault is locked so strain (e) builds,
     // until it exceeds THRESH -> the fault slips (rupture): strain releases as an earthquake.
     var totalMove=m*MOVE;
     if(totalMove<tRel) tRel=totalMove;      // dragging back / reset
     var e=totalMove-tRel;
-    if(e>=THRESH){ tRel=totalMove; e=0; triggerQuake(0.85+Math.random()*0.15); }  // break loose!
+    if(e>=THRESH){ tRel=totalMove; e=0; triggerQuake(0.85+Math.random()*0.15); quakeText={born:performance.now()}; }  // break loose!
     var stress=Math.min(1,e/THRESH);
     // two continental blocks + green surface
     s+=R(0,top,xf,MTOP-top,'url(#concrust)',' stroke="#5e4d30" stroke-width="2"');
     s+=R(xf,top,W-xf,MTOP-top,'url(#concrust)',' stroke="#5e4d30" stroke-width="2"');
     s+=R(0,top-8,xf,8,'#3f9a55')+R(xf,top-8,W-xf,8,'#3f9a55');
     // white reference lines (fences/roads): they bend near the stuck fault, then snap + offset
-    [top+34,top+62,top+90].forEach(function(ry){ s+=refLine(ry,tRel,e,xf,d,top,MTOP); });
+    s+=refLine(top+60,tRel,e,xf,d,top,MTOP);
     // fault line reddens as stress builds, then snaps back dark after a quake
     var fc='rgb('+Math.round(32+223*stress)+','+Math.round(20+50*stress)+','+Math.round(10+50*stress)+')';
     s+=PATH('M'+xf+' '+(top-8)+' L'+xf+' '+MTOP,'none',' stroke="'+fc+'" stroke-width="'+(4+stress*3).toFixed(1)+'" stroke-dasharray="10 8"');
@@ -295,6 +295,7 @@
   var vent={x:BX,y:200,on:false};
   var conduit={on:false};
   var tRel=0;   // transform: released (permanent) offset from past ruptures
+  var quakeText=null;
   function refLine(ry,rel,e,xf,d,top,mtop){
     var cl=function(y){return Math.max(top+4,Math.min(mtop-4,y));},lp='',rp='',x,bend;
     for(x=0;x<=xf;x+=20){ bend=(e/Math.PI)*Math.atan((x-xf)/d); lp+=x+','+cl(ry-rel/2+bend).toFixed(1)+' '; }
@@ -376,7 +377,8 @@
   var animRAF=null,animBtn=$('animBtn');
   function startAnim(){ stopAnim(); animBtn.textContent=L.animating; var t0=performance.now(),from=motion>=0.98?0:motion;
     if(from===0) setMotion(0);
-    (function step(now){ var k=Math.min(1,(now-t0)/6000); setMotion(from+(1-from)*k); if(k<1){animRAF=requestAnimationFrame(step);} else {stopAnim();} })(t0);
+    var dur=(mode==='transform')?12000:6000;
+    (function step(now){ var k=Math.min(1,(now-t0)/dur); setMotion(from+(1-from)*k); if(k<1){animRAF=requestAnimationFrame(step);} else {stopAnim();} })(t0);
   }
   function stopAnim(){ if(animRAF){cancelAnimationFrame(animRAF);animRAF=null;} animBtn.textContent=L.animate; }
   animBtn.addEventListener('click',function(){ animRAF?stopAnim():startAnim(); });
@@ -438,6 +440,13 @@
       } else { var sx=vent.x+bb.dir*bb.reach*ab, sy=vent.y-Math.sin(ab*Math.PI)*13+ab*ab*18;
         var col=ab<0.55?'#ff7a2c':'#6b3c22', op2=(ab<0.85?0.95:(1-ab)/0.15).toFixed(2);
         f+='<circle cx="'+sx.toFixed(1)+'" cy="'+sy.toFixed(1)+'" r="'+bb.r.toFixed(1)+'" fill="'+col+'" opacity="'+op2+'"/>';
+      }
+    }
+    // typed EARTHQUAKE! text on rupture (transform)
+    if(quakeText){ var qt=now-quakeText.born, full=L.quakeText, n=Math.min(full.length,Math.floor(qt/55)), shown=full.slice(0,n);
+      if(qt>2200){ quakeText=null; } else {
+        var qop=(qt<1500?1:Math.max(0,1-(qt-1500)/700)).toFixed(2), jit=qt<650?(Math.random()*7-3.5):0;
+        f+='<text x="'+(W/2+jit).toFixed(1)+'" y="120" text-anchor="middle" font-family="\'Fraunces\',serif" font-weight="900" font-size="54" fill="#ff5a3c" stroke="#20140a" stroke-width="5" paint-order="stroke" opacity="'+qop+'">'+shown+'</text>';
       }
     }
     fx.innerHTML=f;
