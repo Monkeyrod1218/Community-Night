@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atmospheric Elevator · Community Night</title>
+<meta name="description" content="Ride a weather balloon up through the troposphere, stratosphere, mesosphere and thermosphere. Watch temperature and pressure change, the ozone layer block UV, meteors burn up, and the auroras glow.">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;700&family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#05070f; --night:#0a0f22; --deep:#111935; --panel:#141d3d;
+    --line:#27325c; --star:#eef2ff; --mist:#9aa5cf; --dim:#5d6794;
+    --gold:#f4c15b; --gold-soft:#ffd98a; --cyan:#74dbe8; --rose:#f08fb0; --ember:#ff8a5c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--void);color:var(--star);font-family:'Spline Sans',sans-serif;line-height:1.6;
+    overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh}
+  ::selection{background:var(--gold);color:var(--void)}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;line-height:1.05;letter-spacing:-.01em}
+
+  #sky{position:fixed;inset:0;z-index:0;display:block}
+  .scrim{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 80% at 70% -10%, rgba(116,219,232,.10), transparent 55%),
+               radial-gradient(90% 60% at 10% 110%, rgba(244,193,91,.07), transparent 60%)}
+  main{position:relative;z-index:2}
+
+  .back-btn{position:fixed;top:20px;left:20px;z-index:100;display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--mist);border:1px solid var(--line);border-radius:100px;padding:10px 18px;
+    background:rgba(5,7,15,.6);backdrop-filter:blur(8px);transition:.25s}
+  .back-btn:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-1px)}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  .hero{padding:clamp(74px,10vh,110px) 0 6px;text-align:center}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:clamp(.7rem,1.7vw,.82rem);
+    letter-spacing:.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:16px}
+  h1{font-size:clamp(2.3rem,7vw,4.1rem)}
+  h1 .em{font-style:italic;color:var(--gold-soft)}
+  .intro{color:var(--mist);max-width:64ch;margin:16px auto 0;font-size:clamp(1rem,2.1vw,1.13rem)}
+
+  .stage{display:grid;grid-template-columns:minmax(280px,420px) 1fr;gap:28px;align-items:stretch;margin:30px 0 10px}
+  @media(max-width:820px){.stage{grid-template-columns:1fr;gap:20px}}
+
+  /* scene + slider */
+  .scenewrap{display:flex;gap:12px;align-items:stretch;justify-content:center}
+  .scene-card{position:relative;flex:1;border:1px solid var(--line);border-radius:24px;overflow:hidden;
+    background:#03040c;box-shadow:0 20px 60px rgba(0,0,0,.5);min-height:420px}
+  #scene{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
+  #scene.grabbing{cursor:grabbing}
+  .slidercol{display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 0}
+  .slidercol .cap{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;writing-mode:vertical-rl}
+  input[type=range].vert{-webkit-appearance:slider-vertical;appearance:slider-vertical;writing-mode:vertical-lr;direction:rtl;
+    width:20px;flex:1;min-height:360px;accent-color:var(--gold);cursor:pointer;background:transparent}
+
+  /* panel */
+  .panel{border:1px solid var(--line);border-radius:24px;background:linear-gradient(160deg,var(--panel),var(--night));
+    padding:clamp(20px,3vw,30px);display:flex;flex-direction:column;gap:18px}
+  .layerTag{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#20180a;background:var(--gold-soft);
+    border-radius:100px;padding:6px 15px;font-weight:700}
+  .layerTag .dot{width:9px;height:9px;border-radius:50%;background:#20180a}
+  .readouts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:400px){.readouts{grid-template-columns:1fr 1fr}}
+  .ro{background:rgba(5,7,15,.5);border:1px solid var(--line);border-radius:14px;padding:13px 14px}
+  .ro .k{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  .ro .v{font-family:'Fraunces',serif;font-size:1.55rem;color:var(--star);margin-top:3px;line-height:1.05}
+  .ro .v small{font-size:.7rem;color:var(--mist);font-family:'Spline Sans',sans-serif}
+  .ro.temp .v{transition:color .3s}
+
+  .desc{border-left:2px solid var(--cyan);background:rgba(116,219,232,.05);border-radius:0 12px 12px 0;
+    padding:14px 16px;color:var(--star);font-size:1rem;min-height:5.2em}
+  .desc b{color:var(--gold-soft)}
+
+  .controls{display:flex;flex-wrap:wrap;gap:10px}
+  .btn{font-family:'Spline Sans',sans-serif;font-weight:600;font-size:.92rem;border-radius:100px;padding:11px 20px;cursor:pointer;border:1px solid transparent;transition:.25s}
+  .btn-gold{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#241704;box-shadow:0 8px 24px rgba(244,193,91,.28)}
+  .btn-gold:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(244,193,91,.42)}
+  .btn-ghost{border-color:var(--line);color:var(--star);background:transparent}
+  .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+  .jumps{display:flex;flex-wrap:wrap;gap:8px}
+  .jump{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
+    background:rgba(5,7,15,.5);border:1px solid var(--line);color:var(--mist);border-radius:100px;padding:8px 13px;cursor:pointer;transition:.2s}
+  .jump:hover{border-color:var(--cyan);color:var(--cyan)}
+  .jump.on{background:var(--gold);border-color:var(--gold);color:#241704;font-weight:700}
+
+  .extras{display:grid;grid-template-columns:170px 1fr;gap:20px;align-items:center;margin-top:2px}
+  @media(max-width:520px){.extras{grid-template-columns:1fr}}
+  .chart-t{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+  .presbar-track{height:12px;border-radius:100px;background:rgba(5,7,15,.6);border:1px solid var(--line);overflow:hidden}
+  .presbar-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--gold));border-radius:100px;transition:width .3s}
+  .pres-note{color:var(--mist);font-size:.85rem;margin-top:8px}
+
+  .foot{color:var(--dim);font-size:.82rem;padding:22px 24px 60px;line-height:1.55;max-width:900px;margin:0 auto;text-align:center}
+  :focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px;border-radius:6px}
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+  <canvas id="sky"></canvas>
+  <div class="scrim"></div>
+  <a class="back-btn" href="earth-english.html">&larr; Back</a>
+
+  <main id="top">
+    <div class="wrap hero">
+      <div class="eyebrow">GPISD · Earth Science</div>
+      <h1>Atmospheric <span class="em">Elevator</span></h1>
+      <p class="intro">Ride a weather balloon straight up and watch the air change beneath you. See the temperature swing, the pressure drop away, the ozone layer catch the Sun’s UV, meteors burn up, and the northern lights glow — layer by layer.</p>
+    </div>
+
+    <div class="wrap stage">
+      <div class="scenewrap">
+        <div class="scene-card">
+          <svg id="scene" viewBox="0 0 400 900" role="img" aria-label="Cross-section of Earth’s atmosphere with a weather balloon that rises through the layers.">
+            <defs>
+              <linearGradient id="skyGrad" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#8ecbf0"/>
+                <stop offset="14%" stop-color="#5aa0d8"/>
+                <stop offset="34%" stop-color="#2f5f9e"/>
+                <stop offset="58%" stop-color="#132a55"/>
+                <stop offset="78%" stop-color="#080f28"/>
+                <stop offset="100%" stop-color="#03040c"/>
+              </linearGradient>
+              <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#fff6d8"/><stop offset="55%" stop-color="#ffd25a"/><stop offset="100%" stop-color="#ff9f2e"/>
+              </radialGradient>
+              <linearGradient id="ozoneGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(116,219,232,.05)"/><stop offset="50%" stop-color="rgba(116,219,232,.30)"/><stop offset="100%" stop-color="rgba(116,219,232,.05)"/>
+              </linearGradient>
+              <linearGradient id="balloonGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffe6a6"/><stop offset="55%" stop-color="#f4c15b"/><stop offset="100%" stop-color="#ff8a5c"/>
+              </linearGradient>
+              <radialGradient id="auroraG" cx="50%" cy="0%" r="90%">
+                <stop offset="0%" stop-color="rgba(120,255,190,.0)"/><stop offset="45%" stop-color="rgba(90,240,170,.55)"/><stop offset="100%" stop-color="rgba(150,110,255,.0)"/>
+              </radialGradient>
+              <linearGradient id="auroraLin" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(150,255,190,0)"/>
+                <stop offset="28%" stop-color="rgba(90,240,150,.95)"/>
+                <stop offset="62%" stop-color="rgba(80,210,180,.5)"/>
+                <stop offset="100%" stop-color="rgba(150,110,255,0)"/>
+              </linearGradient>
+            </defs>
+
+            <rect x="0" y="0" width="400" height="900" fill="url(#skyGrad)"/>
+            <g id="starGroup"></g>
+
+            <!-- layer bands (subtle) -->
+            <g id="bands" opacity="0.9">
+              <rect id="bandThermo" x="0" y="30"    width="400" height="286.6" fill="rgba(150,110,255,0)"/>
+              <rect id="bandMeso"   x="0" y="316.6" width="400" height="222.9" fill="rgba(116,219,232,0)"/>
+              <rect id="bandStrato" x="0" y="539.5" width="400" height="242.1" fill="rgba(255,209,90,0)"/>
+              <rect id="bandTropo"  x="0" y="781.6" width="400" height="76.4"  fill="rgba(255,255,255,0)"/>
+            </g>
+
+            <!-- ozone band 15-35 km -->
+            <g id="ozoneGroup">
+              <rect x="0" y="635.1" width="400" height="127.4" fill="url(#ozoneGrad)"/>
+              <text x="392" y="705" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="15" fill="#bfeef6" opacity="0.92">Ozone layer</text>
+            </g>
+
+            <!-- aurora (thermosphere) -->
+            <g id="auroraGroup"></g>
+            <!-- meteors (mesosphere) -->
+            <g id="meteorGroup"></g>
+            <!-- clouds (troposphere) -->
+            <g id="cloudGroup"></g>
+
+            <!-- sun + UV rays -->
+            <g id="sunGroup">
+              <circle cx="66" cy="96" r="34" fill="url(#sunGrad)"/>
+              <g id="uvGroup"></g>
+            </g>
+
+            <!-- ground -->
+            <g id="ground">
+              <rect x="0" y="858" width="400" height="42" fill="#2f7d43"/>
+              <path d="M0 858 Q 100 838 200 856 T 400 852 L400 900 L0 900 Z" fill="#276b39"/>
+              <rect x="300" y="836" width="16" height="24" fill="#5a4632"/>
+              <path d="M292 838 L308 818 L324 838 Z" fill="#3e8f52"/>
+              <path d="M300 848 L316 828 L332 848 Z" fill="#4aa561"/>
+            </g>
+
+            <!-- altitude axis labels (left) -->
+            <g id="axis" font-family="'JetBrains Mono',monospace" font-size="14" fill="#cfe0ff">
+              <g opacity="0.8">
+                <line x1="8" y1="858"   x2="20" y2="858"   stroke="#cfe0ff" stroke-width="1"/><text x="24" y="862">0</text>
+                <line x1="8" y1="698.8" x2="20" y2="698.8" stroke="#cfe0ff" stroke-width="1"/><text x="24" y="703">25</text>
+                <line x1="8" y1="539.5" x2="20" y2="539.5" stroke="#cfe0ff" stroke-width="1"/><text x="24" y="544">50</text>
+                <line x1="8" y1="380.3" x2="20" y2="380.3" stroke="#cfe0ff" stroke-width="1"/><text x="24" y="385">75</text>
+                <line x1="8" y1="221.1" x2="20" y2="221.1" stroke="#cfe0ff" stroke-width="1"/><text x="24" y="226">100</text>
+                <line x1="8" y1="61.8"  x2="20" y2="61.8"  stroke="#cfe0ff" stroke-width="1"/><text x="24" y="66">125 km</text>
+              </g>
+            </g>
+
+            <!-- balloon -->
+            <g id="balloon">
+              <line x1="-11" y1="30" x2="-4" y2="6" stroke="#e7ecff" stroke-width="1.3"/>
+              <line x1="11" y1="30" x2="4" y2="6" stroke="#e7ecff" stroke-width="1.3"/>
+              <path d="M0 -34 C 26 -34 30 -6 14 8 C 8 14 -8 14 -14 8 C -30 -6 -26 -34 0 -34 Z" fill="url(#balloonGrad)" stroke="#c98a3c" stroke-width="1"/>
+              <path d="M0 -34 C 10 -30 12 -6 0 10 C -12 -6 -10 -30 0 -34 Z" fill="rgba(255,255,255,.18)"/>
+              <rect x="-9" y="30" width="18" height="13" rx="3" fill="#8a5a34" stroke="#5f3d22" stroke-width="1"/>
+              <circle cx="0" cy="36" r="3.4" fill="#ffd98a"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="slidercol">
+          <span class="cap">Altitude ▲</span>
+          <input id="alt" class="vert" type="range" min="0" max="130" step="0.5" value="0" aria-label="Altitude" orient="vertical">
+        </div>
+      </div>
+
+      <div class="panel">
+        <span class="layerTag" id="layerTag"><span class="dot"></span><span id="layerName"></span></span>
+        <div class="readouts">
+          <div class="ro"><div class="k">Altitude</div><div class="v"><span id="roAlt">0</span> <small>km</small></div></div>
+          <div class="ro temp"><div class="k">Temperature</div><div class="v" id="roTemp">15°C</div></div>
+          <div class="ro"><div class="k">Pressure</div><div class="v" id="roPres">1013 <small>hPa</small></div></div>
+        </div>
+        <p class="desc" id="desc"></p>
+        <div class="controls">
+          <button class="btn btn-gold" id="launchBtn" type="button">🎈 Launch</button>
+          <button class="btn btn-ghost" id="resetBtn" type="button">Reset to ground</button>
+        </div>
+        <div class="jumps" id="jumps"></div>
+        <div class="extras">
+          <div>
+            <div class="chart-t">Temperature vs. altitude</div>
+            <svg id="chart" viewBox="0 0 170 300" role="img" aria-label="Temperature vs. altitude"></svg>
+          </div>
+          <div>
+            <div class="chart-t">Air pressure</div>
+            <div class="presbar-track"><div class="presbar-fill" id="presFill" style="width:100%"></div></div>
+            <p class="pres-note" id="presNote"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="foot">A weather balloon really pops around 35 km — above that this is an imaginary elevator! Temperature and pressure follow the U.S. Standard Atmosphere. Built for Community Night. Drag the balloon, use the slider, or press Launch.</p>
+  </main>
+
+<script>
+(function(){
+  "use strict";
+  var LANG="en";
+  var L={"layer_tropo": "Troposphere", "layer_strato": "Stratosphere", "layer_meso": "Mesosphere", "layer_thermo": "Thermosphere", "desc_tropo": "You're in the <b>troposphere</b> — where all our weather happens. Clouds, rain and wind swirl here, and it gets about 6.5°C colder for every kilometer you climb.", "desc_strato": "Welcome to the <b>stratosphere</b>. The <b>ozone layer</b> lives here, soaking up the Sun's harmful UV rays — that's why it actually gets <b>warmer</b> as you rise! Jet planes cruise near the bottom.", "desc_meso": "This is the <b>mesosphere</b> — the coldest layer, down to about −90°C. Look for the streaks: almost every <b>meteor</b> (\"shooting star\") burns up right here as it slams into the air.", "desc_thermo": "You've reached the <b>thermosphere</b>. The air is almost empty, but the few particles are scorching hot (rising past 1000°C higher up). This is where the <b>auroras</b> (northern lights) glow and the Space Station orbits (~400 km).", "rising": "Rising… (tap to stop)", "launch": "🎈 Launch", "presPct": " % of sea-level pressure", "chartX": "Temperature °C"};
+  var NS='http://www.w3.org/2000/svg';
+  var MAX=130, groundY=858, topY=30, span=groundY-topY;      // 828
+  function yOf(a){ return groundY - (a/MAX)*span; }
+  function altOfY(y){ return (groundY - y)/span*MAX; }
+
+  // US-standard-ish table: [alt km, tempC, pressure hPa]
+  var TBL=[[0,15,1013.25],[11,-56.5,226.32],[20,-56.5,54.75],[32,-44.5,8.68],[47,-2.5,1.109],
+           [51,-2.5,0.669],[71,-58.5,0.03956],[85,-86.2,0.003734],[100,-78,0.00032],
+           [110,-13,0.0000710],[120,72,0.0000254],[130,135,0.0000120]];
+  function tempAt(a){ a=clamp(a,0,MAX); for(var i=0;i<TBL.length-1;i++){var p=TBL[i],q=TBL[i+1];
+      if(a<=q[0]){var t=(a-p[0])/((q[0]-p[0])||1);return p[1]+t*(q[1]-p[1]);}} return TBL[TBL.length-1][1]; }
+  function presAt(a){ a=clamp(a,0,MAX); for(var i=0;i<TBL.length-1;i++){var p=TBL[i],q=TBL[i+1];
+      if(a<=q[0]){var t=(a-p[0])/((q[0]-p[0])||1);return Math.exp(Math.log(p[2])+t*(Math.log(q[2])-Math.log(p[2])));}}
+      return TBL[TBL.length-1][2]; }
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+
+  // layers: name key, altitude range, jump target, band el, accent rgb
+  var LAYERS=[
+    {key:'tropo', lo:0,  hi:12,  jump:6,   band:'bandTropo',  accent:'255,255,255', tint:'rgba(255,255,255,.05)'},
+    {key:'strato',lo:12, hi:50,  jump:30,  band:'bandStrato', accent:'244,193,91',  tint:'rgba(255,209,90,.07)'},
+    {key:'meso',  lo:50, hi:85,  jump:68,  band:'bandMeso',   accent:'116,219,232', tint:'rgba(116,219,232,.06)'},
+    {key:'thermo',lo:85, hi:130, jump:115, band:'bandThermo', accent:'150,110,255', tint:'rgba(150,110,255,.08)'}
+  ];
+  function layerOf(a){ for(var i=0;i<LAYERS.length;i++) if(a<LAYERS[i].hi-1e-9) return LAYERS[i]; return LAYERS[LAYERS.length-1]; }
+
+  var $=function(id){return document.getElementById(id);};
+  var scene=$('scene'), balloon=$('balloon'), slider=$('alt');
+  var roAlt=$('roAlt'), roTemp=$('roTemp'), roPres=$('roPres'), desc=$('desc');
+  var layerName=$('layerName'), layerTag=$('layerTag'), presFill=$('presFill'), presNote=$('presNote');
+  var altitude=0, launching=false;
+
+  function tempColor(c){ var t=clamp((c+90)/230,0,1); var h=220-220*t; return 'hsl('+h.toFixed(0)+',80%,'+(60- t*8).toFixed(0)+'%)'; }
+  function fmt(n,d){ return Number(n).toFixed(d==null?0:d); }
+
+  // ---- static: stars, jumps, chart, clouds ----
+  function buildStars(){ var g=$('starGroup'),f='';
+    for(var i=0;i<70;i++){var x=Math.random()*400, y=30+Math.random()*470, r=(Math.random()*1.2+0.3).toFixed(2),
+      o=(0.25+Math.random()*0.6).toFixed(2);
+      f+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r+'" fill="#eef2ff" opacity="'+o+'"/>';}
+    g.innerHTML=f;
+  }
+  function buildClouds(){ var g=$('cloudGroup');
+    var specs=[[70,822,1],[250,806,1.25],[150,840,0.9]];
+    specs.forEach(function(s,i){ var el=document.createElementNS(NS,'g'); el.setAttribute('class','cloud');
+      el.setAttribute('transform','translate('+s[0]+','+s[1]+') scale('+s[2]+')'); el._x=s[0]; el._y=s[1]; el._sc=s[2]; el._sp=6+i*4;
+      el.innerHTML='<ellipse cx="0" cy="0" rx="26" ry="12" fill="rgba(255,255,255,.9)"/>'+
+        '<ellipse cx="18" cy="4" rx="20" ry="10" fill="rgba(255,255,255,.85)"/>'+
+        '<ellipse cx="-18" cy="4" rx="18" ry="9" fill="rgba(255,255,255,.8)"/>';
+      g.appendChild(el);
+    });
+  }
+  function buildJumps(){ var g=$('jumps');
+    LAYERS.forEach(function(ly){ var b=document.createElement('button'); b.className='jump'; b.type='button';
+      b.dataset.alt=ly.jump; b.dataset.key=ly.key; b.textContent=L['layer_'+ly.key];
+      b.addEventListener('click',function(){ stopLaunch(); glideTo(ly.jump); });
+      g.appendChild(b);
+    });
+  }
+
+  // chart: temp vs altitude
+  var CX0=44, CX1=160, CY0=286, CY1=14, TMIN=-95, TMAX=140;
+  function cx(t){ return CX0+(clamp(t,TMIN,TMAX)-TMIN)/(TMAX-TMIN)*(CX1-CX0); }
+  function cy(a){ return CY0-(a/MAX)*(CY0-CY1); }
+  var chartMarker;
+  function buildChart(){ var g=$('chart'),f='';
+    // grid + axis
+    f+='<line x1="'+CX0+'" y1="'+CY0+'" x2="'+CX1+'" y2="'+CY0+'" stroke="#3a4a7a" stroke-width="1"/>';
+    f+='<line x1="'+CX0+'" y1="'+CY0+'" x2="'+CX0+'" y2="'+CY1+'" stroke="#3a4a7a" stroke-width="1"/>';
+    [0,50,100].forEach(function(a){ f+='<line x1="'+(CX0-3)+'" y1="'+cy(a)+'" x2="'+CX0+'" y2="'+cy(a)+'" stroke="#6a78a8"/>'+
+      '<text x="'+(CX0-6)+'" y="'+(cy(a)+3)+'" text-anchor="end" font-family="\'JetBrains Mono\',monospace" font-size="9" fill="#9aa5cf">'+a+'</text>'; });
+    [-50,0,50,100].forEach(function(t){ f+='<text x="'+cx(t)+'" y="'+(CY0+13)+'" text-anchor="middle" font-family="\'JetBrains Mono\',monospace" font-size="9" fill="#9aa5cf">'+t+'</text>'; });
+    // profile polyline (sample every 2km)
+    var pts='';
+    for(var a=0;a<=MAX;a+=2){ pts+=cx(tempAt(a)).toFixed(1)+','+cy(a).toFixed(1)+' '; }
+    f+='<polyline points="'+pts+'" fill="none" stroke="#74dbe8" stroke-width="2"/>';
+    f+='<circle id="chartMarker" cx="'+cx(15)+'" cy="'+cy(0)+'" r="5" fill="#f4c15b" stroke="#241704" stroke-width="1"/>';
+    g.innerHTML=f; chartMarker=$('chartMarker');
+  }
+
+  // ---- update everything from altitude ----
+  function update(){
+    var a=altitude, ly=layerOf(a), t=tempAt(a), p=presAt(a);
+    balloon.setAttribute('transform','translate('+balloonX(a)+','+yOf(a)+')');
+    roAlt.textContent=fmt(a, a<10?1:0);
+    roTemp.textContent=fmt(t)+'°C'; roTemp.style.color=tempColor(t);
+    roTemp.title=fmt(t*9/5+32)+'°F';
+    roPres.innerHTML=(p>=1?fmt(p):p.toPrecision(2))+' <small>hPa</small>';
+    layerName.textContent=L['layer_'+ly.key];
+    layerTag.style.background='rgb('+ly.accent+')';
+    desc.innerHTML=L['desc_'+ly.key];
+    // highlight band
+    LAYERS.forEach(function(z){ $(z.band).setAttribute('fill', z===ly? z.tint : 'rgba(0,0,0,0)'); });
+    // jump active
+    Array.prototype.forEach.call(document.querySelectorAll('.jump'),function(b){ b.classList.toggle('on', b.dataset.key===ly.key); });
+    // chart marker
+    if(chartMarker){ chartMarker.setAttribute('cx',cx(t)); chartMarker.setAttribute('cy',cy(a)); }
+    // pressure bar (log scale over 6 decades: 1013 -> ~1e-4)
+    var frac=clamp((Math.log10(p)- -4)/(Math.log10(1013.25)- -4),0,1);
+    presFill.style.width=(frac*100).toFixed(1)+'%';
+    var pct=p/1013.25*100;
+    presNote.textContent=(pct>=1?fmt(pct):pct.toPrecision(2))+L.presPct;
+    if(slider.value!=a) slider.value=a;
+  }
+  function balloonX(a){ return 205 + Math.sin(a*0.5)*10; } // gentle drift
+
+  function setAlt(a){ altitude=clamp(a,0,MAX); update(); }
+  // smooth glide to target
+  var glideRAF=null;
+  function glideTo(target){ if(glideRAF) cancelAnimationFrame(glideRAF);
+    var start=altitude, t0=performance.now(), dur=Math.min(1400,300+Math.abs(target-start)*14);
+    (function step(now){ var k=clamp((now-t0)/dur,0,1); var e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+      setAlt(start+(target-start)*e); if(k<1) glideRAF=requestAnimationFrame(step); })(t0);
+  }
+
+  // launch (full ride)
+  var launchBtn=$('launchBtn'), launchRAF=null, launchT0=0, launchFrom=0;
+  function startLaunch(){ if(glideRAF)cancelAnimationFrame(glideRAF);
+    launching=true; launchBtn.textContent=L.rising; launchFrom=altitude>=MAX-1?0:altitude;
+    if(launchFrom===0) setAlt(0); launchT0=performance.now();
+    var dur=17000*(1-launchFrom/MAX);
+    (function step(now){ if(!launching) return; var k=clamp((now-launchT0)/dur,0,1);
+      setAlt(launchFrom+(MAX-launchFrom)*k);
+      if(k<1){ launchRAF=requestAnimationFrame(step); } else { stopLaunch(); }
+    })(launchT0);
+  }
+  function stopLaunch(){ launching=false; if(launchRAF)cancelAnimationFrame(launchRAF); launchBtn.textContent=L.launch; }
+  launchBtn.addEventListener('click',function(){ launching?stopLaunch():startLaunch(); });
+  $('resetBtn').addEventListener('click',function(){ stopLaunch(); glideTo(0); });
+
+  // slider
+  slider.addEventListener('input',function(){ stopLaunch(); setAlt(parseFloat(slider.value)); });
+
+  // drag balloon
+  var dragging=false;
+  function pt(evt){ var r=scene.getBoundingClientRect(), cy2=(evt.touches?evt.touches[0].clientY:evt.clientY);
+    return (cy2-r.top)/r.height*900; }
+  scene.addEventListener('pointerdown',function(e){ dragging=true; stopLaunch(); scene.classList.add('grabbing');
+    scene.setPointerCapture&&scene.setPointerCapture(e.pointerId); setAlt(altOfY(pt(e))); e.preventDefault(); });
+  scene.addEventListener('pointermove',function(e){ if(dragging){ setAlt(altOfY(pt(e))); } });
+  window.addEventListener('pointerup',function(){ dragging=false; scene.classList.remove('grabbing'); });
+
+  // ---- continuous animation: clouds, uv, meteors, aurora ----
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var meteors=[], uvs=[], last=performance.now();
+  function spawnMeteor(){ meteors.push({x:40+Math.random()*320, y:221+Math.random()*10, len:0, vx:-1.1-Math.random()*0.8, vy:2.4+Math.random()*1.4, life:0, max:60+Math.random()*40}); }
+  function spawnUV(){ uvs.push({t:0, off:Math.random()*8-4, sp:0.9+Math.random()*0.5}); }
+  function loop(now){ var dt=Math.min(50,now-last); last=now;
+    // clouds drift
+    Array.prototype.forEach.call(document.querySelectorAll('.cloud'),function(c){ c._x+=(dt/1000)*c._sp; if(c._x>440)c._x=-40;
+      c.setAttribute('transform','translate('+c._x.toFixed(1)+','+c._y+') scale('+c._sc+')'); });
+    // uv particles: sun(66,96) -> ozone top y=635
+    if(!reduce && Math.random()<0.06) spawnUV();
+    var ug=$('uvGroup'), uf='';
+    for(var i=uvs.length-1;i>=0;i--){ var u=uvs[i]; u.t+=dt*0.0006*u.sp; var yy=96+(635.1-96)*u.t, xx=66+(150-66)*u.t+u.off;
+      if(u.t>=1){ uf+='<circle cx="'+(xx).toFixed(1)+'" cy="635" r="3.2" fill="#bff2ff" opacity="'+(1-(u.t-1)*3).toFixed(2)+'"/>'; if(u.t>1.33) uvs.splice(i,1); }
+      else { uf+='<line x1="'+xx.toFixed(1)+'" y1="'+yy.toFixed(1)+'" x2="'+(xx+3).toFixed(1)+'" y2="'+(yy-9).toFixed(1)+'" stroke="#ffe9a6" stroke-width="2" opacity="0.8"/>'; } }
+    ug.innerHTML=uf;
+    // meteors 75-100km (y 221-380)
+    if(!reduce && Math.random()<0.04) spawnMeteor();
+    var mg=$('meteorGroup'), mf='';
+    for(var j=meteors.length-1;j>=0;j--){ var m=meteors[j]; m.life+=dt; m.x+=m.vx*(dt/16); m.y+=m.vy*(dt/16);
+      var op=clamp(1-m.life/m.max*1.0,0,1);
+      mf+='<line x1="'+m.x.toFixed(1)+'" y1="'+m.y.toFixed(1)+'" x2="'+(m.x-m.vx*7).toFixed(1)+'" y2="'+(m.y-m.vy*7).toFixed(1)+'" stroke="#ffd98a" stroke-width="2" opacity="'+op.toFixed(2)+'" stroke-linecap="round"/>';
+      mf+='<circle cx="'+m.x.toFixed(1)+'" cy="'+m.y.toFixed(1)+'" r="2.2" fill="#fff2cf" opacity="'+op.toFixed(2)+'"/>';
+      if(m.life>m.max||m.y>385) meteors.splice(j,1);
+    }
+    mg.innerHTML=mf;
+    // aurora shimmer (thermosphere y 30-235)
+    if(!reduce){ var ag=$('auroraGroup'), af='', tsec=now*0.001;
+      for(var b=0;b<3;b++){ var baseY=52+b*44, amp=18+b*5, ph=tsec*(0.5+b*0.2)+b, h=90;
+        var d='M 0 '+baseY;
+        for(var x=0;x<=400;x+=20){ d+=' L '+x+' '+(baseY+Math.sin(x*0.028+ph)*amp).toFixed(1); }
+        d+=' L 400 '+(baseY+h)+' L 0 '+(baseY+h)+' Z';
+        var op=(0.38+0.18*Math.sin(tsec*1.3+b)).toFixed(2);
+        af+='<path d="'+d+'" fill="url(#auroraLin)" opacity="'+op+'"/>';
+      }
+      ag.innerHTML=af;
+    }
+    requestAnimationFrame(loop);
+  }
+
+  // starfield background (site style)
+  (function(){var c=$('sky'),x=c.getContext('2d'),st=[],DPR=Math.min(window.devicePixelRatio||1,2);
+    function rs(){c.width=innerWidth*DPR;c.height=innerHeight*DPR;c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';
+      var n=Math.round(innerWidth*innerHeight/7000);st=[];for(var i=0;i<n;i++)st.push({x:Math.random()*c.width,y:Math.random()*c.height,r:(Math.random()*1.2+0.2)*DPR,a:Math.random()*0.6+0.2,tw:Math.random()*0.02+0.004,p:Math.random()*6.28,hue:Math.random()<0.15?'116,219,232':(Math.random()<0.2?'244,193,91':'238,242,255')});}
+    function dr(){x.clearRect(0,0,c.width,c.height);for(var i=0;i<st.length;i++){var s=st[i];s.p+=s.tw;var a=s.a+Math.sin(s.p)*0.25;x.beginPath();x.arc(s.x,s.y,s.r,0,6.28);x.fillStyle='rgba('+s.hue+','+Math.max(0,a).toFixed(2)+')';x.fill();}requestAnimationFrame(dr);}
+    addEventListener('resize',rs);rs();dr();})();
+
+  buildStars(); buildClouds(); buildJumps(); buildChart(); setAlt(0);
+  requestAnimationFrame(loop);
+
+  window.__atmo={setAlt:setAlt,tempAt:tempAt,presAt:presAt,layerOf:layerOf,startLaunch:startLaunch,stopLaunch:stopLaunch,glideTo:glideTo,get altitude(){return altitude;},L:L};
+})();
+</script>
+</body>
+</html>
