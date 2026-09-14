@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratorio de Tectónica de Placas · Noche Comunitaria</title>
+<meta name="description" content="Empuja, separa y desliza dos de las placas tectónicas de la Tierra para formar montañas, excavar fosas oceánicas, crear volcanes, abrir nuevo suelo marino y provocar terremotos.">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;700&family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#05070f; --night:#0a0f22; --deep:#111935; --panel:#141d3d;
+    --line:#27325c; --star:#eef2ff; --mist:#9aa5cf; --dim:#5d6794;
+    --gold:#f4c15b; --gold-soft:#ffd98a; --cyan:#74dbe8; --rose:#f08fb0; --ember:#ff8a5c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--void);color:var(--star);font-family:'Spline Sans',sans-serif;line-height:1.6;
+    overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh}
+  ::selection{background:var(--gold);color:var(--void)}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;line-height:1.05;letter-spacing:-.01em}
+  #sky{position:fixed;inset:0;z-index:0;display:block}
+  .scrim{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 80% at 70% -10%, rgba(116,219,232,.10), transparent 55%),
+               radial-gradient(90% 60% at 10% 110%, rgba(244,193,91,.07), transparent 60%)}
+  main{position:relative;z-index:2}
+  .back-btn{position:fixed;top:20px;left:20px;z-index:100;display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--mist);border:1px solid var(--line);border-radius:100px;padding:10px 18px;
+    background:rgba(5,7,15,.6);backdrop-filter:blur(8px);transition:.25s}
+  .back-btn:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-1px)}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  .hero{padding:clamp(58px,7vh,92px) 0 4px;text-align:center}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:clamp(.7rem,1.7vw,.82rem);
+    letter-spacing:.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px}
+  h1{font-size:clamp(2.1rem,6vw,3.7rem)}
+  h1 .em{font-style:italic;color:var(--gold-soft)}
+  .intro{color:var(--mist);max-width:66ch;margin:12px auto 0;font-size:clamp(.95rem,2vw,1.1rem)}
+  .action{color:var(--gold);font-weight:600;margin:10px auto 0;max-width:60ch}
+
+  .modes{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0 4px}
+  .mode{font-family:'Spline Sans',sans-serif;font-weight:600;font-size:.95rem;border-radius:100px;
+    padding:11px 20px;cursor:pointer;border:1px solid var(--line);background:rgba(10,15,34,.7);color:var(--star);transition:.2s;
+    display:inline-flex;align-items:center;gap:8px}
+  .mode:hover{border-color:var(--cyan)}
+  .mode.on{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#241704;border-color:var(--gold);box-shadow:0 8px 22px rgba(244,193,91,.3)}
+  .mode .ar{font-family:'JetBrains Mono',monospace;font-size:.9em}
+
+  .scene-card{position:relative;margin:14px auto 0;border:1px solid var(--line);border-radius:22px;overflow:hidden;
+    background:#0a1226;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+  #scene{display:block;width:100%;height:auto;touch-action:none;cursor:ew-resize}
+
+  .controls{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;justify-content:center;margin:16px 0 2px}
+  .controls .mlbl{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  input[type=range]{-webkit-appearance:none;appearance:none;height:6px;width:min(420px,60vw);border-radius:100px;
+    background:linear-gradient(90deg,var(--cyan),var(--gold));outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;
+    background:var(--star);border:3px solid var(--gold);cursor:pointer;box-shadow:0 0 12px rgba(244,193,91,.5)}
+  input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--star);border:3px solid var(--gold);cursor:pointer}
+  .btn{font-family:'Spline Sans',sans-serif;font-weight:600;font-size:.9rem;border-radius:100px;padding:10px 18px;cursor:pointer;border:1px solid transparent;transition:.25s}
+  .btn-gold{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#241704;box-shadow:0 8px 22px rgba(244,193,91,.28)}
+  .btn-gold:hover{transform:translateY(-2px)}
+  .btn-ghost{border-color:var(--line);color:var(--star);background:transparent}
+  .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+
+  .readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px auto 0}
+  @media(max-width:640px){.readouts{grid-template-columns:1fr 1fr}}
+  .ro{background:rgba(10,15,34,.6);border:1px solid var(--line);border-radius:14px;padding:12px 13px;min-width:0}
+  .ro .k{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+  .ro .v{font-family:'Fraunces',serif;font-size:1.02rem;color:var(--star);margin-top:4px;line-height:1.15}
+  .ro.quake .v{transition:color .2s}
+  .desc{border-left:2px solid var(--cyan);background:rgba(116,219,232,.05);border-radius:0 12px 12px 0;
+    padding:13px 16px;color:var(--star);font-size:1rem;margin:16px auto 0;max-width:70ch}
+  .desc b{color:var(--gold-soft)}
+  .foot{color:var(--dim);font-size:.8rem;padding:20px 20px 54px;line-height:1.55;max-width:860px;margin:0 auto;text-align:center}
+  :focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px;border-radius:6px}
+  [hidden]{display:none!important}
+
+  @media(max-width:1024px){
+    .hero{padding:44px 0 2px}
+    h1{font-size:clamp(1.7rem,4.6vw,2.4rem)}
+    .intro{font-size:.88rem;margin-top:7px}
+    .action{margin-top:7px;font-size:.92rem}
+    .modes{margin-top:12px}
+    .mode{padding:8px 14px;font-size:.84rem}
+    .scene-card{max-width:660px;margin-left:auto;margin-right:auto}
+    .controls{margin-top:10px}
+    .readouts{margin-top:10px;gap:10px}
+    .ro{padding:9px 11px}
+    .ro .v{font-size:.92rem}
+    .desc{font-size:.88rem;padding:10px 12px;margin-top:10px}
+    .foot{padding:10px 20px 24px;font-size:.74rem}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+  <canvas id="sky"></canvas>
+  <div class="scrim"></div>
+  <a class="back-btn" href="earth-spanish.html">&larr; Volver</a>
+
+  <main id="top">
+    <div class="wrap hero">
+      <div class="eyebrow">GPISD · Ciencia de la Tierra</div>
+      <h1>Laboratorio de <span class="em">Tectónica</span></h1>
+      <p class="intro">La corteza de la Tierra está dividida en placas gigantes que siempre se mueven. Mueve dos de ellas y observa qué pasa donde se encuentran — montañas, fosas, volcanes, nuevo suelo marino y terremotos.</p>
+      <p class="action">Elige cómo se mueven las placas y luego arrastra el control (o las placas) para formar el límite.</p>
+    </div>
+
+    <div class="wrap">
+      <div class="modes" id="modes"></div>
+
+      <div class="scene-card">
+        <svg id="scene" viewBox="0 0 960 480" role="img" aria-label="Corte de dos placas tectónicas que forman montañas, fosas, volcanes o nuevo suelo marino al moverse.">
+          <defs>
+            <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8ecbf0"/><stop offset="100%" stop-color="#cfeafb"/></linearGradient>
+            <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3fb0e6"/><stop offset="100%" stop-color="#1f6ea3"/></linearGradient>
+            <linearGradient id="mantle" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b83a15"/><stop offset="55%" stop-color="#d75a1e"/><stop offset="100%" stop-color="#8f2410"/></linearGradient>
+            <linearGradient id="magma" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffd24a"/><stop offset="55%" stop-color="#ff7a2c"/><stop offset="100%" stop-color="#e0431a"/></linearGradient>
+            <linearGradient id="ocrust" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a5a68"/><stop offset="100%" stop-color="#2c3a46"/></linearGradient>
+            <linearGradient id="concrust" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b79a68"/><stop offset="100%" stop-color="#7c6440"/></linearGradient>
+            <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff2c0"/><stop offset="100%" stop-color="rgba(255,180,60,0)"/></radialGradient>
+          </defs>
+          <g id="sceneG">
+            <g id="dyn"></g>
+            <g id="fx"></g>
+          </g>
+        </svg>
+      </div>
+
+      <div class="controls">
+        <span class="mlbl">Mueve las placas</span>
+        <input id="move" type="range" min="0" max="100" step="0.5" value="0" aria-label="Mueve las placas">
+        <button class="btn btn-gold" id="animBtn" type="button">▶ Animar</button>
+        <button class="btn btn-ghost" id="resetBtn" type="button">Reiniciar</button>
+      </div>
+
+      <div class="readouts">
+        <div class="ro"><div class="k">Límite</div><div class="v" id="roBoundary"></div></div>
+        <div class="ro"><div class="k">Se forma</div><div class="v" id="roForming"></div></div>
+        <div class="ro"><div class="k">Ejemplo real</div><div class="v" id="roExample"></div></div>
+        <div class="ro quake"><div class="k">Último sismo</div><div class="v" id="roQuake">—</div></div>
+      </div>
+
+      <p class="desc" id="desc"></p>
+    </div>
+
+    <p class="foot">Un modelo simplificado para la Noche Comunitaria. Los límites convergentes forman los Andes y el Himalaya; los divergentes ensanchan el Atlántico; la falla de San Andrés es un límite transformante. Empuja, separa o desliza — y observa los terremotos.</p>
+  </main>
+
+<script>
+(function(){
+  "use strict";
+  var LANG="es";
+  var L={"lbl_mantle": "Manto", "lbl_mountains": "Montañas", "lbl_volcano": "Volcán", "lbl_trench": "Fosa", "lbl_oceanplate": "Placa oceánica", "lbl_conplate": "Placa continental", "lbl_ridge": "Dorsal", "lbl_newfloor": "Nuevo suelo marino", "lbl_magma": "Magma", "lbl_fault": "Falla", "mode_converge": "Empujar", "mode_diverge": "Separar", "mode_transform": "Deslizar", "bnd_converge": "Convergente", "bnd_diverge": "Divergente", "bnd_transform": "Transformante", "form_converge": "Fosa, volcanes y montañas", "form_diverge": "Dorsal y nuevo suelo marino", "form_transform": "Falla (sin nueva corteza)", "ex_converge": "Los Andes y las Cascadas", "ex_diverge": "Dorsal Mesoatlántica", "ex_transform": "Falla de San Andrés", "desc_converge": "Las placas <b>chocan</b>. Una se hunde bajo la otra y se derrite en magma que alimenta <b>volcanes</b>, mientras la corteza se pliega formando <b>montañas</b> y una profunda <b>fosa</b> oceánica — con fuertes terremotos.", "desc_diverge": "Las placas <b>se separan</b>. El magma caliente sube para llenar el hueco y se endurece formando <b>nuevo suelo marino</b>, creando una larga <b>dorsal</b> submarina, con terremotos suaves y superficiales.", "desc_transform": "Las placas <b>se deslizan</b> una junto a otra. Se traban, se acumula tensión y de repente se sueltan — y ese salto repentino <b>es un terremoto</b>. No se crea ni se destruye corteza.", "animate": "▶ Animar", "animating": "⏸ Parar"};
+  var NS='http://www.w3.org/2000/svg';
+  var $=function(id){return document.getElementById(id);};
+
+  var mode='converge', motion=0;               // motion 0..1
+  var dyn=$('dyn'), fx=$('fx'), sceneG=$('sceneG'), moveEl=$('move');
+
+  // ---- svg string helpers ----
+  function R(x,y,w,h,fill,extra){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+fill+'"'+(extra||'')+'/>';}
+  function P(pts,fill,extra){return '<polygon points="'+pts+'" fill="'+fill+'"'+(extra||'')+'/>';}
+  function PATH(d,fill,extra){return '<path d="'+d+'" fill="'+fill+'"'+(extra||'')+'/>';}
+  function T(x,y,s,fill,size,anchor){return '<text x="'+x+'" y="'+y+'" fill="'+(fill||'#fff')+'" font-family="\'JetBrains Mono\',monospace" font-size="'+(size||15)+'" text-anchor="'+(anchor||'middle')+'" font-weight="700" paint-order="stroke" stroke="rgba(0,0,0,.55)" stroke-width="3">'+s+'</text>';}
+  var W=960,H=480, SEA=150, MTOP=300, BX=480;
+
+  function bg(){ // sky + mantle behind everything
+    return R(0,0,W,SEA,'url(#sky2)') + R(0,MTOP,W,H-MTOP,'url(#mantle)') +
+      T(W-14,H-16,L.lbl_mantle,'#ffe0b8',15,'end');
+  }
+
+  // ---------- CONVERGE (ocean-continent subduction) ----------
+  function renderConverge(m){
+    var over=m*70, s=bg();
+    var coast=BX+24;
+    // ocean water (left)
+    s+=R(0,SEA,coast,MTOP-SEA,'url(#water)');
+    // subducting oceanic slab: slab body then a tongue diving down-right
+    var top=190;
+    s+=PATH('M0 '+top+' L'+(BX-30)+' '+top+' Q '+(BX+20)+' '+(top+4)+' '+(BX+80+over)+' '+(top+90+over)+
+            ' L'+(BX+50+over)+' '+(top+120+over)+' Q '+(BX-10)+' '+(top+26)+' '+(BX-40)+' '+(top+34)+' L0 '+(top+34)+' Z',
+            'url(#ocrust)',' stroke="#1f2a33" stroke-width="2"');
+    // trench notch at boundary
+    s+=PATH('M'+(BX-18)+' '+top+' L'+BX+' '+(top+30)+' L'+(BX+18)+' '+top+' Z','#0b1620');
+    // continental plate (right) body
+    s+=PATH('M'+(coast-10)+' '+top+' L'+W+' '+top+' L'+W+' '+MTOP+' L'+(coast-10)+' '+MTOP+' Z','url(#concrust)',' stroke="#5e4d30" stroke-width="2"');
+    // land surface (green) on right, sloping up to mountains near boundary
+    var mtnH=m*70;
+    s+=PATH('M'+(coast-10)+' '+top+' L'+W+' '+top+' L'+W+' '+(top-6)+' L'+(coast-10)+' '+(top-6)+' Z','#3f9a55');
+    // mountain range near the boundary
+    if(m>0.02){
+      var mx=coast+40;
+      s+=P(mx+' '+top+' '+(mx+28)+' '+(top-mtnH)+' '+(mx+56)+' '+top,'#7d6a4c',' stroke="#5e4d30" stroke-width="1.5"');
+      s+=P((mx+40)+' '+top+' '+(mx+74)+' '+(top-mtnH*1.25)+' '+(mx+108)+' '+top,'#8a7355',' stroke="#5e4d30" stroke-width="1.5"');
+      if(mtnH>36){ s+=P((mx+62)+' '+(top-mtnH*1.25+18)+' '+(mx+74)+' '+(top-mtnH*1.25)+' '+(mx+86)+' '+(top-mtnH*1.25+18),'#fff'); }
+      s+=T(mx+54,top+34,L.lbl_mountains,'#ffe9c9',14);
+    }
+    // volcano further inland, grows + erupts
+    var vx=coast+230, vH=30+m*80;
+    s+=P((vx-46)+' '+top+' '+vx+' '+(top-vH)+' '+(vx+46)+' '+top,'#3a2e22',' stroke="#241b12" stroke-width="1.5"');
+    s+=P((vx-12)+' '+(top-vH+8)+' '+vx+' '+(top-vH)+' '+(vx+12)+' '+(top-vH+8),'#ff5a2c'); // crater lava
+    s+=T(vx,top+34,L.lbl_volcano,'#ffd9a6',14);
+    // magma rising from slab to volcano
+    if(m>0.25){ s+=PATH('M'+(BX+55+over)+' '+(MTOP+40)+' Q '+(vx-30)+' '+(MTOP-10)+' '+vx+' '+(top-vH+6),'none',' stroke="url(#magma)" stroke-width="'+(3+m*4)+'" opacity="0.85"'); }
+    // trench + plate labels
+    s+=T(BX,top-14,L.lbl_trench,'#bfeaff',14);
+    s+=T(120,SEA+22,L.lbl_oceanplate,'#dff0ff',13);
+    s+=T(W-90,top+58,L.lbl_conplate,'#ffeccb',13);
+    // motion arrows (pushing together)
+    s+=arrow(150,MTOP+34,1)+arrow(W-150,MTOP+34,-1);
+    dyn.innerHTML=s;
+    // eruption particles handled in fx loop (store vent)
+    vent={x:vx,y:top-vH,on:m>0.45};
+  }
+
+  // ---------- DIVERGE (mid-ocean ridge) ----------
+  function renderDiverge(m){
+    var gap=20+m*150, s=bg();
+    var lend=BX-gap/2, rend=BX+gap/2;
+    // water everywhere above crust
+    s+=R(0,SEA,W,MTOP-SEA,'url(#water)');
+    // left & right oceanic plates sliding apart
+    var top=200;
+    s+=R(0,top,lend,MTOP-top,'url(#ocrust)',' stroke="#1f2a33" stroke-width="2"');
+    s+=R(rend,top,W-rend,MTOP-top,'url(#ocrust)',' stroke="#1f2a33" stroke-width="2"');
+    // new sea floor filling the gap (bright basalt bands, symmetric)
+    var bands=Math.max(1,Math.round(gap/22));
+    for(var i=0;i<bands;i++){
+      var bw=gap/bands, x=lend+i*bw;
+      var shade=(i%2===0)?'#2f6f57':'#3d8a6c';
+      s+=R(x,top,bw+0.6,MTOP-top,shade);
+    }
+    // ridge bump + central rift
+    s+=P((BX-46)+' '+top+' '+BX+' '+(top-30)+' '+(BX+46)+' '+top,'#3d8a6c');
+    s+=PATH('M'+(BX-8)+' '+(top-30)+' L'+BX+' '+(top-8)+' L'+(BX+8)+' '+(top-30)+' Z','#173a30');
+    // magma upwelling from mantle into the gap
+    s+=P((BX-34)+' '+MTOP+' '+(BX+34)+' '+MTOP+' '+(BX+10)+' '+(top-6)+' '+(BX-10)+' '+(top-6),'url(#magma)',' opacity="0.95"');
+    s+=T(BX,top-40,L.lbl_ridge,'#d8ffe9',14);
+    if(gap>60) s+=T(BX,top+56,L.lbl_newfloor,'#e9fff4',13);
+    s+=T(BX,MTOP+34,L.lbl_magma,'#ffe6b0',13);
+    s+=arrow(150,MTOP+34,-1)+arrow(W-150,MTOP+34,1);
+    dyn.innerHTML=s;
+    vent={x:BX,y:top-30,on:false};
+  }
+
+  // ---------- TRANSFORM (strike-slip fault) ----------
+  function renderTransform(m){
+    var off=m*70, s=bg();
+    var top=180;
+    // two continental blocks (land) meeting at a vertical fault
+    s+=R(0,top,BX,MTOP-top,'url(#concrust)',' stroke="#5e4d30" stroke-width="2"');
+    s+=R(BX,top,W-BX,MTOP-top,'url(#concrust)',' stroke="#5e4d30" stroke-width="2"');
+    s+=R(0,top-8,BX,8,'#3f9a55')+R(BX,top-8,W-BX,8,'#3f9a55');
+    // a road crosses the fault; left half shifts down, right half up -> lateral offset
+    var ry=top+46;
+    // road: left half at ry+off, right half at ry-off (offset across fault)
+    s+=R(0,ry+off-4,BX,8,'#eae3cf');
+    s+=R(BX,ry-off-4,W-BX,8,'#eae3cf');
+    // fault line (dashed) + label
+    s+=PATH('M'+BX+' '+(top-8)+' L'+BX+' '+MTOP,'none',' stroke="#20140a" stroke-width="4" stroke-dasharray="10 8"');
+    s+=T(BX,top-16,L.lbl_fault,'#ffd9a6',15);
+    // lateral motion arrows (opposite, along the fault -> shown vertical on the surface)
+    s+='<g stroke="#20140a" stroke-width="0" >';
+    s+=varrow(120,top+ (MTOP-top)/2, 1)+varrow(W-120,top+(MTOP-top)/2,-1);
+    s+='</g>';
+    s+=T(230,top+90,L.lbl_conplate,'#ffeccb',13)+T(W-230,top+90,L.lbl_conplate,'#ffeccb',13);
+    dyn.innerHTML=s;
+    vent={x:BX,y:top,on:false};
+  }
+
+  // horizontal push/pull arrow. dir=1 points right, -1 left
+  function arrow(cx,cy,dir){
+    var L2=52, hw=12; var tipx=cx+dir*L2;
+    return '<g opacity="0.95"><line x1="'+(cx-dir*L2)+'" y1="'+cy+'" x2="'+tipx+'" y2="'+cy+'" stroke="#fff" stroke-width="6"/>'+
+      P(tipx+' '+cy+' '+(tipx-dir*18)+' '+(cy-hw)+' '+(tipx-dir*18)+' '+(cy+hw),'#fff')+'</g>';
+  }
+  // vertical arrow for transform surface (dir=1 down, -1 up)
+  function varrow(cx,cy,dir){
+    var L2=42,hw=11; var tipy=cy+dir*L2;
+    return '<g opacity="0.95"><line x1="'+cx+'" y1="'+(cy-dir*L2)+'" x2="'+cx+'" y2="'+tipy+'" stroke="#fff" stroke-width="6"/>'+
+      P(cx+' '+tipy+' '+(cx-hw)+' '+(tipy-dir*18)+' '+(cx+hw)+' '+(tipy-dir*18),'#fff')+'</g>';
+  }
+
+  var vent={x:BX,y:200,on:false};
+
+  function render(){
+    if(mode==='converge') renderConverge(motion);
+    else if(mode==='diverge') renderDiverge(motion);
+    else renderTransform(motion);
+    updatePanel();
+  }
+
+  function updatePanel(){
+    $('roBoundary').textContent=L['bnd_'+mode];
+    $('roForming').textContent=L['form_'+mode];
+    $('roExample').textContent=L['ex_'+mode];
+    $('desc').innerHTML=L['desc_'+mode];
+    // active mode button
+    Array.prototype.forEach.call(document.querySelectorAll('.mode'),function(b){b.classList.toggle('on',b.dataset.mode===mode);});
+  }
+
+  // ---- earthquakes ----
+  var quakes=[], shake=0, lastMag=0;
+  function quakeRange(){ if(mode==='transform')return [5.0,7.6]; if(mode==='converge')return [4.5,7.2]; return [2.5,4.4]; }
+  function boundaryPoints(){
+    if(mode==='converge') return [{x:BX,y:190},{x:BX+40,y:250},{x:BX+80,y:300}];
+    if(mode==='diverge') return [{x:BX,y:200}];
+    return [{x:BX,y:200},{x:BX,y:250},{x:BX,y:290}];
+  }
+  function triggerQuake(strength){
+    var r=quakeRange(); var mag=r[0]+(r[1]-r[0])*Math.min(1,strength);
+    lastMag=mag;
+    var pts=boundaryPoints();
+    var n=mode==='diverge'?1:(1+Math.round(Math.random()*2));
+    for(var i=0;i<n;i++){ var p=pts[Math.floor(Math.random()*pts.length)];
+      quakes.push({x:p.x+(Math.random()*40-20),y:p.y+(Math.random()*30-15),born:performance.now(),mag:mag});
+    }
+    shake=Math.min(10, (mag-2)*1.6);
+    var q=$('roQuake'); q.textContent='M '+mag.toFixed(1);
+    q.style.color = mag>=6?'#ff5a3c':(mag>=4.5?'#ffb03a':'#7CF3A0');
+  }
+
+  // ---- interaction ----
+  function setMotion(v,fromDrag){
+    v=Math.max(0,Math.min(1,v));
+    var d=Math.abs(v-motion);
+    motion=v; if(moveEl.value!=v*100) moveEl.value=v*100;
+    render();
+    if(d>0.008 && Math.random()<0.6+d*4) triggerQuake(d*6 + (mode==='transform'?0.25:0));
+  }
+  moveEl.addEventListener('input',function(){ stopAnim(); setMotion(parseFloat(moveEl.value)/100,true); });
+
+  // drag on scene
+  var scene=$('scene'),dragging=false,lastX=0;
+  function sx(e){var r=scene.getBoundingClientRect();return ((e.touches?e.touches[0].clientX:e.clientX)-r.left)/r.width;}
+  scene.addEventListener('pointerdown',function(e){dragging=true;stopAnim();lastX=sx(e);scene.setPointerCapture&&scene.setPointerCapture(e.pointerId);e.preventDefault();});
+  scene.addEventListener('pointermove',function(e){ if(!dragging)return; var x=sx(e),dx=x-lastX; lastX=x;
+    // dragging outward (either direction) increases motion; toward center decreases
+    var dir = (x<0.5)? -dx : dx;   // pulling edges outward raises motion
+    setMotion(motion+dir*1.4,true);
+  });
+  window.addEventListener('pointerup',function(){dragging=false;});
+
+  // modes
+  function buildModes(){
+    var defs=[['converge',L.mode_converge,'→ ←'],['diverge',L.mode_diverge,'← →'],['transform',L.mode_transform,'⇅']];
+    var g=$('modes');
+    defs.forEach(function(d){ var b=document.createElement('button'); b.className='mode'; b.type='button'; b.dataset.mode=d[0];
+      b.innerHTML='<span class="ar">'+d[2]+'</span> '+d[1];
+      b.addEventListener('click',function(){ mode=d[0]; setMotion(0); });
+      g.appendChild(b);
+    });
+  }
+
+  // animate
+  var animRAF=null,animBtn=$('animBtn');
+  function startAnim(){ stopAnim(); animBtn.textContent=L.animating; var t0=performance.now(),from=motion>=0.98?0:motion;
+    if(from===0) setMotion(0);
+    (function step(now){ var k=Math.min(1,(now-t0)/6000); setMotion(from+(1-from)*k); if(k<1){animRAF=requestAnimationFrame(step);} else {stopAnim();} })(t0);
+  }
+  function stopAnim(){ if(animRAF){cancelAnimationFrame(animRAF);animRAF=null;} animBtn.textContent=L.animate; }
+  animBtn.addEventListener('click',function(){ animRAF?stopAnim():startAnim(); });
+  $('resetBtn').addEventListener('click',function(){ stopAnim(); setMotion(0); $('roQuake').textContent='—'; $('roQuake').style.color=''; quakes=[]; });
+
+  // ---- fx loop: quakes, shake, eruption ----
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var puffs=[];
+  function loop(now){
+    var f='';
+    // shake decay
+    if(shake>0.1){ var s=shake; sceneG.setAttribute('transform','translate('+(Math.random()*s-s/2).toFixed(1)+','+(Math.random()*s-s/2).toFixed(1)+')'); shake*=0.86; }
+    else { sceneG.setAttribute('transform',''); shake=0; }
+    // quakes render (star flashes)
+    for(var i=quakes.length-1;i>=0;i--){ var q=quakes[i], age=(now-q.born)/700; if(age>=1){quakes.splice(i,1);continue;}
+      var op=(1-age).toFixed(2), rr=(6+q.mag*2)*(0.6+age*0.8);
+      f+='<circle cx="'+q.x.toFixed(1)+'" cy="'+q.y.toFixed(1)+'" r="'+rr.toFixed(1)+'" fill="none" stroke="#ffe14a" stroke-width="3" opacity="'+op+'"/>';
+      f+=star(q.x,q.y,7+q.mag,'#fff36b',op);
+    }
+    // volcano eruption puffs (converge, vent.on)
+    if(!reduce && mode==='converge' && vent.on){
+      if(Math.random()<0.4) puffs.push({x:vent.x+(Math.random()*10-5),y:vent.y,vy:-1-Math.random(),vx:(Math.random()*1.2-0.6),born:now,ash:Math.random()<0.5});
+    }
+    for(var j=puffs.length-1;j>=0;j--){ var p=puffs[j],a=(now-p.born)/1500; if(a>=1||mode!=='converge'){puffs.splice(j,1);continue;}
+      var px=p.x+p.vx*a*40, py=p.y+p.vy*a*60, op=(1-a)*0.9;
+      if(p.ash) f+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+(3+a*7).toFixed(1)+'" fill="#8a8f99" opacity="'+op.toFixed(2)+'"/>';
+      else f+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+(2+a*3).toFixed(1)+'" fill="#ff7a2c" opacity="'+op.toFixed(2)+'"/>';
+    }
+    fx.innerHTML=f;
+    requestAnimationFrame(loop);
+  }
+  function star(cx,cy,r,fill,op){ var p='';for(var i=0;i<10;i++){var ang=Math.PI/5*i-Math.PI/2,rad=i%2?r*0.45:r;p+=(cx+Math.cos(ang)*rad).toFixed(1)+','+(cy+Math.sin(ang)*rad).toFixed(1)+' ';}
+    return '<polygon points="'+p+'" fill="'+fill+'" opacity="'+op+'"/>'; }
+
+  // starfield bg (site style)
+  (function(){var c=$('sky'),x=c.getContext('2d'),st=[],DPR=Math.min(window.devicePixelRatio||1,2);
+    function rs(){c.width=innerWidth*DPR;c.height=innerHeight*DPR;c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';
+      var n=Math.round(innerWidth*innerHeight/7000);st=[];for(var i=0;i<n;i++)st.push({x:Math.random()*c.width,y:Math.random()*c.height,r:(Math.random()*1.2+0.2)*DPR,a:Math.random()*.6+.2,tw:Math.random()*.02+.004,p:Math.random()*6.28,hue:Math.random()<.15?'116,219,232':(Math.random()<.2?'244,193,91':'238,242,255')});}
+    function dr(){x.clearRect(0,0,c.width,c.height);for(var i=0;i<st.length;i++){var s=st[i];s.p+=s.tw;var a=s.a+Math.sin(s.p)*.25;x.beginPath();x.arc(s.x,s.y,s.r,0,6.28);x.fillStyle='rgba('+s.hue+','+Math.max(0,a).toFixed(2)+')';x.fill();}requestAnimationFrame(dr);}
+    addEventListener('resize',rs);rs();dr();})();
+
+  buildModes(); setMotion(0); requestAnimationFrame(loop);
+  window.__plate={setMode:function(m){mode=m;setMotion(0);},setMotion:setMotion,get motion(){return motion;},get mode(){return mode;},triggerQuake:triggerQuake,get lastMag(){return lastMag;}};
+})();
+</script>
+</body>
+</html>
