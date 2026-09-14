@@ -254,27 +254,29 @@
 
   // ---------- TRANSFORM (strike-slip fault) ----------
   function renderTransform(m){
-    var off=m*70, s=bg();
-    var top=180;
-    // two continental blocks (land) meeting at a vertical fault
-    s+=R(0,top,BX,MTOP-top,'url(#concrust)',' stroke="#5e4d30" stroke-width="2"');
-    s+=R(BX,top,W-BX,MTOP-top,'url(#concrust)',' stroke="#5e4d30" stroke-width="2"');
-    s+=R(0,top-8,BX,8,'#3f9a55')+R(BX,top-8,W-BX,8,'#3f9a55');
-    // a road crosses the fault; left half shifts down, right half up -> lateral offset
-    var ry=top+46;
-    // road: left half at ry+off, right half at ry-off (offset across fault)
-    s+=R(0,ry+off-4,BX,8,'#eae3cf');
-    s+=R(BX,ry-off-4,W-BX,8,'#eae3cf');
-    // fault line (dashed) + label
-    s+=PATH('M'+BX+' '+(top-8)+' L'+BX+' '+MTOP,'none',' stroke="#20140a" stroke-width="4" stroke-dasharray="10 8"');
-    s+=T(BX,top-16,L.lbl_fault,'#ffd9a6',15);
-    // lateral motion arrows (opposite, along the fault -> shown vertical on the surface)
-    s+='<g stroke="#20140a" stroke-width="0" >';
-    s+=varrow(120,top+ (MTOP-top)/2, 1)+varrow(W-120,top+(MTOP-top)/2,-1);
-    s+='</g>';
-    s+=T(230,top+90,L.lbl_conplate,'#ffeccb',13)+T(W-230,top+90,L.lbl_conplate,'#ffeccb',13);
+    var s=bg(), top=180, MOVE=120, THRESH=40, d=64, xf=BX;
+    // elastic rebound: far-field displacement grows; fault is locked so strain (e) builds,
+    // until it exceeds THRESH -> the fault slips (rupture): strain releases as an earthquake.
+    var totalMove=m*MOVE;
+    if(totalMove<tRel) tRel=totalMove;      // dragging back / reset
+    var e=totalMove-tRel;
+    if(e>=THRESH){ tRel=totalMove; e=0; triggerQuake(0.85+Math.random()*0.15); }  // break loose!
+    var stress=Math.min(1,e/THRESH);
+    // two continental blocks + green surface
+    s+=R(0,top,xf,MTOP-top,'url(#concrust)',' stroke="#5e4d30" stroke-width="2"');
+    s+=R(xf,top,W-xf,MTOP-top,'url(#concrust)',' stroke="#5e4d30" stroke-width="2"');
+    s+=R(0,top-8,xf,8,'#3f9a55')+R(xf,top-8,W-xf,8,'#3f9a55');
+    // white reference lines (fences/roads): they bend near the stuck fault, then snap + offset
+    [top+34,top+62,top+90].forEach(function(ry){ s+=refLine(ry,tRel,e,xf,d,top,MTOP); });
+    // fault line reddens as stress builds, then snaps back dark after a quake
+    var fc='rgb('+Math.round(32+223*stress)+','+Math.round(20+50*stress)+','+Math.round(10+50*stress)+')';
+    s+=PATH('M'+xf+' '+(top-8)+' L'+xf+' '+MTOP,'none',' stroke="'+fc+'" stroke-width="'+(4+stress*3).toFixed(1)+'" stroke-dasharray="10 8"');
+    s+=T(xf,top-16,L.lbl_fault,'#ffd9a6',15);
+    // opposite motion arrows along the fault
+    s+=varrow(120,top+(MTOP-top)/2,1)+varrow(W-120,top+(MTOP-top)/2,-1);
+    s+=T(232,MTOP-14,L.lbl_conplate,'#ffeccb',13)+T(W-232,MTOP-14,L.lbl_conplate,'#ffeccb',13);
     dyn.innerHTML=s;
-    vent={x:BX,y:top,on:false};
+    vent={x:xf,y:top,on:false};
   }
 
   // horizontal push/pull arrow. dir=1 points right, -1 left
@@ -292,6 +294,14 @@
 
   var vent={x:BX,y:200,on:false};
   var conduit={on:false};
+  var tRel=0;   // transform: released (permanent) offset from past ruptures
+  function refLine(ry,rel,e,xf,d,top,mtop){
+    var cl=function(y){return Math.max(top+4,Math.min(mtop-4,y));},lp='',rp='',x,bend;
+    for(x=0;x<=xf;x+=20){ bend=(e/Math.PI)*Math.atan((x-xf)/d); lp+=x+','+cl(ry-rel/2+bend).toFixed(1)+' '; }
+    for(x=xf;x<=W;x+=20){ bend=(e/Math.PI)*Math.atan((x-xf)/d); rp+=x+','+cl(ry+rel/2+bend).toFixed(1)+' '; }
+    return '<polyline points="'+lp+'" fill="none" stroke="#f2ead2" stroke-width="4" stroke-linecap="round"/>'+
+           '<polyline points="'+rp+'" fill="none" stroke="#f2ead2" stroke-width="4" stroke-linecap="round"/>';
+  }
 
   function render(){
     if(mode==='converge') renderConverge(motion);
@@ -336,7 +346,7 @@
     var d=Math.abs(v-motion);
     motion=v; if(moveEl.value!=v*100) moveEl.value=v*100;
     render();
-    if(d>0.008 && Math.random()<0.6+d*4) triggerQuake(d*6 + (mode==='transform'?0.25:0));
+    if(mode!=='transform' && d>0.008 && Math.random()<0.6+d*4) triggerQuake(d*6);
   }
   moveEl.addEventListener('input',function(){ stopAnim(); setMotion(parseFloat(moveEl.value)/100,true); });
 
@@ -370,7 +380,7 @@
   }
   function stopAnim(){ if(animRAF){cancelAnimationFrame(animRAF);animRAF=null;} animBtn.textContent=L.animate; }
   animBtn.addEventListener('click',function(){ animRAF?stopAnim():startAnim(); });
-  $('resetBtn').addEventListener('click',function(){ stopAnim(); setMotion(0); $('roQuake').textContent='—'; $('roQuake').style.color=''; quakes=[]; });
+  $('resetBtn').addEventListener('click',function(){ stopAnim(); tRel=0; setMotion(0); $('roQuake').textContent='—'; $('roQuake').style.color=''; quakes=[]; });
 
   // ---- fx loop: quakes, shake, eruption ----
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
