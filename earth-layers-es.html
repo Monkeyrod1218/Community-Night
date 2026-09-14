@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viaje al Centro de la Tierra · Noche Comunitaria</title>
+<meta name="description" content="Toca las capas de la Tierra — corteza, manto, núcleo externo e interno — para aprender de qué está hecha cada una, y descubre cómo los terremotos nos dejan ver el interior del planeta.">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;700&family=Spline+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#05070f; --night:#0a0f22; --deep:#111935; --panel:#141d3d;
+    --line:#27325c; --star:#eef2ff; --mist:#9aa5cf; --dim:#5d6794;
+    --gold:#f4c15b; --gold-soft:#ffd98a; --cyan:#74dbe8; --rose:#f08fb0; --ember:#ff8a5c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--void);color:var(--star);font-family:'Spline Sans',sans-serif;line-height:1.6;
+    overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh}
+  ::selection{background:var(--gold);color:var(--void)}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;line-height:1.05;letter-spacing:-.01em}
+  #sky{position:fixed;inset:0;z-index:0;display:block}
+  .scrim{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 80% at 70% -10%, rgba(116,219,232,.10), transparent 55%),
+               radial-gradient(90% 60% at 10% 110%, rgba(244,193,91,.07), transparent 60%)}
+  main{position:relative;z-index:2}
+  .back-btn{position:fixed;top:20px;left:20px;z-index:100;display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--mist);border:1px solid var(--line);border-radius:100px;padding:10px 18px;
+    background:rgba(5,7,15,.6);backdrop-filter:blur(8px);transition:.25s}
+  .back-btn:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-1px)}
+
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+  .hero{padding:clamp(56px,7vh,90px) 0 4px;text-align:center}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:clamp(.7rem,1.7vw,.82rem);
+    letter-spacing:.3em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px}
+  h1{font-size:clamp(2.1rem,6vw,3.6rem)}
+  h1 .em{font-style:italic;color:var(--gold-soft)}
+  .intro{color:var(--mist);max-width:62ch;margin:12px auto 0;font-size:clamp(.95rem,2vw,1.1rem)}
+  .action{color:var(--gold);font-weight:600;margin:10px auto 0;max-width:62ch}
+
+  .stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start;margin:22px 0 6px}
+  @media(max-width:760px){.stage{grid-template-columns:1fr;gap:16px}}
+
+  .earthwrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .earth-card{position:relative;width:100%;border:1px solid var(--line);border-radius:22px;overflow:hidden;
+    background:radial-gradient(circle at 50% 40%,#0e1630,#070b18);box-shadow:0 18px 50px rgba(0,0,0,.5)}
+  #earth{display:block;width:100%;height:auto}
+  .layer{cursor:pointer;transition:opacity .15s}
+  .layer:hover{opacity:.92}
+  .lbtns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .lbtn{font-family:'Spline Sans',sans-serif;font-weight:600;font-size:.85rem;border-radius:100px;
+    padding:8px 14px;cursor:pointer;border:1px solid var(--line);background:rgba(10,15,34,.7);color:var(--star);transition:.2s}
+  .lbtn:hover{border-color:var(--cyan)}
+  .lbtn.on{color:#20180a;font-weight:700;border-color:transparent}
+
+  .info{border:1px solid var(--line);border-radius:22px;background:linear-gradient(160deg,var(--panel),var(--night));
+    padding:clamp(18px,2.6vw,26px);min-height:220px}
+  .info .ltag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;
+    text-transform:uppercase;color:#20180a;background:var(--gold-soft);border-radius:100px;padding:5px 13px;margin-bottom:10px;font-weight:700}
+  .info h2{font-size:1.5rem;margin:0 0 6px;color:var(--star)}
+  .prompt{color:var(--mist);font-size:1rem}
+  .facts{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin:6px 0 0}
+  .facts dt{color:var(--cyan);font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;padding-top:3px}
+  .facts dd{margin:0;color:var(--star);font-size:.98rem}
+  .fact{margin:14px 0 0;padding:12px 14px;border-left:2px solid var(--cyan);background:rgba(116,219,232,.05);border-radius:0 12px 12px 0;color:var(--star);font-size:.96rem}
+
+  .howcard{margin:16px 0 0;border:1px solid var(--line);border-radius:20px;background:linear-gradient(160deg,#15203f,#0b1226);
+    padding:clamp(18px,2.6vw,24px);display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;justify-content:space-between}
+  .howcard h2{font-size:clamp(1.15rem,2.6vw,1.5rem);color:var(--gold-soft);max-width:60ch}
+  .btn{font-family:'Spline Sans',sans-serif;font-weight:700;font-size:.95rem;border-radius:100px;padding:12px 22px;cursor:pointer;border:1px solid transparent;transition:.25s;white-space:nowrap}
+  .btn-gold{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#241704;box-shadow:0 8px 24px rgba(244,193,91,.3)}
+  .btn-gold:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(244,193,91,.44)}
+
+  .overlay{position:fixed;inset:0;z-index:200;background:rgba(3,5,12,.74);display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(3px)}
+  .panel{width:min(860px,100%);max-height:90svh;overflow:auto;background:linear-gradient(160deg,var(--panel),var(--night));
+    border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 70px rgba(0,0,0,.65);padding:clamp(20px,3vw,30px)}
+  .panel h2{font-size:clamp(1.3rem,3vw,1.7rem);color:var(--gold-soft);margin:0 0 6px}
+  .learn-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:start;margin-top:12px}
+  @media(max-width:680px){.learn-grid{grid-template-columns:1fr}}
+  .learn-grid p{color:var(--star);font-size:.98rem;margin:0 0 10px}
+  .learn-grid b{color:var(--gold-soft)}
+  #seis{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:16px;background:radial-gradient(circle at 50% 42%,#0e1630,#05080f)}
+  .seis-cap{color:var(--mist);font-size:.82rem;margin-top:8px;text-align:center}
+  .panel .row{display:flex;justify-content:flex-end;margin-top:16px}
+  .close{background:transparent;border:1px solid var(--line);color:var(--star);border-radius:100px;padding:10px 20px;cursor:pointer;font-family:'Spline Sans',sans-serif;font-weight:600}
+  .close:hover{border-color:var(--cyan);color:var(--cyan)}
+
+  .foot{color:var(--dim);font-size:.8rem;padding:18px 20px 52px;line-height:1.55;max-width:860px;margin:0 auto;text-align:center}
+  :focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px;border-radius:6px}
+  [hidden]{display:none!important}
+
+  @media(max-width:1024px){
+    .hero{padding:48px 0 2px}
+    h1{font-size:clamp(1.8rem,5vw,2.5rem)}
+    .intro{font-size:.9rem;margin-top:7px}
+    .info{min-height:0;padding:16px}
+    .info h2{font-size:1.3rem}
+    .howcard{padding:16px}
+    .foot{padding:12px 20px 26px;font-size:.74rem}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important}}
+</style>
+</head>
+<body>
+  <canvas id="sky"></canvas>
+  <div class="scrim"></div>
+  <a class="back-btn" href="earth-spanish.html">&larr; Volver</a>
+
+  <main id="top">
+    <div class="wrap hero">
+      <div class="eyebrow">GPISD · Ciencia de la Tierra</div>
+      <h1>Dentro de la <span class="em">Tierra</span></h1>
+      <p class="intro">Nuestro planeta está formado por capas, como un durazno gigante: una fina piel rocosa, un manto grueso y caliente, y un núcleo metálico — en parte líquido, en parte sólido.</p>
+      <p class="action">Toca una capa para explorarla — y luego descubre cómo sabemos qué hay allí abajo.</p>
+    </div>
+
+    <div class="wrap">
+      <div class="stage">
+        <div class="earthwrap">
+          <div class="earth-card">
+            <svg id="earth" viewBox="0 0 400 400" role="img" aria-label="Un corte de la Tierra con capas que se pueden tocar: corteza, manto, núcleo externo y núcleo interno.">
+              <defs>
+                <radialGradient id="gMantle" cx="42%" cy="38%" r="65%"><stop offset="0%" stop-color="#e06a34"/><stop offset="100%" stop-color="#a83c17"/></radialGradient>
+                <radialGradient id="gOuter" cx="45%" cy="40%" r="60%"><stop offset="0%" stop-color="#ffb04a"/><stop offset="100%" stop-color="#f0781a"/></radialGradient>
+                <radialGradient id="gInner" cx="45%" cy="40%" r="60%"><stop offset="0%" stop-color="#fff3c0"/><stop offset="100%" stop-color="#ffcf3f"/></radialGradient>
+                <radialGradient id="gShine" cx="38%" cy="32%" r="60%"><stop offset="0%" stop-color="rgba(255,255,255,.28)"/><stop offset="45%" stop-color="rgba(255,255,255,0)"/></radialGradient>
+              </defs>
+              <circle class="layer" data-k="crust"  cx="200" cy="200" r="190" fill="#8a6b4a" stroke="#0a0f22" stroke-width="1"/>
+              <circle class="layer" data-k="mantle" cx="200" cy="200" r="176" fill="url(#gMantle)"/>
+              <circle class="layer" data-k="outer"  cx="200" cy="200" r="104" fill="url(#gOuter)"/>
+              <circle class="layer" data-k="inner"  cx="200" cy="200" r="36"  fill="url(#gInner)"/>
+              <circle id="selRing" cx="200" cy="200" r="190" fill="none" stroke="#fff" stroke-width="3" opacity="0" pointer-events="none"/>
+              <circle cx="200" cy="200" r="190" fill="url(#gShine)" pointer-events="none"/>
+              <g id="earthLabels" pointer-events="none" font-family="'JetBrains Mono',monospace" font-size="13" fill="#fff" font-weight="700"></g>
+            </svg>
+          </div>
+          <div class="lbtns" id="lbtns"></div>
+        </div>
+
+        <div class="info" id="info">
+          <span class="ltag" id="liTag" hidden></span>
+          <h2 id="liName">Toca una capa</h2>
+          <p class="prompt" id="liPrompt">Toca un anillo de la Tierra — o un botón abajo — para aprender sobre la corteza, el manto y el núcleo externo e interno.</p>
+          <dl class="facts" id="liFacts" hidden>
+            <dt id="lblDepth"></dt><dd id="liDepth"></dd>
+            <dt id="lblState"></dt><dd id="liState"></dd>
+            <dt id="lblTemp"></dt><dd id="liTemp"></dd>
+            <dt id="lblMade"></dt><dd id="liMade"></dd>
+          </dl>
+          <p class="fact" id="liFact" hidden></p>
+        </div>
+      </div>
+
+      <div class="howcard">
+        <h2 id="howQ">¿Cómo sabemos qué hay dentro de la Tierra?</h2>
+        <button class="btn btn-gold" id="learnBtn" type="button">Aprende aquí</button>
+      </div>
+    </div>
+
+    <p class="foot">Un modelo simplificado para la Noche Comunitaria. Las profundidades y temperaturas son aproximadas. Las ondas sísmicas — registradas por sismógrafos de todo el mundo — son la principal forma de estudiar el interior de la Tierra.</p>
+  </main>
+
+  <div class="overlay" id="learnOverlay" hidden>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="learnTitle">
+      <h2 id="learnTitle">¿Cómo sabemos qué hay dentro de la Tierra?</h2>
+      <div class="learn-grid">
+        <div id="learnText"></div>
+        <div>
+          <svg id="seis" viewBox="0 0 420 430" role="img" aria-label="Corte de la Tierra que muestra las ondas P atravesando y las ondas S detenidas en el núcleo externo líquido.">
+            <defs>
+              <radialGradient id="sMantle" cx="42%" cy="38%" r="65%"><stop offset="0%" stop-color="#c85a2c"/><stop offset="100%" stop-color="#8f3214"/></radialGradient>
+            </defs>
+            <circle cx="210" cy="210" r="190" fill="url(#sMantle)" stroke="#0a0f22" stroke-width="1"/>
+            <circle cx="210" cy="210" r="104" fill="#ff8c1a" opacity="0.92"/>
+            <circle cx="210" cy="210" r="36" fill="#ffe06b"/>
+            <g id="shadow"></g>
+            <g id="rays" fill="none" stroke-linecap="round"></g>
+            <g id="raydots"></g>
+            <g id="seisLabels" font-family="'JetBrains Mono',monospace" font-weight="700"></g>
+          </svg>
+          <p class="seis-cap" id="seisCap"></p>
+        </div>
+      </div>
+      <div class="row"><button class="close" id="learnClose" type="button">Cerrar</button></div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var LANG="es", L={"f_depth": "Profundidad", "f_state": "Estado", "f_temp": "Temperatura", "f_made": "De qué está hecho", "ly_crust": {"name": "Corteza", "tag": "0–70 km", "depth": "0–70 km", "state": "Roca sólida", "temp": "Hasta ~400°C en su base", "made": "Roca — granito (tierra) y basalto (fondo marino)", "fact": "La capa más delgada — comparada con toda la Tierra es más fina que la piel de una manzana. Es la única capa donde vivimos y perforamos."}, "ly_mantle": {"name": "Manto", "tag": "70–2,890 km", "depth": "70–2,890 km", "state": "Roca sólida que fluye lentamente", "temp": "~500–4,000°C", "made": "Roca de silicato rica en hierro y magnesio", "fact": "La capa más gruesa — cerca del 84% del volumen de la Tierra. Su lento movimiento (convección) arrastra las placas tectónicas."}, "ly_outer": {"name": "Núcleo externo", "tag": "2,890–5,150 km", "depth": "2,890–5,150 km", "state": "Metal líquido", "temp": "~4,000–5,000°C", "made": "Hierro y níquel fundidos", "fact": "Este metal líquido en movimiento crea el campo magnético de la Tierra, que nos protege de la radiación solar. Las ondas S no lo atraviesan — así sabemos que es líquido."}, "ly_inner": {"name": "Núcleo interno", "tag": "5,150 km – centro", "depth": "5,150–6,371 km (el centro)", "state": "Metal sólido", "temp": "~5,200°C (casi tan caliente como la superficie del Sol)", "made": "Hierro y níquel", "fact": "Aunque es la capa más caliente, la enorme presión lo mantiene sólido. Incluso gira un poco más rápido que el resto del planeta."}, "learn_body": "<p>Nunca hemos excavado más de unos <b>12 km</b> — ni siquiera atravesamos la corteza — así que no podemos ver el interior directamente. En cambio, escuchamos los <b>terremotos</b>.</p><p><b>1. Velocidad y curvatura.</b> Las ondas sísmicas se aceleran, se frenan y <b>se curvan</b> al pasar a un material distinto — como la luz al entrar al agua. Al cronometrar cuándo llegan a estaciones de todo el mundo, mapeamos dónde cambia el material.</p><p><b>2. Qué ondas pasan.</b> Las ondas P viajan por sólidos <i>y</i> líquidos, pero las <b>ondas S no viajan por líquidos</b>. Las ondas S desaparecen en el lado opuesto del planeta (la “zona de sombra”) — la prueba de que el núcleo externo es líquido.</p><p>En el laboratorio ya conocemos la <b>densidad</b> de cada material y qué tan rápido lo atraviesan las ondas. Al comparar las velocidades reales con esos valores, sabemos de qué está hecha cada capa.</p>", "seis_cap": "Las ondas P (verde) atraviesan toda la Tierra. Las ondas S (rojo) se detienen en el núcleo externo líquido.", "seis_quake": "Terremoto", "seis_p": "Ondas P", "seis_s": "Ondas S", "seis_shadow": "Zona de sombra de ondas S", "seis_liquid": "líquido"}, NS='http://www.w3.org/2000/svg';
+  var $=function(id){return document.getElementById(id);};
+
+  var LAYERS=[
+    {k:'crust', color:'#8a6b4a', tag:'#d9b98c'},
+    {k:'mantle',color:'#d1571f', tag:'#f0a06a'},
+    {k:'outer', color:'#ff8c1a', tag:'#ffc27a'},
+    {k:'inner', color:'#ffe06b', tag:'#ffe98f'}
+  ];
+  function info(k){return L['ly_'+k];}   // {name,depth,state,temp,made,fact}
+
+  // labels around the cutaway (leader text)
+  (function(){ var g=$('earthLabels'), specs=[
+      ['crust', 200, 20,  'middle'],
+      ['mantle',200, 150, 'middle'],
+      ['outer', 200, 250, 'middle'],
+      ['inner', 200, 205, 'middle']
+    ];
+    var s='';
+    specs.forEach(function(sp){ var nm=info(sp[0]).name;
+      s+='<text x="'+sp[1]+'" y="'+sp[2]+'" text-anchor="'+sp[3]+'" paint-order="stroke" stroke="rgba(0,0,0,.5)" stroke-width="3">'+nm+'</text>';
+    });
+    g.innerHTML=s;
+  })();
+
+  var selRing=$('selRing');
+  var RADII={crust:190,mantle:176,outer:104,inner:36};
+  function select(k){
+    var d=info(k), ly=LAYERS.filter(function(x){return x.k===k;})[0];
+    $('liPrompt').hidden=true; $('liFacts').hidden=false; $('liFact').hidden=false; $('liTag').hidden=false;
+    var tag=$('liTag'); tag.textContent=d.tag; tag.style.background=ly.tag;
+    $('liName').textContent=d.name;
+    $('liDepth').textContent=d.depth; $('liState').textContent=d.state; $('liTemp').textContent=d.temp; $('liMade').textContent=d.made;
+    $('liFact').textContent=d.fact;
+    selRing.setAttribute('r',RADII[k]); selRing.setAttribute('opacity','0.9'); selRing.setAttribute('stroke', k==='crust'? '#fff':'#fff');
+    Array.prototype.forEach.call(document.querySelectorAll('.lbtn'),function(b){b.classList.toggle('on',b.dataset.k===k); b.style.background=b.dataset.k===k?ly.tag:'';});
+  }
+  // static labels for facts
+  $('lblDepth').textContent=L.f_depth; $('lblState').textContent=L.f_state; $('lblTemp').textContent=L.f_temp; $('lblMade').textContent=L.f_made;
+
+  // clickable rings
+  Array.prototype.forEach.call(document.querySelectorAll('#earth .layer'),function(c){
+    c.addEventListener('click',function(){ select(c.getAttribute('data-k')); });
+  });
+  // layer buttons
+  (function(){ var g=$('lbtns'); LAYERS.forEach(function(ly){ var b=document.createElement('button');
+      b.className='lbtn'; b.type='button'; b.dataset.k=ly.k; b.textContent=info(ly.k).name;
+      b.addEventListener('click',function(){ select(ly.k); }); g.appendChild(b);
+    });
+  })();
+
+  // ---------- learn overlay ----------
+  var overlay=$('learnOverlay');
+  function buildLearn(){
+    $('learnText').innerHTML=L.learn_body;
+    $('seisCap').textContent=L.seis_cap;
+    // shadow zone wedge (bottom arc where S-waves don't reach)
+    var cx=210,cy=210,R=190;
+    function pt(deg,r){var a=deg*Math.PI/180;return [ (cx+r*Math.cos(a)).toFixed(1), (cy+r*Math.sin(a)).toFixed(1) ];}
+    var a1=pt(58,R), a2=pt(122,R);
+    $('shadow').innerHTML='<path d="M'+a1[0]+' '+a1[1]+' A '+R+' '+R+' 0 0 1 '+a2[0]+' '+a2[1]+' L '+cx+' '+cy+' Z" fill="rgba(20,25,50,.55)"/>';
+    // rays
+    var rays=$('rays'),s='';
+    // P-waves (green): curve through interior to far side, pass through core
+    var P=['M210 22 Q 110 210 200 396','M210 22 Q 310 210 220 396','M210 22 Q 70 150 44 300','M210 22 Q 350 150 376 300'];
+    P.forEach(function(d,i){ s+='<path id="P'+i+'" d="'+d+'" stroke="#5df08f" stroke-width="2.4" opacity="0.9"/>'; });
+    // S-waves (red): stop at the outer-core boundary
+    var S=['M210 22 Q 150 150 150 292','M210 22 Q 270 150 270 292','M210 22 Q 210 150 210 314'];
+    S.forEach(function(d,i){ s+='<path id="S'+i+'" d="'+d+'" stroke="#ff5a5a" stroke-width="2.4" stroke-dasharray="7 6" opacity="0.9"/>'; });
+    rays.innerHTML=s;
+    // blocked marks where S hits core
+    var blk='';[[150,292],[270,292],[210,314]].forEach(function(p){ blk+='<text x="'+p[0]+'" y="'+(p[1]+5)+'" text-anchor="middle" font-size="16" fill="#ff8a8a" font-weight="700">✕</text>'; });
+    // labels
+    $('seisLabels').innerHTML=
+      '<circle cx="210" cy="22" r="6" fill="#ffe14a" stroke="#20140a" stroke-width="1.5"/>'+
+      '<text x="210" y="12" text-anchor="middle" font-size="12" fill="#ffe14a" paint-order="stroke" stroke="rgba(0,0,0,.6)" stroke-width="3">'+L.seis_quake+'</text>'+
+      '<text x="24" y="360" font-size="12.5" fill="#5df08f" paint-order="stroke" stroke="rgba(0,0,0,.6)" stroke-width="3">'+L.seis_p+'</text>'+
+      '<text x="300" y="360" font-size="12.5" fill="#ff6a6a" paint-order="stroke" stroke="rgba(0,0,0,.6)" stroke-width="3">'+L.seis_s+'</text>'+
+      '<text x="210" y="418" text-anchor="middle" font-size="12" fill="#c9d2ef" paint-order="stroke" stroke="rgba(0,0,0,.6)" stroke-width="3">'+L.seis_shadow+'</text>'+
+      '<text x="210" y="210" text-anchor="middle" font-size="11" fill="#3a1a08" font-weight="700">'+L.seis_liquid+'</text>'+
+      blk;
+    startWaves();
+  }
+  // animate dots along the ray paths
+  var waveRAF=null;
+  function startWaves(){
+    if(waveRAF)cancelAnimationFrame(waveRAF);
+    var Ps=[0,1,2,3].map(function(i){return $('P'+i);}), Ss=[0,1,2].map(function(i){return $('S'+i);});
+    var dg=$('raydots');
+    var t0=performance.now();
+    (function step(now){
+      if(overlay.hidden){ waveRAF=null; return; }
+      var e=(now-t0)/2600, u=e%1, d='';
+      Ps.forEach(function(p){ if(!p)return; var len=p.getTotalLength(); var pt=p.getPointAtLength(u*len);
+        d+='<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="4" fill="#b6ffce"/>'; });
+      Ss.forEach(function(p){ if(!p)return; var len=p.getTotalLength(); var uu=Math.min(u,1); var pt=p.getPointAtLength(uu*len);
+        var op=uu>0.9?(1-(uu-0.9)/0.1):1; d+='<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="4" fill="#ffb3b3" opacity="'+op.toFixed(2)+'"/>'; });
+      dg.innerHTML=d;
+      waveRAF=requestAnimationFrame(step);
+    })(t0);
+  }
+  var learnBuilt=false;
+  function openLearn(){ overlay.hidden=false; if(!learnBuilt){buildLearn();learnBuilt=true;} else {startWaves();} $('learnClose').focus(); }
+  function closeLearn(){ overlay.hidden=true; if(waveRAF){cancelAnimationFrame(waveRAF);waveRAF=null;} $('learnBtn').focus(); }
+  $('learnBtn').addEventListener('click',openLearn);
+  $('learnClose').addEventListener('click',closeLearn);
+  overlay.addEventListener('click',function(e){ if(e.target===overlay) closeLearn(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!overlay.hidden) closeLearn(); });
+
+  // starfield
+  (function(){var c=$('sky'),x=c.getContext('2d'),st=[],DPR=Math.min(window.devicePixelRatio||1,2);
+    function rs(){c.width=innerWidth*DPR;c.height=innerHeight*DPR;c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';
+      var n=Math.round(innerWidth*innerHeight/7000);st=[];for(var i=0;i<n;i++)st.push({x:Math.random()*c.width,y:Math.random()*c.height,r:(Math.random()*1.2+0.2)*DPR,a:Math.random()*.6+.2,tw:Math.random()*.02+.004,p:Math.random()*6.28,hue:Math.random()<.15?'116,219,232':(Math.random()<.2?'244,193,91':'238,242,255')});}
+    function dr(){x.clearRect(0,0,c.width,c.height);for(var i=0;i<st.length;i++){var s=st[i];s.p+=s.tw;var a=s.a+Math.sin(s.p)*.25;x.beginPath();x.arc(s.x,s.y,s.r,0,6.28);x.fillStyle='rgba('+s.hue+','+Math.max(0,a).toFixed(2)+')';x.fill();}requestAnimationFrame(dr);}
+    addEventListener('resize',rs);rs();dr();})();
+
+  window.__earth={select:select,openLearn:openLearn,closeLearn:closeLearn};
+})();
+</script>
+</body>
+</html>
