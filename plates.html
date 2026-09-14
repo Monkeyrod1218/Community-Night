@@ -153,7 +153,7 @@
 (function(){
   "use strict";
   var LANG="en";
-  var L={"lbl_mantle": "Mantle", "lbl_mountains": "Mountains", "lbl_volcano": "Volcano", "lbl_trench": "Trench", "lbl_oceanplate": "Ocean plate", "lbl_conplate": "Continental plate", "lbl_ridge": "Ridge", "lbl_newfloor": "New sea floor", "lbl_magma": "Magma", "lbl_fault": "Fault", "mode_converge": "Push together", "mode_diverge": "Pull apart", "mode_transform": "Slide past", "bnd_converge": "Convergent", "bnd_diverge": "Divergent", "bnd_transform": "Transform", "form_converge": "Trench, volcanoes & mountains", "form_diverge": "Ridge & new sea floor", "form_transform": "Fault (no new crust)", "ex_converge": "Andes & Cascades", "ex_diverge": "Mid-Atlantic Ridge", "ex_transform": "San Andreas Fault", "desc_converge": "The plates <b>crash together</b>. One dives under the other and melts into magma that feeds <b>volcanoes</b>, while the crust buckles up into <b>mountains</b> and a deep ocean <b>trench</b> — with powerful earthquakes.", "desc_diverge": "The plates <b>pull apart</b>. Hot magma rises to fill the gap and hardens into <b>brand-new sea floor</b>, building a long underwater <b>ridge</b>, with gentle shallow earthquakes.", "desc_transform": "The plates <b>grind past</b> each other. They lock, stress builds, then they suddenly slip — and that sudden slip <b>is an earthquake</b>. No crust is made or destroyed.", "animate": "▶ Animate", "animating": "⏸ Stop"};
+  var L={"lbl_melt": "Plate melts", "lbl_mantle": "Mantle", "lbl_mountains": "Mountains", "lbl_volcano": "Volcano", "lbl_trench": "Trench", "lbl_oceanplate": "Ocean plate", "lbl_conplate": "Continental plate", "lbl_ridge": "Ridge", "lbl_newfloor": "New sea floor", "lbl_magma": "Magma", "lbl_fault": "Fault", "mode_converge": "Push together", "mode_diverge": "Pull apart", "mode_transform": "Slide past", "bnd_converge": "Convergent", "bnd_diverge": "Divergent", "bnd_transform": "Transform", "form_converge": "Trench, volcanoes & mountains", "form_diverge": "Ridge & new sea floor", "form_transform": "Fault (no new crust)", "ex_converge": "Andes & Cascades", "ex_diverge": "Mid-Atlantic Ridge", "ex_transform": "San Andreas Fault", "desc_converge": "The plates <b>crash together</b>. One dives under the other and melts into magma that feeds <b>volcanoes</b>, while the crust buckles up into <b>mountains</b> and a deep ocean <b>trench</b> — with powerful earthquakes.", "desc_diverge": "The plates <b>pull apart</b>. Hot magma rises to fill the gap and hardens into <b>brand-new sea floor</b>, building a long underwater <b>ridge</b>, with gentle shallow earthquakes.", "desc_transform": "The plates <b>grind past</b> each other. They lock, stress builds, then they suddenly slip — and that sudden slip <b>is an earthquake</b>. No crust is made or destroyed.", "animate": "▶ Animate", "animating": "⏸ Stop"};
   var NS='http://www.w3.org/2000/svg';
   var $=function(id){return document.getElementById(id);};
 
@@ -203,8 +203,13 @@
     s+=P((vx-46)+' '+top+' '+vx+' '+(top-vH)+' '+(vx+46)+' '+top,'#3a2e22',' stroke="#241b12" stroke-width="1.5"');
     s+=P((vx-12)+' '+(top-vH+8)+' '+vx+' '+(top-vH)+' '+(vx+12)+' '+(top-vH+8),'#ff5a2c'); // crater lava
     s+=T(vx,top+34,L.lbl_volcano,'#ffd9a6',14);
-    // magma rising from slab to volcano
-    if(m>0.25){ s+=PATH('M'+(BX+55+over)+' '+(MTOP+40)+' Q '+(vx-30)+' '+(MTOP-10)+' '+vx+' '+(top-vH+6),'none',' stroke="url(#magma)" stroke-width="'+(3+m*4)+'" opacity="0.85"'); }
+    // magma conduit: from the melting slab tip up to the volcano (animated in fx loop)
+    var meltX=BX+55+over, meltY=top+120+over, ctrlX=vx-42, ctrlY=MTOP-14, ventY=top-vH+6;
+    if(m>0.2){
+      s+=PATH('M'+meltX+' '+meltY+' Q '+ctrlX+' '+ctrlY+' '+vx+' '+ventY,'none',' stroke="url(#magma)" stroke-width="'+(2+m*3)+'" opacity="0.32"');
+      s+=T(meltX+8,meltY+4,L.lbl_melt,'#ffd0a0',12,'start');
+    }
+    conduit={mx:meltX,my:meltY,cx:ctrlX,cy:ctrlY,vx:vx,vy:ventY,on:m>0.2};
     // trench + plate labels
     s+=T(BX,top-14,L.lbl_trench,'#bfeaff',14);
     s+=T(120,SEA+22,L.lbl_oceanplate,'#dff0ff',13);
@@ -286,6 +291,7 @@
   }
 
   var vent={x:BX,y:200,on:false};
+  var conduit={on:false};
 
   function render(){
     if(mode==='converge') renderConverge(motion);
@@ -370,6 +376,7 @@
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   var puffs=[];
   var bubbles=[];
+  var magma=[];
   function loop(now){
     var f='';
     // shake decay
@@ -389,6 +396,20 @@
       var px=p.x+p.vx*a*40, py=p.y+p.vy*a*60, op=(1-a)*0.9;
       if(p.ash) f+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+(3+a*7).toFixed(1)+'" fill="#8a8f99" opacity="'+op.toFixed(2)+'"/>';
       else f+='<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="'+(2+a*3).toFixed(1)+'" fill="#ff7a2c" opacity="'+op.toFixed(2)+'"/>';
+    }
+    // convergent: the oceanic plate melts at depth and magma rises up to the volcano
+    if(mode==='converge' && conduit.on){
+      var mp=0.5+0.5*Math.sin(now*0.007);
+      f+='<ellipse cx="'+conduit.mx+'" cy="'+conduit.my+'" rx="'+(15+7*mp).toFixed(1)+'" ry="'+(9+4*mp).toFixed(1)+'" fill="url(#glow)" opacity="'+(0.5*mp+0.3).toFixed(2)+'"/>';
+      if(!reduce && Math.random()<0.55) magma.push({born:now,dur:1500+Math.random()*800,r:2.5+Math.random()*2.5,w:Math.random()*6-3});
+    }
+    for(var km=magma.length-1;km>=0;km--){ var mm=magma[km],am=(now-mm.born)/mm.dur;
+      if(am>=1||mode!=='converge'){magma.splice(km,1);continue;}
+      var u=am,iu=1-u;
+      var mgx=iu*iu*conduit.mx+2*iu*u*conduit.cx+u*u*conduit.vx+Math.sin(u*14)*mm.w;
+      var mgy=iu*iu*conduit.my+2*iu*u*conduit.cy+u*u*conduit.vy;
+      var op=(u<0.85?0.92:(1-u)/0.15).toFixed(2);
+      f+='<circle cx="'+mgx.toFixed(1)+'" cy="'+mgy.toFixed(1)+'" r="'+mm.r.toFixed(1)+'" fill="#ff8a2c" opacity="'+op+'"/>';
     }
     // divergent: magma bubbling up the ridge column and spilling over to build it
     if(mode==='diverge' && vent.on){
