@@ -257,11 +257,11 @@
     var P=['M210 22 Q 110 210 200 396','M210 22 Q 310 210 220 396','M210 22 Q 70 150 44 300','M210 22 Q 350 150 376 300'];
     P.forEach(function(d,i){ s+='<path id="P'+i+'" d="'+d+'" stroke="#5df08f" stroke-width="2.4" opacity="0.9"/>'; });
     // S-waves (red): stop at the outer-core boundary
-    var S=['M210 22 Q 150 150 150 292','M210 22 Q 270 150 270 292','M210 22 Q 210 150 210 314'];
+    var S=['M210 22 Q 150 60 120 158','M210 22 Q 210 64 210 106','M210 22 Q 270 60 300 158'];
     S.forEach(function(d,i){ s+='<path id="S'+i+'" d="'+d+'" stroke="#ff5a5a" stroke-width="2.4" stroke-dasharray="7 6" opacity="0.9"/>'; });
     rays.innerHTML=s;
     // blocked marks where S hits core
-    var blk='';[[150,292],[270,292],[210,314]].forEach(function(p){ blk+='<text x="'+p[0]+'" y="'+(p[1]+5)+'" text-anchor="middle" font-size="16" fill="#ff8a8a" font-weight="700">✕</text>'; });
+    var blk='';[[120,158],[210,106],[300,158]].forEach(function(p){ blk+='<text x="'+p[0]+'" y="'+(p[1]+5)+'" text-anchor="middle" font-size="16" fill="#ff8a8a" font-weight="700">✕</text>'; });
     // labels
     $('seisLabels').innerHTML=
       '<circle cx="210" cy="22" r="6" fill="#ffe14a" stroke="#20140a" stroke-width="1.5"/>'+
@@ -285,8 +285,11 @@
       var e=(now-t0)/2600, u=e%1, d='';
       Ps.forEach(function(p){ if(!p)return; var len=p.getTotalLength(); var pt=p.getPointAtLength(u*len);
         d+='<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="4" fill="#b6ffce"/>'; });
-      Ss.forEach(function(p){ if(!p)return; var len=p.getTotalLength(); var uu=Math.min(u,1); var pt=p.getPointAtLength(uu*len);
-        var op=uu>0.9?(1-(uu-0.9)/0.1):1; d+='<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="4" fill="#ffb3b3" opacity="'+op.toFixed(2)+'"/>'; });
+      Ss.forEach(function(p){ if(!p)return; var len=p.getTotalLength();
+        var sm=Math.min(u/0.7,1); var pt=p.getPointAtLength(sm*len);
+        d+='<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="4" fill="#ffb3b3"/>';
+        if(sm>=1){ var bp=(u-0.7)/0.3, rr=(5+bp*13).toFixed(1), op=(1-bp).toFixed(2);
+          d+='<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+rr+'" fill="none" stroke="#ff5a5a" stroke-width="2.6" opacity="'+op+'"/>'; } });
       dg.innerHTML=d;
       waveRAF=requestAnimationFrame(step);
     })(t0);
