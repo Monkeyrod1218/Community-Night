@@ -284,10 +284,14 @@
       if(overlay.hidden){ waveRAF=null; return; }
       var e=(now-t0)/2600, u=e%1, d='';
       Ps.forEach(function(p){ if(!p)return; var len=p.getTotalLength(); var pt=p.getPointAtLength(u*len);
-        d+='<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="4" fill="#b6ffce"/>'; });
+        var x=pt.x.toFixed(1), y=pt.y.toFixed(1);
+        d+='<circle cx="'+x+'" cy="'+y+'" r="7" fill="#77e6a0"/>'+
+           '<text x="'+x+'" y="'+y+'" text-anchor="middle" dominant-baseline="central" font-family="\'JetBrains Mono\',monospace" font-size="9.5" font-weight="700" fill="#0b3a1e">P</text>'; });
       Ss.forEach(function(p){ if(!p)return; var len=p.getTotalLength();
         var sm=Math.min(u/0.7,1); var pt=p.getPointAtLength(sm*len);
-        d+='<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="4" fill="#ffb3b3"/>';
+        var sx=pt.x.toFixed(1), sy=pt.y.toFixed(1);
+        d+='<circle cx="'+sx+'" cy="'+sy+'" r="7" fill="#ff9a9a"/>'+
+           '<text x="'+sx+'" y="'+sy+'" text-anchor="middle" dominant-baseline="central" font-family="\'JetBrains Mono\',monospace" font-size="9.5" font-weight="700" fill="#5a1414">S</text>';
         if(sm>=1){ var bp=(u-0.7)/0.3, rr=(5+bp*13).toFixed(1), op=(1-bp).toFixed(2);
           d+='<circle cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+rr+'" fill="none" stroke="#ff5a5a" stroke-width="2.6" opacity="'+op+'"/>'; } });
       dg.innerHTML=d;
